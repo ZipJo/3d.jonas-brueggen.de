@@ -1,0 +1,369 @@
+/* ####################################################### */
+/* Main Rules, set the colors and a bunch of general stuff */
+/* ####################################################### */
+
+@import 'variables';
+
+@import 'background';
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+
+body {
+	margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	min-width: 360px; /* no 240p support - sorry people from 2003 */
+
+	font-family: 'Montserrat', sans-serif;
+	text-rendering: optimizeLegibility;
+	color: $color-page-main;
+}
+
+/* scrollbar-design hacking (amazing!) */
+
+*::-webkit-scrollbar {
+	width: 7px;
+	height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.45);
+}
+
+*::-webkit-scrollbar-track {
+	background-color: rgba(0,0,0,0.05);
+}
+
+a {
+	color: $color-accent-6;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+}
+
+a:hover {
+	color: $color-page-main;
+}
+
+*:click{
+	text-decoration: none;
+}
+
+p {
+	margin: 8pt;
+	font-size: 12pt;
+	line-height: 18pt;
+}
+
+
+/* Link-FX*/
+.fancy_link {
+	color: $color-accent-6;
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	transition: color 0.12s linear;
+	box-shadow:inset 0 -2px 0 0 $color-accent-6;
+	z-index: 0;
+}
+
+.fancy_link:before, .fancy_link:after {
+	z-index: -1;
+	content: "";
+	background: $color-accent-6;
+	
+	position: absolute;
+	height: 50%;
+	width: 0%;
+
+	transition: width 0.12s linear;
+}
+.fancy_link:before { left: -3%; bottom: 0; }
+.fancy_link:after { right: -3%; top: 0; }
+
+
+.fancy_link:hover {
+	color: $color-page-bg;
+}
+.fancy_link:hover:before, .fancy_link:hover:after {
+	width: 106%;
+}
+
+.fancy_link.fancy_link--reversed {
+	color: $color-page-bg;
+	box-shadow:inset 0 -2px 0 0 $color-page-bg;
+}
+.fancy_link.fancy_link--reversed:before, .fancy_link.fancy_link--reversed:after {
+	content: "";
+	background: $color-page-bg;
+}
+.fancy_link.fancy_link--reversed:hover {
+	color: $color-accent-6;
+}
+
+
+/* ################### */
+/* ################### */
+/* Layout and fancy-FX */
+/* ################### */
+/* ################### */
+
+/* ############### */
+/* Site-wide rules */
+/* ############### */
+
+.wrapper {
+	margin: 0;
+}
+
+/* logo and menu */
+
+header {
+	margin: 0;
+	opacity: 1;
+
+	.header_logo {
+		margin: 0 auto;
+		padding: 15px;
+		width: 100px;
+		height: 100px;
+		position: relative;
+		
+		.logo_wrapper {
+			overflow: hidden;
+			width: 100%;
+			height: 100%;
+			margin: auto;
+			position: absolute;
+			top: 0;
+			left: 0;
+			.logo {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+		}
+	}
+	/* header menu */
+
+	nav {
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		max-width: 35%;
+		transition: all 0.2s ease-in-out;
+		a {
+			letter-spacing: 1px;
+			font-size: 10pt;
+			text-transform: uppercase;
+			padding: 10px 15px;
+		}
+	}
+}
+
+
+
+/* ############################# */
+/* general dynamic-content-rules */
+/* ############################# */
+
+section {
+	max-width: 30vw;
+	max-height: 20vw;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	display: none;
+}
+
+
+/* #################### */
+/* Page-specific rules: */
+/* #### About-page #### */
+/* #################### */
+
+.about_text_wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.about_text {
+	width: 800px;
+}
+
+.about_text p {
+	margin: 0 20px 20px;
+}
+
+
+/* about-sidebar */
+.about_sidebar {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 5fr 6fr 1fr;
+}
+
+/* about-sidebar -> address */
+.contact_address_wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.contact_address {
+	color: $color-page-bg;
+}
+
+
+/* about-sidebar -> contact tiles */
+.contact_tiles_grid {
+	display: grid;
+	grid-template-columns: 2fr 2fr 1fr 2fr 2fr;
+	grid-template-rows: 1fr 2fr 2fr 1fr;
+}
+
+.contact_tiles_grid > a:nth-child(1) { grid-column: 2 / span 1; grid-row: 2 / span 1; }
+.contact_tiles_grid > a:nth-child(2) { grid-column: 2 / span 1; grid-row: 3 / span 1; }
+.contact_tiles_grid > a:nth-child(3) { grid-column: 4 / span 1; grid-row: 2 / span 1; }
+.contact_tiles_grid > a:nth-child(4) { grid-column: 4 / span 1; grid-row: 3 / span 1; }
+
+.contact_tiles_grid > a > span {
+	height: 100%;
+	width: 100%;
+	display: block;
+	background-image: url('../files/logos.svg');
+	background-repeat: no-repeat;
+	background-size: 400%;
+}
+.contact_tiles_grid > a:nth-child(1) > span { background-position-x: 0%; }
+.contact_tiles_grid > a:nth-child(2) > span { background-position-x: calc(100% / 3); }
+.contact_tiles_grid > a:nth-child(3) > span { background-position-x: calc(200% / 3); }
+.contact_tiles_grid > a:nth-child(4) > span { background-position-x: 100%; }
+.contact_tiles_grid > a:nth-child(1):hover { background-color: #dd4c3c; } /* mail */
+.contact_tiles_grid > a:nth-child(2):hover { background-color: #3d559e; } /* phone */
+.contact_tiles_grid > a:nth-child(3):hover { background-color: #1dabe5; } /* skype */
+.contact_tiles_grid > a:nth-child(4):hover { background-color: #20d442; } /* whatsapp */
+
+/* Animation */
+.contact_tiles_grid a {
+}
+.contact_tiles_grid > a:nth-child(1) { animation-delay: 0s; }
+.contact_tiles_grid > a:nth-child(2) { animation-delay: 0.1s; }
+.contact_tiles_grid > a:nth-child(3) { animation-delay: 0.2s; }
+.contact_tiles_grid > a:nth-child(4) { animation-delay: 0.3s; }
+
+.contact_tiles_grid.start_animation a {
+	animation-name: contact_tiles--animation;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-out;
+	animation-iteration-count: 1;
+}
+
+@keyframes contact_tiles--animation {
+	from { transform: translateX(0%); }
+	20% { transform: translateX(-20%); }
+	to { transform: translateX(0%); }
+}
+
+/* about-sidebar -> imprint-link */
+.about_imprint {
+	justify-self: center;
+}
+
+
+/* ########### */
+/* Other stuff */
+/* ########### */
+
+/* Everything popup-related */
+
+.popup_container {
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 1%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	pointer-events: none;
+	background: $color-page-main-opaque;
+	transition: opacity 0.2s;
+	z-index: 1000;
+}
+.popup_container.active {
+	opacity: 1;
+	pointer-events: all;
+}
+
+.popup_container > div {
+	transform: translateY(-60px);
+	background: $color-page-bg;
+	opacity: 0;
+	max-height: 85%;
+	padding: 50px;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
+	transition: all 0.3s ease-in-out;
+	overflow-y: auto;
+}
+.popup_container > div.move {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+
+/*  impressum-style */
+
+.impressum_div, .impressum_div p {
+	line-height: 20pt;
+}
+
+.impressum_div li {
+	list-style: unset;
+	margin-top: 8px;
+}
+
+.impressum_div table, .impressum_div tr {
+	border: 1px solid $color-page-main-opaque;
+	border-collapse: collapse;
+}
+
+.impressum_div .first_column {
+	width: 250px;
+}
+
+.impressum_div a {
+	display: inline-block;
+	text-decoration: underline;
+}
+
+.impressum_div h1 {
+	padding-top: 40px;
+}
+
+.impressum_div h1:first-child {
+	padding-top: 0;
+}
+
+.impressum_div h2 {
+	padding-top: 15px;
+}
+
+/* ################# */
+/* Responsive design */
+/* ################# */
+
+/* medium screens */
+@media all and (min-width:900px) and (max-width:1200px) {
+   
+}
+
+/* small screens */
+@media all and (max-width:900px) {
+
+}

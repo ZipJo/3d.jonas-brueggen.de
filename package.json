@@ -1,0 +1,35 @@
+{
+  "name": "3d.jonas-brueggen.de",
+  "version": "1.0.0",
+  "description": "workspace for 3d.jonas-brueggen.de",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "www.jonas-brueggen.de",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-connect-php": "^1.0.3",
+    "gulp-csso": "^4.0.1",
+    "gulp-file-include": "^2.1.1",
+    "gulp-if": "^3.0.0",
+    "gulp-ignore": "^3.0.0",
+    "gulp-minify-inline": "^1.1.0",
+    "gulp-print": "^5.0.2",
+    "gulp-pug": "^4.0.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sftp-up4": "^0.1.8",
+    "gulp-src-viewer": "^1.2.3",
+    "gulp-uglify": "^3.0.2",
+    "gulp-useref": "^4.0.1",
+    "pump": "^3.0.0"
+  },
+  "dependencies": {
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-javascript-obfuscator": "^1.1.6"
+  }
+}
