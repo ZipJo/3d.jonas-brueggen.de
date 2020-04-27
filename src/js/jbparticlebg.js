@@ -48,17 +48,23 @@ let pBg = function(tag_id, parameters){
 		console.log("click at X:"+pBg.interactivity.mouse.click_pos_x+" Y:"+pBg.interactivity.mouse.click_pos_y);
 	}
 
-	pBg.functions.deviceOrientationChange = function(e) {
+	pBg.functions.deviceOrientationEvent = function(e) {
 		if(pBg.interactivity.status != 'tilt') {
-			pBg.interactivity.mobile.tilt_alpha_initial = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (-180 to 180)
+			pBg.interactivity.mobile.tilt_alpha_initial = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (0 to 360)
 			pBg.interactivity.mobile.tilt_beta_initial = Math.round(e.beta * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //up & down (-180 to 180)
 			pBg.interactivity.mobile.tilt_gamma_initial = Math.round(e.gamma * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //left & right (-90 to 90)
 		}
 		pBg.interactivity.status = 'tilt';
 
-		pBg.interactivity.mobile.tilt_alpha = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (-180 to 180)
+		pBg.interactivity.mobile.tilt_alpha = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (0 to 360)
 		pBg.interactivity.mobile.tilt_beta = Math.round(e.beta * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //up & down (-180 to 180)
 		pBg.interactivity.mobile.tilt_gamma = Math.round(e.gamma * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //left & right (-90 to 90)
+	}
+
+	pBg.functions.deviceMotionEvent = function(e) {
+		pBg.interactivity.mobile.rotation_alpha = Math.round(e.rotationRate.alpha / 10); //up & down
+		pBg.interactivity.mobile.rotation_beta = Math.round(e.rotationRate.beta  / 10); //left & right
+		pBg.interactivity.mobile.rotation_gamma = Math.round(e.rotationRate.gamma  / 10); //counter- & clockwise
 	}
 
 	pBg.functions.eventListeners = function(){
@@ -68,37 +74,50 @@ let pBg = function(tag_id, parameters){
 			if( true || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 				//mobile!
 
-				if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function') {
-					document.body.addEventListener('click', function () {
-						DeviceOrientationEvent.requestPermission()
-						.then(function() {}).catch(function () {})
-					}, {once: true});
-				}
-
 				//debug-element:
 				let elem = document.createElement("div");
-					elem.setAttribute("id","infobox");
-					elem.innerHTML = "init";
+				elem.setAttribute("id","infobox");
+				elem.innerHTML = "init";
 				document.querySelector("main").append(elem);
 
-				window.addEventListener("deviceorientation", pBg.functions.deviceOrientationChange);
+				//only, if DeviceOrientationEvent is supported.
+				if (typeof(DeviceOrientationEvent) !== 'undefined') {
 
+					if (typeof(DeviceOrientationEvent.requestPermission) === 'function') {
+						document.body.addEventListener('click', function () {
+							DeviceOrientationEvent.requestPermission()
+							.then(function() {
+								window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent,20));
+								window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent,100));
+								elem.innerHTML = "doe allowed";
+							}).catch(function () {
+								elem.innerHTML = "doe denied";
+							})
+						}, {once: true});
+					} else {
+						window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent,20));
+						window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent,100));
+						elem.innerHTML = "doe supported";
+					}
+
+				}
+				else elem.innerHTML = "doe NOT supported";
 
 
 			} else {
 				//desktop!
 
 				/* el on mousemove */
-				window.addEventListener('mousemove', function(e){
+				window.addEventListener('mousemove', throttle(function(e){
 
 					let pos_x = e.clientX,
-						pos_y = e.clientY;
+					pos_y = e.clientY;
 
 					pBg.interactivity.mouse.pos_x = pos_x;
 					pBg.interactivity.mouse.pos_y = pos_y;
 
 					pBg.interactivity.status = 'mousemove';
-				});
+				}),20);
 
 				/* el on onmouseleave */
 				window.addEventListener('mouseleave', function(e){
@@ -137,137 +156,84 @@ let pBg = function(tag_id, parameters){
 			let percentage_y_mouse = pBg.interactivity.mouse.pos_y / pBg.canvas.height;
 
 			let perspectiveOrigin =
-				(100 - (pBg.functions.vars.containment/2 + percentage_x_mouse*(100 - pBg.functions.vars.containment))) + "% " +
-				(100 - (pBg.functions.vars.containment/2 + percentage_y_mouse*(100 - pBg.functions.vars.containment))) + "%";
+			(100 - (pBg.functions.vars.containment/2 + percentage_x_mouse*(100 - pBg.functions.vars.containment))) + "% " +
+			(100 - (pBg.functions.vars.containment/2 + percentage_y_mouse*(100 - pBg.functions.vars.containment))) + "%";
 
 
 			pBg.canvas.object_elem.style.perspectiveOrigin = perspectiveOrigin;
 		}
 		if(pBg.interactivity.events.onhover.enable && pBg.interactivity.status == 'tilt'){
+
 			function rotate(vec, axis, angle) {
 				var c = Math.cos(angle * Math.PI / 180.0),
-					s = Math.sin(angle * Math.PI / 180.0),
-					x = axis[0], y = axis[1], z = axis[2],
+				s = Math.sin(angle * Math.PI / 180.0),
+				x = axis[0], y = axis[1], z = axis[2],
 
-					// rotation matrix form
-					rm00 =    c + x*x * (1-c),
-					rm10 =  z*s + y*x * (1-c),
-					rm20 = -y*s + z*x * (1-c),
-					rm01 = -z*s + x*y * (1-c),
-					rm11 =    c + y*y * (1-c),
-					rm21 =  x*s + z*y * (1-c),
-					rm02 =  y*s + x*z * (1-c),
-					rm12 = -x*s + y*z * (1-c),
-					rm22 =    c + z*z * (1-c);
+				// rotation matrix form
+				rm00 =    c + x*x * (1-c),
+				rm10 =  z*s + y*x * (1-c),
+				rm20 = -y*s + z*x * (1-c),
+				rm01 = -z*s + x*y * (1-c),
+				rm11 =    c + y*y * (1-c),
+				rm21 =  x*s + z*y * (1-c),
+				rm02 =  y*s + x*z * (1-c),
+				rm12 = -x*s + y*z * (1-c),
+				rm22 =    c + z*z * (1-c);
 
 				return Array(
 					rm00 * vec[0] + rm01 * vec[1] + rm02 * vec[2],
 					rm10 * vec[0] + rm11 * vec[1] + rm12 * vec[2],
 					rm20 * vec[0] + rm21 * vec[1] + rm22 * vec[2]
-				);
+					);
 			}
-			document.getElementById("infobox").innerHTML = "";
-			let maxPivot_beta = 30;  // 60degree = 100% tilt front/back!
-			let maxPivot_gamma = 20; // 40degree = 100% tilt left/right!
 
-			let b = pBg.interactivity.mobile.tilt_beta,
-				g = -pBg.interactivity.mobile.tilt_gamma,
-				a = pBg.interactivity.mobile.tilt_alpha,
-				axis_y = Array(0,1,0),
-				axis_x = rotate(Array(1,0,0), axis_y, g),
-				axis_z = rotate(rotate(Array(0,0,1), axis_y, g), axis_x, b);
+			let beta = pBg.interactivity.mobile.tilt_beta,
+			gamma = -pBg.interactivity.mobile.tilt_gamma,
+			alpha = pBg.interactivity.mobile.tilt_alpha,
+			alpha_init = pBg.interactivity.mobile.tilt_alpha_initial,
 
-			 let transform =
-				"rotate3d(" + axis_z[0] + ", " + axis_z[1] + ", " + axis_z[2] + ", " + a + "deg) " +
-				"rotate3d(" + axis_x[0] + ", " + axis_x[1] + ", " + axis_x[2] + ", " + b + "deg) " +
-				"rotate3d(" + axis_y[0] + ", " + axis_y[1] + ", " + axis_y[2] + ", " + g + "deg)";
+			rot_beta = pBg.interactivity.mobile.rotation_beta,
+			rot_gamma = -pBg.interactivity.mobile.rotation_gamma,
+			rot_alpha = pBg.interactivity.mobile.rotation_alpha,
 
+			axis_y = Array(0,1,0),
+			axis_x = rotate(Array(1,0,0), axis_y, gamma),
+			axis_z = rotate(rotate(Array(0,0,1), axis_y, gamma), axis_x, beta);
 
-			document.querySelector("div.cuboid_container > .cuboid").style.transform = transform;
-
-			// pBg.interactivity.mobile.tilt_alpha: current tilt counter-/clockwise
-			// pBg.interactivity.mobile.tilt_beta: current tilt front/back
-			// pBg.interactivity.mobile.tilt_gamma: current tilt left/right
-			// pBg.interactivity.mobile.tilt_alpha_initial: initial tilt counter-/clockwise
-			// pBg.interactivity.mobile.tilt_beta_initial: initial tilt front/back
-			// pBg.interactivity.mobile.tilt_gamma_initial: initial tilt left/right
-
-			//euler-stuff:
-			let rad = Math.PI / 180;
-			let qCurrent = Quaternion.fromEuler(pBg.interactivity.mobile.tilt_alpha * rad, pBg.interactivity.mobile.tilt_beta * rad, (-pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCf_0 = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta * rad, -pBg.interactivity.mobile.tilt_gamma * rad, 'ZXY');
-			//let qCf_1 = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta * rad, -(180+pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCf_2 = Quaternion.fromEuler(0, (90+pBg.interactivity.mobile.tilt_beta) * rad, -(pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCf_3 = Quaternion.fromEuler(0, (90+pBg.interactivity.mobile.tilt_beta) * rad, -(pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCf_4 = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta * rad, -(90+pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCf_5 = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta * rad, -(90+pBg.interactivity.mobile.tilt_gamma) * rad, 'ZXY');
-			//let qCurrent = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta * rad, -pBg.interactivity.mobile.tilt_gamma * rad, 'ZXY');
-			//let qInit = Quaternion.fromEuler(pBg.interactivity.mobile.tilt_alpha_initial * rad, pBg.interactivity.mobile.tilt_beta_initial * rad, pBg.interactivity.mobile.tilt_gamma_initial * rad, 'ZXY');
-			//let qInit = Quaternion.fromEuler(0, pBg.interactivity.mobile.tilt_beta_initial * rad, pBg.interactivity.mobile.tilt_gamma_initial * rad, 'ZXY');
-
-			// let cssArrayCf_0 = qCf_0.conjugate().toMatrix4();
-			// cssArrayCf_0[14] = 50;
-			// let cssArrayCf_1 = qCf_1.conjugate().toMatrix4();
-			// cssArrayCf_1[14] = -50;
-			// let cssArrayCf_2 = qCf_2.conjugate().toMatrix4();
-			// cssArrayCf_2[13] = 50;
-			// let cssArrayCf_3 = qCf_3.conjugate().toMatrix4();
-			// cssArrayCf_3[13] = -50;
-			// let cssArrayCf_4 = qCf_4.conjugate().toMatrix4();
-			// cssArrayCf_4[12] = 50;
-			// let cssArrayCf_5 = qCf_5.conjugate().toMatrix4();
-			// cssArrayCf_5[12] = -50;
-
-			// Set the CSS style to the element you want to rotate
-			//let eulerString = "Current Euler-3D-Matrix(" + qCurrent.conjugate().toMatrix4() + ")";
-			//let eulerStringInit = "Initial Euler-3D-Matrix(" + qInit.conjugate().toMatrix4() + ")";
-			// document.getElementById("infobox").innerHTML += eulerString+"<br />";
-			// document.getElementById("infobox").innerHTML += eulerStringInit+"<br /><br />";
-
-			//document.querySelector("div.cuboid_container > .cuboid").style.transform = "matrix3d(" + qCurrent.conjugate().toMatrix4() + ")";          
 			
-			// document.querySelector("div.cuboid_container > .cf_0").style.transform = "matrix3d(" + cssArrayCf_0 + ")";           
-			// document.querySelector("div.cuboid_container > .cf_0").style.transformOrigin = "center center";          
-			// document.querySelector("div.cuboid_container > .cf_1").style.transform = "matrix3d(" + cssArrayCf_1 + ")";           
-			// document.querySelector("div.cuboid_container > .cf_1").style.transformOrigin = "center center";          
-			// document.querySelector("div.cuboid_container > .cf_2").style.transform = "matrix3d(" + cssArrayCf_2 + ")";           
-			// document.querySelector("div.cuboid_container > .cf_3").style.transform = "matrix3d(" + cssArrayCf_3 + ")";           
-			// document.querySelector("div.cuboid_container > .cf_4").style.transform = "matrix3d(" + cssArrayCf_4 + ")";           
-			// document.querySelector("div.cuboid_container > .cf_5").style.transform = "matrix3d(" + cssArrayCf_5 + ")";           
 
-			// beta_init: value between -180 and 180
-			// absolute difference. negative = front, positive = back
-			let beta_diff = pBg.interactivity.mobile.tilt_beta - pBg.interactivity.mobile.tilt_beta_initial;
-			
-			// gamma_init: value between -90 and 90
-			// absolute difference. negative = left, positive = right
-			let gamma_diff = pBg.interactivity.mobile.tilt_gamma - pBg.interactivity.mobile.tilt_gamma_initial;
-			
-			let percentage_beta_tilt = (maxPivot_beta + beta_diff) / (maxPivot_beta * 2);
-			let percentage_gamma_tilt = (maxPivot_gamma + gamma_diff) / (maxPivot_gamma * 2);
+			let transformAll =
+			"rotate3d(" + axis_z[0] + ", " + axis_z[1] + ", " + axis_z[2] + ", " + (alpha-alpha_init) + "deg) " +
+			"rotate3d(" + axis_x[0] + ", " + axis_x[1] + ", " + axis_x[2] + ", " + beta + "deg) " +
+			"rotate3d(" + axis_y[0] + ", " + axis_y[1] + ", " + axis_y[2] + ", " + gamma + "deg)";
 
-			let perspectiveX = 100 - (pBg.functions.vars.containment/2 + percentage_gamma_tilt*(100 - pBg.functions.vars.containment));
-			let perspectiveY = 100 - (pBg.functions.vars.containment/2 +  percentage_beta_tilt*(100 - pBg.functions.vars.containment));
 
-			//debug-infobox
-			// document.getElementById("infobox").innerHTML +=
-			//  "tilt_beta_initial: "+Math.round(pBg.interactivity.mobile.tilt_beta_initial * 100)/100+
-			//  "<br />tilt_beta: "+Math.round(pBg.interactivity.mobile.tilt_beta * 100)/100+
-			//  "<br />beta_diff: "+Math.round(beta_diff * 100)/100+
-			//  "<br />percentage_beta_tilt: "+Math.round(percentage_beta_tilt * 100)/100+
-			//  "<br /><br />tilt_gamma_initial: "+Math.round(pBg.interactivity.mobile.tilt_gamma_initial * 100)/100+
-			//  "<br />tilt_gamma: "+Math.round(pBg.interactivity.mobile.tilt_gamma * 100)/100+
-			//  "<br />gamma_diff: "+Math.round(gamma_diff * 100)/100+
-			//  "<br />percentage_gamma_tilt: "+Math.round(percentage_gamma_tilt * 100)/100+
-			//  "<br /><br />perspectiveX: "+Math.round(perspectiveX * 100)/100+
-			//  "<br />perspectiveY: "+Math.round(perspectiveY * 100)/100;
+			let transformLess =
+			"rotate3d(" + axis_x[0] + ", " + axis_x[1] + ", " + axis_x[2] + ", " + beta + "deg) " +
+			"rotate3d(" + axis_y[0] + ", " + axis_y[1] + ", " + axis_y[2] + ", " + gamma + "deg)";
+
+			let br = "<br>";
+
+			document.getElementById("infobox").innerHTML = alpha+br+beta+br+gamma+br+br+rot_alpha+br+rot_beta+br+rot_gamma;
+
+			document.querySelector("div.cuboid_container > .cuboid:nth-child(1)").style.transform = transformAll;
+			//document.querySelector("div.cuboid_container > .cuboid:nth-child(2)").style.transform = transformLess;
+
+
+			document.querySelector("span#motion_dot").style.top = rot_alpha+"px";
+			document.querySelector("span#motion_dot").style.left = rot_beta+"px";
+
+			let perspectiveX = 50 + rot_beta;
+			let perspectiveY = 50 + rot_alpha;
 
 			//map the whole thing to the perspective
 			let perspectiveOrigin = "50% 50%";
-			//if (pBg.canvas.isPortrait) perspectiveOrigin = perspectiveX + "% " + perspectiveY + "%"
-			//else perspectiveOrigin = perspectiveY + "% " + perspectiveX + "%";
+			if (pBg.canvas.isPortrait) perspectiveOrigin = perspectiveX + "% " + perspectiveY + "%"
+			else perspectiveOrigin = perspectiveY + "% " + perspectiveX + "%";
 
-			document.querySelector("div.cuboid_container > .cuboid").style.perspectiveOrigin = perspectiveOrigin;
+			document.getElementById("infobox").innerHTML += br+br+perspectiveOrigin;
+
+			document.querySelector("div.cuboid_container").style.perspectiveOrigin = perspectiveOrigin;
 		}
 		if(cb) cb();
 	};
@@ -294,26 +260,48 @@ let pBg = function(tag_id, parameters){
 Object.deepExtend = function(destination, source) {
 	for (var property in source) {
 		if (source[property] && source[property].constructor &&
-		 source[property].constructor === Object) {
+			source[property].constructor === Object) {
 			destination[property] = destination[property] || {};
-			arguments.callee(destination[property], source[property]);
-		} else {
-			destination[property] = source[property];
-		}
+		arguments.callee(destination[property], source[property]);
+	} else {
+		destination[property] = source[property];
 	}
-	return destination;
+}
+return destination;
 };
 
 window.requestAnimFrame = (function(){
 	return  window.requestAnimationFrame ||
-		window.webkitRequestAnimationFrame ||
-		window.mozRequestAnimationFrame    ||
-		window.oRequestAnimationFrame      ||
-		window.msRequestAnimationFrame     ||
-		function(callback){
-			window.setTimeout(callback, 1000 / 60);
-		};
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame    ||
+	window.oRequestAnimationFrame      ||
+	window.msRequestAnimationFrame     ||
+	function(callback){
+		window.setTimeout(callback, 1000 / 60);
+	};
 })();
+
+
+const throttle = (func, limit) => {
+  let lastFunc
+  let lastRan
+  return function() {
+	const context = this
+	const args = arguments
+	if (!lastRan) {
+	  func.apply(context, args)
+	  lastRan = Date.now()
+	} else {
+	  clearTimeout(lastFunc)
+	  lastFunc = setTimeout(function() {
+		if ((Date.now() - lastRan) >= limit) {
+		  func.apply(context, args)
+		  lastRan = Date.now()
+		}
+	  }, limit - (Date.now() - lastRan))
+	}
+  }
+}
 
 
 

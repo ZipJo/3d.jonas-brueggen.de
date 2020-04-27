@@ -3,7 +3,7 @@
 //- constants and variables -> this needs to change in _background.scss as well!
 - const cuboidFaces = 6;
 - const cuboidsX = 1;
-- const cuboidsY = 1;
+- const cuboidsY = 2;
 - const cuboidsZ = 1;
 
 - let cF = 0;
@@ -12,6 +12,10 @@
 - let cZ = 0;
 
 - let particlesPerCube = 10;
+
+//- draw a dot
+
+span(id="motion_dot")
 
 //- draw main div
 div(id='object_container' class='cuboid_container')
@@ -24,9 +28,9 @@ div(id='object_container' class='cuboid_container')
 			- cZ = 0;
 			while cZ < cuboidsZ
 				- cF = 0;
-				div(class='cuboid') 
+				div(class='cuboid cx_'+cX+' cy_'+cY+' cz_'+cZ) 
 					while cF < cuboidFaces
-						div(class='c cf_'+cF+' cx_'+cX+' cy_'+cY+' cz_'+cZ )= cF
+						div(class='c cf_'+cF)= cF
 						- cF++;
 					- cZ++;
 			- cY++;
