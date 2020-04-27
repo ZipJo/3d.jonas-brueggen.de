@@ -6,14 +6,24 @@
 
 @import 'background';
 
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+@font-face {
+	font-family: 'Montserrat';
+	src: url('/css/Montserrat-Bold.ttf') format('truetype');
+	font-weight: bold;
+} 
+@font-face {
+	font-family: 'Montserrat';
+	src: url('/css/Montserrat-Regular.ttf') format('truetype');
+} 
 
+
+*{
+	margin: 0;
+	padding: 0;
+}
 
 body {
-	margin: 0;
 	box-sizing: border-box;
-	padding: 0;
-	min-width: 360px; /* no 240p support - sorry people from 2003 */
 
 	font-family: 'Montserrat', sans-serif;
 	text-rendering: optimizeLegibility;
@@ -365,5 +375,9 @@ section {
 
 /* small screens */
 @media all and (max-width:900px) {
-
+ header {
+	nav {
+		max-width: 100%;
+	}
+ }
 }
