@@ -1,26 +1,27 @@
-<!-- spinner javascript -->
+<!-- preload javascript -->
 <script>
 
-	function init_eruda() {
+	function init_eruda(cb) {
 		var script = document.createElement('script');
 		script.src="//cdn.jsdelivr.net/npm/eruda";
 		document.body.appendChild(script);
 		script.onload = function () {
 			eruda.init();
+			if(cb) cb();
 		}
 	}
 
 
 	function startup(){
-		//init_eruda(); //mobile console - for dev purposes
-		jb_particles(loader);
+		loader();
+		init_eruda(jb_particles); //mobile console - for dev purposes
 	}
 	function jb_particles(cb){
-		jbParticleBg('particle_background', {
+		jbParticleBg('div#particle_background > canvas', {
 			interactivity: { events: {
 				onhover: { enable: true },
 				onclick: { enable: false },
-				resize: false
+				resize: true
 			}},
 			functions: {
 				vars: { containment: 80 }
