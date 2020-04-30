@@ -12,6 +12,7 @@ span#motion_dot {
   transition: all 0.2s ease; }
 
 div#particle_background {
+  overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
