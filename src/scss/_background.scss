@@ -1,26 +1,35 @@
 // _background.scss
-$baseLength: 100vw;
-@media screen and (orientation:portrait) { $baseLength: 100vw; }
-@media screen and (orientation:landscape) { $baseLength: 100vw; }
+$baseLength: 100vMax;
 
-span#motion_dot {
-    height: 10px;
-    width: 10px;
-    border-radius: 5px;
-    background: darkred;
-    display: block;
-    transform: translate(50vw, 50vh);
-    position: absolute;
-    transition: all 0.2s ease;
-}
+
 
 div#particle_background {
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -10;
-    width: 100vw;
-    height: 100vh;
-    background: $color-page-bg;
+	overflow: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -10;
+	width: 100vw;
+	height: 100vh;
+	background: $color-page-bg;
+	
+	span#motion_dot {
+		height: 10px;
+		width: 10px;
+		border-radius: 5px;
+		background: darkred;
+		display: block;
+		transform: translate(50vw, 50vh);
+		position: absolute;
+		transition: all 0.2s ease;
+	}
+
+	canvas {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 }
