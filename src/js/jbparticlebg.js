@@ -33,8 +33,10 @@ let pBg = function(qSelector, parameters) {
 			actions: {}
 		},
 		threejs: {
-			
-			frustumSize: 600;
+			vars: {
+				camRotationRadius: 500,
+				autoRotationSpeed: 0.001
+			}
 		}
 	};
 
@@ -49,6 +51,21 @@ let pBg = function(qSelector, parameters) {
 	pBg.functions.actions.clickAction = function() {
 		console.log("click at X:" + pBg.interactivity.mouse.click_pos_x + " Y:" + pBg.interactivity.mouse.click_pos_y);
 	}
+
+	pBg.functions.actions.resizeAction = function() {
+		pBg.canvas.width = pBg.canvas.elem.offsetWidth;
+		pBg.canvas.height = pBg.canvas.elem.offsetHeight;
+		pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
+
+
+		pBg.threejs.aspect = pBg.canvas.width / pBg.canvas.height;
+
+		pBg.threejs.renderer.setSize( pBg.canvas.width, pBg.canvas.height );
+
+		pBg.threejs.camera.aspect = pBg.threejs.aspect;
+		pBg.threejs.camera.updateProjectionMatrix();
+
+	};
 
 	pBg.functions.deviceOrientationEvent = function(e) {
 		if (pBg.interactivity.status != 'tilt') {
@@ -73,7 +90,7 @@ let pBg = function(qSelector, parameters) {
 		// detect mouse pos - on hover / click event
 		if (pBg.interactivity.events.onhover.enable || pBg.interactivity.events.onclick.enable) {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
-			if (true || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 				//mobile!
 
 				//debug-element:
@@ -141,12 +158,11 @@ let pBg = function(qSelector, parameters) {
 					pBg.functions.actions.clickAction();
 				});
 			}
-
-			// resize event to determine portrait/landscape
+		}
+		// resize event
+		if (pBg.interactivity.events.resize) {
 			window.addEventListener("resize", function() {
-				pBg.canvas.width = pBg.canvas.elem.offsetWidth;
-				pBg.canvas.height = pBg.canvas.elem.offsetHeight;
-				pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
+				pBg.functions.actions.resizeAction();
 			}, false);
 		}
 
@@ -227,15 +243,22 @@ let pBg = function(qSelector, parameters) {
 	};
 
 	pBg.functions.initThreeJs = function() {
+		
+		pBg.threejs.vars.timer = 0;
+
 		pBg.threejs.aspect = pBg.canvas.width / pBg.canvas.height;
 		pBg.threejs.scene = new THREE.Scene();
-		pBg.threejs.camera = new THREE.PerspectiveCamera(50, 0.5*pBg.threejs.aspect, 150, 1000);
 
-		pBg.threejs.cameraHelper = new THREE.CameraHelper( pBg.threejs.camera );
-		pBg.threejs.scene.add( pBg.threejs.cameraHelper );
+		//setup camera
+		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, 2500, 10000);
 
-		pBg.threejs.camera.rotation.y = Math.PI;
+		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius;
+		pBg.threejs.camera.position.y = 150;
+		pBg.threejs.camera.position.z = 0;
 
+		//setup Helpers
+		var axesHelper = new THREE.AxesHelper( 20 );
+		pBg.threejs.scene.add( axesHelper );
 
 		//background-particles
 		var geometry = new THREE.BufferGeometry();
@@ -254,37 +277,66 @@ let pBg = function(qSelector, parameters) {
 		pBg.threejs.scene.add( particles );
 
 
+		//cube
+		var geometry = new THREE.BoxGeometry( 100, 100, 100 );
+		var material = new THREE.MeshBasicMaterial({
+			color: "white",
+			wireframe: true
+		});
+		pBg.threejs.cube = new THREE.Mesh(geometry, material);
+
+		pBg.threejs.cube.position.x = 0;
+		pBg.threejs.cube.position.z = 0;
+		pBg.threejs.cube.position.y = 0;
+
+		pBg.threejs.scene.add(pBg.threejs.cube);
+
+		//renderer
 		pBg.threejs.renderer = new THREE.WebGLRenderer({
 			canvas: pBg.canvas.elem,
 			antialias: true
 		});
-		pBg.threejs.renderer.setPixelRatio( window.devicePixelRatio )
+		pBg.threejs.renderer.setPixelRatio( window.devicePixelRatio );
+		pBg.threejs.renderer.setSize( pBg.canvas.width, pBg.canvas.height );
 		pBg.threejs.renderer.autoClear = false;
-		pBg.threejs.renderer
 
-		var geometry = new THREE.BoxGeometry();
-		var material = new THREE.MeshBasicMaterial({
-			color: "white"
-		});
-		var cube = new THREE.Mesh(geometry, material);
-		pBg.threejs.scene.add(cube);
+	}
+
+	pBg.functions.renderThreeJs = function() {
+
+		pBg.threejs.vars.timer += pBg.threejs.vars.autoRotationSpeed;
+		//object properties
 
 
+		//camera position
+		pBg.threejs.camera.far = pBg.threejs.cube.position.length();
+		pBg.threejs.camera.updateProjectionMatrix();
+		pBg.threejs.camera.lookAt(pBg.threejs.cube.position);
+
+		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius*Math.cos(pBg.threejs.vars.timer);
+		pBg.threejs.camera.position.z = pBg.threejs.vars.camRotationRadius*Math.sin(pBg.threejs.vars.timer);
+
+
+		//re-render scene
+		pBg.threejs.renderer.clear();
+		pBg.threejs.renderer.render(pBg.threejs.scene, pBg.threejs.camera);
 	}
 
 	pBg.functions.init = function() {
+		pBg.canvas.width = pBg.canvas.elem.offsetWidth;
+		pBg.canvas.height = pBg.canvas.elem.offsetHeight;
 		pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
 	}
 	pBg.functions.draw = function() {
-		pBg.functions.initThreeJs();
-		pBg.threejs.renderer.render(pBg.threejs.scene, pBg.threejs.camera);
-		
+		pBg.functions.renderThreeJs();
+
 		pBg.functions.perspective();
-		//window.requestAnimFrame(pBg.functions.draw);
+		window.requestAnimFrame(pBg.functions.draw);
 	};
 
 	pBg.functions.start = function() {
 		pBg.functions.init();
+		pBg.functions.initThreeJs();
 		pBg.functions.draw();
 	};
 
