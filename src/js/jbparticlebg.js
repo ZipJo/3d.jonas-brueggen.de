@@ -8,22 +8,26 @@ let pBg = function(qSelector, parameters) {
 	this.pBg = {
 		canvas: {
 			elem: canvas_el,
-			width: canvas_el.offsetWidth,
-			height: canvas_el.offsetHeight,
+			width: canvas_el.parentElement.offsetWidth,
+			height: canvas_el.parentElement.offsetHeight,
 		},
 		interactivity: {
 			events: {
 				onhover: {
-					enable: true
+					enable: true,
+					sensorStatus: false
 				},
 				onclick: {
 					enable: true
+				},
+				ondeviceorientation: {
+					initialOffset: null
 				},
 				resize: true
 			},
 			mouse: {},
 			mobile: {
-				tilt_accuracy: 1000 // <- 1 divided by this
+				tiltAccuracy: 1000 // <- 1 divided by this
 			}
 		},
 		functions: {
@@ -53,14 +57,14 @@ let pBg = function(qSelector, parameters) {
 	}
 
 	pBg.functions.actions.resizeAction = function() {
-		pBg.canvas.width = pBg.canvas.elem.offsetWidth;
-		pBg.canvas.height = pBg.canvas.elem.offsetHeight;
+		pBg.canvas.width = pBg.canvas.elem.parentElement.offsetWidth;
+		pBg.canvas.height = pBg.canvas.elem.parentElement.offsetHeight;
 		pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
 
 
 		pBg.threejs.aspect = pBg.canvas.width / pBg.canvas.height;
 
-		pBg.threejs.renderer.setSize( pBg.canvas.width, pBg.canvas.height );
+		pBg.threejs.renderer.setSize(pBg.canvas.width, pBg.canvas.height);
 
 		pBg.threejs.camera.aspect = pBg.threejs.aspect;
 		pBg.threejs.camera.updateProjectionMatrix();
@@ -68,16 +72,22 @@ let pBg = function(qSelector, parameters) {
 	};
 
 	pBg.functions.deviceOrientationEvent = function(e) {
-		if (pBg.interactivity.status != 'tilt') {
-			pBg.interactivity.mobile.tilt_alpha_initial = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (0 to 360)
-			pBg.interactivity.mobile.tilt_beta_initial = Math.round(e.beta * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //up & down (-180 to 180)
-			pBg.interactivity.mobile.tilt_gamma_initial = Math.round(e.gamma * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //left & right (-90 to 90)
-		}
 		pBg.interactivity.status = 'tilt';
 
-		pBg.interactivity.mobile.tilt_alpha = Math.round(e.alpha * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //counter- & clockwise (0 to 360)
-		pBg.interactivity.mobile.tilt_beta = Math.round(e.beta * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //up & down (-180 to 180)
-		pBg.interactivity.mobile.tilt_gamma = Math.round(e.gamma * pBg.interactivity.mobile.tilt_accuracy) / pBg.interactivity.mobile.tilt_accuracy; //left & right (-90 to 90)
+		//normalize alpha (game-based calibration):
+		if(pBg.interactivity.events.ondeviceorientation.initialOffset === null) {
+			pBg.interactivity.events.ondeviceorientation.initialOffset = e.alpha;
+		}
+		let alpha = e.alpha - pBg.interactivity.events.ondeviceorientation.initialOffset;
+
+		if(alpha < 0) {
+			alpha += 360;
+		}
+
+		//set and round global vars - use normalized alpha
+		pBg.interactivity.mobile.tilt_alpha = Math.round(alpha * pBg.interactivity.mobile.tiltAccuracy) / pBg.interactivity.mobile.tiltAccuracy; //counter- & clockwise (0 to 360)
+		pBg.interactivity.mobile.tilt_beta = Math.round(e.beta * pBg.interactivity.mobile.tiltAccuracy) / pBg.interactivity.mobile.tiltAccuracy; //up & down (-180 to 180)
+		pBg.interactivity.mobile.tilt_gamma = Math.round(e.gamma * pBg.interactivity.mobile.tiltAccuracy) / pBg.interactivity.mobile.tiltAccuracy; //left & right (-90 to 90)
 	}
 
 	pBg.functions.deviceMotionEvent = function(e) {
@@ -90,7 +100,7 @@ let pBg = function(qSelector, parameters) {
 		// detect mouse pos - on hover / click event
 		if (pBg.interactivity.events.onhover.enable || pBg.interactivity.events.onclick.enable) {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
-			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 				//mobile!
 
 				//debug-element:
@@ -108,9 +118,9 @@ let pBg = function(qSelector, parameters) {
 								.then(function() {
 									window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 20));
 									window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 100));
-									elem.innerHTML = "doe allowed";
+									pBg.interactivity.events.onhover.sensorStatus = true;
 								}).catch(function() {
-									elem.innerHTML = "doe denied";
+									pBg.interactivity.events.onhover.sensorStatus = false;
 								})
 						}, {
 							once: true
@@ -118,11 +128,12 @@ let pBg = function(qSelector, parameters) {
 					} else {
 						window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 20));
 						window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 100));
-						elem.innerHTML = "doe supported";
+						pBg.interactivity.events.onhover.sensorStatus = true;
 					}
 
-				} else elem.innerHTML = "doe NOT supported";
-
+				} else {
+					pBg.interactivity.events.onhover.sensorStatus = false;
+				}
 
 			} else {
 				//desktop!
@@ -183,102 +194,84 @@ let pBg = function(qSelector, parameters) {
 		}
 		if (pBg.interactivity.events.onhover.enable && pBg.interactivity.status == 'tilt') {
 
-			function rotate(vec, axis, angle) {
-				var c = Math.cos(angle * Math.PI / 180.0),
-					s = Math.sin(angle * Math.PI / 180.0),
-					x = axis[0],
-					y = axis[1],
-					z = axis[2],
+			let alpha = pBg.interactivity.mobile.tilt_alpha,
+				beta = pBg.interactivity.mobile.tilt_beta,
+				gamma = pBg.interactivity.mobile.tilt_gamma,
 
-					// rotation matrix form
-					rm00 = c + x * x * (1 - c),
-					rm10 = z * s + y * x * (1 - c),
-					rm20 = -y * s + z * x * (1 - c),
-					rm01 = -z * s + x * y * (1 - c),
-					rm11 = c + y * y * (1 - c),
-					rm21 = x * s + z * y * (1 - c),
-					rm02 = y * s + x * z * (1 - c),
-					rm12 = -x * s + y * z * (1 - c),
-					rm22 = c + z * z * (1 - c);
+				aRad = alpha * Math.PI / 180.0,
+				bRad = beta * Math.PI / 180.0,
+				gRad = gamma * Math.PI / 180.0,
 
-				return Array(
-					rm00 * vec[0] + rm01 * vec[1] + rm02 * vec[2],
-					rm10 * vec[0] + rm11 * vec[1] + rm12 * vec[2],
-					rm20 * vec[0] + rm21 * vec[1] + rm22 * vec[2]
-				);
-			}
-
-			let beta = pBg.interactivity.mobile.tilt_beta,
-				gamma = -pBg.interactivity.mobile.tilt_gamma,
-				alpha = pBg.interactivity.mobile.tilt_alpha,
-				alpha_init = pBg.interactivity.mobile.tilt_alpha_initial,
-
-				rot_beta = pBg.interactivity.mobile.rotation_beta,
-				rot_gamma = -pBg.interactivity.mobile.rotation_gamma,
 				rot_alpha = pBg.interactivity.mobile.rotation_alpha,
+				rot_beta = pBg.interactivity.mobile.rotation_beta,
+				rot_gamma = pBg.interactivity.mobile.rotation_gamma;
 
-				axis_y = Array(0, 1, 0),
-				axis_x = rotate(Array(1, 0, 0), axis_y, gamma),
-				axis_z = rotate(rotate(Array(0, 0, 1), axis_y, gamma), axis_x, beta);
 			let br = "<br>";
+			let sp = " - ";
 
+			document.getElementById("infobox").innerHTML = alpha + sp+ aRad+br + beta + sp+bRad+br + gamma +sp+gRad+ br + br + rot_alpha + br + rot_beta + br + rot_gamma;
 			document.getElementById("infobox").innerHTML = alpha + br + beta + br + gamma + br + br + rot_alpha + br + rot_beta + br + rot_gamma;
 			document.querySelector("span#motion_dot").style.top = rot_alpha + "px";
 			document.querySelector("span#motion_dot").style.left = rot_beta + "px";
-
-			let transformAll =
-				"rotate3d(" + axis_z[0] + ", " + axis_z[1] + ", " + axis_z[2] + ", " + (alpha - alpha_init) + "deg) " +
-				"rotate3d(" + axis_x[0] + ", " + axis_x[1] + ", " + axis_x[2] + ", " + beta + "deg) " +
-				"rotate3d(" + axis_y[0] + ", " + axis_y[1] + ", " + axis_y[2] + ", " + gamma + "deg)";
-
-
-			let transformLess =
-				"rotate3d(" + axis_x[0] + ", " + axis_x[1] + ", " + axis_x[2] + ", " + beta + "deg) " +
-				"rotate3d(" + axis_y[0] + ", " + axis_y[1] + ", " + axis_y[2] + ", " + gamma + "deg)";
-
-
 
 		}
 		if (cb) cb();
 	};
 
 	pBg.functions.initThreeJs = function() {
-		
+
 		pBg.threejs.vars.timer = 0;
 
 		pBg.threejs.aspect = pBg.canvas.width / pBg.canvas.height;
 		pBg.threejs.scene = new THREE.Scene();
+		pBg.threejs.scene.background = new THREE.Color( 0x011b28 );
 
 		//setup camera
-		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, 2500, 10000);
+		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, 1, 10000);
+		pBg.threejs.camera.position.y = 250;
+		pBg.threejs.scene.add(pBg.threejs.camera);
 
-		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius;
-		pBg.threejs.camera.position.y = 150;
-		pBg.threejs.camera.position.z = 0;
 
 		//setup Helpers
-		var axesHelper = new THREE.AxesHelper( 20 );
-		pBg.threejs.scene.add( axesHelper );
+		//axes
+		var axesHelper = new THREE.AxesHelper(20);
+		pBg.threejs.scene.add(axesHelper);
 
-		//background-particles
+		//arrow
+		arrowDir = THREE.Object3D.DefaultUp;
+		arrowDir.normalize();
+		var origin = new THREE.Vector3( 0, 0, 0 );
+		var length = 80;
+		pBg.threejs.arrowHelper = new THREE.ArrowHelper( arrowDir, origin, length+20 );
+		pBg.threejs.arrowHelperx = new THREE.ArrowHelper( arrowDir, origin, length-50, 0xff0000 );
+		pBg.threejs.arrowHelpery = new THREE.ArrowHelper( arrowDir, origin, length-50, 0x00ff00 );
+		pBg.threejs.arrowHelperz = new THREE.ArrowHelper( arrowDir, origin, length-50, 0x0000ff );
+		pBg.threejs.scene.add(pBg.threejs.arrowHelper);
+		pBg.threejs.scene.add(pBg.threejs.arrowHelperx);
+		pBg.threejs.scene.add(pBg.threejs.arrowHelpery);
+		pBg.threejs.scene.add(pBg.threejs.arrowHelperz);
+
+		//background-particles, spread in a cube from -1000 to 1000 on each axis
 		var geometry = new THREE.BufferGeometry();
 		var vertices = [];
 
-		for ( var i = 0; i < 10000; i ++ ) {
-			vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) ); // x
-			vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) ); // y
-			vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) ); // z
+		for (var i = 0; i < 1000; i++) {
+			vertices.push(THREE.MathUtils.randFloatSpread(2000)); // x
+			vertices.push(THREE.MathUtils.randFloatSpread(2000)); // y
+			vertices.push(THREE.MathUtils.randFloatSpread(2000)); // z
 		}
 
 
-		geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
-		var particles = new THREE.Points( geometry, new THREE.PointsMaterial( { color: "hsla(50, 60%, 96%, 1)" } ) );
-		pBg.threejs.scene.add( particles );
+		var particles = new THREE.Points(geometry, new THREE.PointsMaterial({
+			color: "hsla(50, 60%, 96%, 1)"
+		}));
+		pBg.threejs.scene.add(particles);
 
 
 		//cube
-		var geometry = new THREE.BoxGeometry( 100, 100, 100 );
+		var geometry = new THREE.BoxGeometry(100, 100, 100);
 		var material = new THREE.MeshBasicMaterial({
 			color: "white",
 			wireframe: true
@@ -296,25 +289,69 @@ let pBg = function(qSelector, parameters) {
 			canvas: pBg.canvas.elem,
 			antialias: true
 		});
-		pBg.threejs.renderer.setPixelRatio( window.devicePixelRatio );
-		pBg.threejs.renderer.setSize( pBg.canvas.width, pBg.canvas.height );
+		pBg.threejs.renderer.setPixelRatio(window.devicePixelRatio);
+		pBg.threejs.renderer.setSize(pBg.canvas.width, pBg.canvas.height);
 		pBg.threejs.renderer.autoClear = false;
 
 	}
 
 	pBg.functions.renderThreeJs = function() {
 
+		//timer is rad
 		pBg.threejs.vars.timer += pBg.threejs.vars.autoRotationSpeed;
 		//object properties
 
 
 		//camera position
-		pBg.threejs.camera.far = pBg.threejs.cube.position.length();
+		//pBg.threejs.camera.far = pBg.threejs.cube.position.length();
 		pBg.threejs.camera.updateProjectionMatrix();
 		pBg.threejs.camera.lookAt(pBg.threejs.cube.position);
 
-		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius*Math.cos(pBg.threejs.vars.timer);
-		pBg.threejs.camera.position.z = pBg.threejs.vars.camRotationRadius*Math.sin(pBg.threejs.vars.timer);
+
+
+		if (pBg.interactivity.events.onhover.sensorStatus) {
+			//Map ArrowHelper to deviceOrientation
+			let alpha = pBg.interactivity.mobile.tilt_alpha, //counterclockwise (0 to 360)
+				beta = pBg.interactivity.mobile.tilt_beta, //up & down (-180 to 180)
+				gamma = pBg.interactivity.mobile.tilt_gamma; //left & right (-90 to 90)
+
+			//Phone-to-ThreeJS-coordinate-System: XYZ -> XZY
+			//ThreeJS Order of application: XYZ
+			//Phone Order of application: ZXY
+			//Phone-to-ThreeJS-Trait-Bryan-Order: ZXY -> YXZ
+			//Phone-to-ThreeJS-Trait-Bryan-Angles: αβγ -> βαγ
+
+			//convert & norm PhoneEulerAngles from deg
+	    	let alphaTjs = beta * Math.PI / 180.0,
+				betaTjs = alpha * Math.PI / 180.0,
+				gammaTjs = -gamma * Math.PI / 180.0;
+			//do eulermovement
+			let eulerMove = new THREE.Euler( alphaTjs, betaTjs, gammaTjs, 'YXZ' );
+
+			//initial vector = up!
+			let a = new THREE.Vector3(0,1,0);
+			a.applyEuler(eulerMove);
+			//xy&z-helper arrows
+			let ax = new THREE.Vector3(0,a.y,a.z),
+				ay = new THREE.Vector3(a.x,0,a.z),
+				az = new THREE.Vector3(a.x,a.y,0);
+
+			pBg.threejs.arrowHelper.setDirection( a );   //yellow
+			pBg.threejs.arrowHelperx.setDirection( ax ); //red
+			pBg.threejs.arrowHelpery.setDirection( ay ); //green
+			pBg.threejs.arrowHelperz.setDirection( az ); //blue
+
+		} else {
+			//Map camera to mouse-position
+			let a = new THREE.Vector3( 1, 1, 1 );
+			a.normalize();
+			pBg.threejs.arrowHelper.setDirection( a );
+			//pBg.interactivity.mouse.pos_x;
+			//pBg.interactivity.mouse.pos_y;
+		}
+		//describe a circular path
+		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius * Math.sin(pBg.threejs.vars.timer);
+		pBg.threejs.camera.position.z = pBg.threejs.vars.camRotationRadius * Math.cos(pBg.threejs.vars.timer);
 
 
 		//re-render scene
@@ -323,8 +360,8 @@ let pBg = function(qSelector, parameters) {
 	}
 
 	pBg.functions.init = function() {
-		pBg.canvas.width = pBg.canvas.elem.offsetWidth;
-		pBg.canvas.height = pBg.canvas.elem.offsetHeight;
+		pBg.canvas.width = pBg.canvas.elem.parentElement.offsetWidth;
+		pBg.canvas.height = pBg.canvas.elem.parentElement.offsetHeight;
 		pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
 	}
 	pBg.functions.draw = function() {
@@ -391,7 +428,7 @@ const throttle = (func, limit) => {
 			}, limit - (Date.now() - lastRan))
 		}
 	}
-}
+};
 
 
 
