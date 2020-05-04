@@ -69,43 +69,45 @@
 	<!-- spinner javascript -->
 <script>
 
-	function init_eruda() {
-		var script = document.createElement('script');
-		script.src="//cdn.jsdelivr.net/npm/eruda";
-		document.body.appendChild(script);
-		script.onload = function () {
-			eruda.init();
-		}
-	}
+    function init_eruda(cb) {
+        var script = document.createElement('script');
+        script.src="//cdn.jsdelivr.net/npm/eruda";
+        document.body.appendChild(script);
+        script.onload = function () {
+            eruda.init();
+            if (cb) cb();
+        }
+    }
 
 
-	function startup(){
-		//init_eruda(); //mobile console - for dev purposes
-		jb_particles(loader);
-	}
-	function jb_particles(cb){
-		jbParticleBg('div#particle_background > canvas', {
-			interactivity: { events: {
-				onhover: { enable: true },
-				onclick: { enable: false },
-				resize: false
-			}},
-			functions: {
-				vars: { containment: 80 }
-			}
-		}, function() {
-			if(cb) cb();
-		});
-	}
-	
-	function loader(cb){
-		document.getElementsByClassName("loader")[0].classList.add("global_hide");
-		document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
-		document.getElementById("id_wrapper").classList.remove("hide_container");
-		if(cb) cb();
-	}
+    function startup(){
+    	loader();
+        init_eruda(jb_particles); //mobile console - for dev purposes
+        //jb_particles(loader);
+    }
+    function jb_particles(cb){
+        jbParticleBg('div#particle_background > canvas', {
+            interactivity: { events: {
+                onhover: { enable: true },
+                onclick: { enable: false },
+                resize: false
+            }},
+            functions: {
+                vars: { containment: 80 }
+            }
+        }, function() {
+            if(cb) cb();
+        });
+    }
+    
+    function loader(cb){
+        document.getElementsByClassName("loader")[0].classList.add("global_hide");
+        document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
+        document.getElementById("id_wrapper").classList.remove("hide_container");
+        if(cb) cb();
+    }
 
-	window.onload = function() { startup(); };
+    window.onload = function() { startup(); };
 </script>
 </head>
 <body>
