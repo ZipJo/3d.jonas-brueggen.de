@@ -34,7 +34,8 @@ let moveFiles = [
 			'impressum.htm',
 			'**/*.json',
 			'css/*.ttf',
-			'js/three.min.js'
+			'js/three.min.js',
+			'js/dot.png',
 ];
 
 
