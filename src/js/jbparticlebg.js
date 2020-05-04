@@ -39,9 +39,12 @@ let pBg = function(qSelector, parameters) {
 		threejs: {
 			vars: {
 				camRotationRadius: 500,
-				autoRotationSpeed: 0.001
+				autoRotationSpeed: 0.5, //in rpm
+				zeroVector: new THREE.Vector3(0,0,0),
+				vectorAccuracy: 1000
 			}
-		}
+		},
+		fps: 15
 	};
 
 	let pBg = this.pBg;
@@ -49,6 +52,8 @@ let pBg = function(qSelector, parameters) {
 	if (parameters) {
 		Object.deepExtend(pBg, parameters);
 	}
+
+	if (pBg.fps > 30){ pBg.fps = 60 }
 
 
 	// functions
@@ -116,8 +121,8 @@ let pBg = function(qSelector, parameters) {
 						document.body.addEventListener('click', function() {
 							DeviceOrientationEvent.requestPermission()
 								.then(function() {
-									window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 20));
-									window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 100));
+									window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 1000 / pBg.fps));
+									window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 1000 / pBg.fps));
 									pBg.interactivity.events.onhover.sensorStatus = true;
 								}).catch(function() {
 									pBg.interactivity.events.onhover.sensorStatus = false;
@@ -126,8 +131,8 @@ let pBg = function(qSelector, parameters) {
 							once: true
 						});
 					} else {
-						window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 20));
-						window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 100));
+						window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 1000 / pBg.fps));
+						window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 1000 / pBg.fps));
 						pBg.interactivity.events.onhover.sensorStatus = true;
 					}
 
@@ -218,9 +223,15 @@ let pBg = function(qSelector, parameters) {
 		if (cb) cb();
 	};
 
+
+
+
+
 	pBg.functions.initThreeJs = function() {
 
 		pBg.threejs.vars.timer = 0;
+		//one rotation = 2PI
+		pBg.threejs.vars.autoRotationSpeed = pBg.threejs.vars.autoRotationSpeed * 2 * Math.PI / pBg.fps / 60;
 
 		pBg.threejs.aspect = pBg.canvas.width / pBg.canvas.height;
 		pBg.threejs.scene = new THREE.Scene();
@@ -228,9 +239,13 @@ let pBg = function(qSelector, parameters) {
 
 		//setup camera
 		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, 1, 10000);
-		pBg.threejs.camera.position.y = 250;
-		pBg.threejs.scene.add(pBg.threejs.camera);
+		
+		pBg.threejs.camera.position.y = pBg.threejs.vars.camRotationRadius;
 
+		pBg.threejs.cameraInitialPosition = pBg.threejs.camera.position.clone();
+
+
+		pBg.threejs.scene.add(pBg.threejs.camera);
 
 		//setup Helpers
 		//axes
@@ -243,13 +258,7 @@ let pBg = function(qSelector, parameters) {
 		var origin = new THREE.Vector3( 0, 0, 0 );
 		var length = 80;
 		pBg.threejs.arrowHelper = new THREE.ArrowHelper( arrowDir, origin, length+20 );
-		pBg.threejs.arrowHelperx = new THREE.ArrowHelper( arrowDir, origin, length-50, 0xff0000 );
-		pBg.threejs.arrowHelpery = new THREE.ArrowHelper( arrowDir, origin, length-50, 0x00ff00 );
-		pBg.threejs.arrowHelperz = new THREE.ArrowHelper( arrowDir, origin, length-50, 0x0000ff );
-		pBg.threejs.scene.add(pBg.threejs.arrowHelper);
-		pBg.threejs.scene.add(pBg.threejs.arrowHelperx);
-		pBg.threejs.scene.add(pBg.threejs.arrowHelpery);
-		pBg.threejs.scene.add(pBg.threejs.arrowHelperz);
+		//pBg.threejs.scene.add(pBg.threejs.arrowHelper);
 
 		//background-particles, spread in a cube from -1000 to 1000 on each axis
 		var geometry = new THREE.BufferGeometry();
@@ -264,8 +273,10 @@ let pBg = function(qSelector, parameters) {
 
 		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
+		var sprite = new THREE.TextureLoader().load( 'dot.png' );
 		var particles = new THREE.Points(geometry, new THREE.PointsMaterial({
-			color: "hsla(50, 60%, 96%, 1)"
+			size: 10,
+			map: sprite
 		}));
 		pBg.threejs.scene.add(particles);
 
@@ -295,6 +306,8 @@ let pBg = function(qSelector, parameters) {
 
 	}
 
+
+
 	pBg.functions.renderThreeJs = function() {
 
 		//timer is rad
@@ -302,15 +315,10 @@ let pBg = function(qSelector, parameters) {
 		//object properties
 
 
-		//camera position
-		//pBg.threejs.camera.far = pBg.threejs.cube.position.length();
-		pBg.threejs.camera.updateProjectionMatrix();
-		pBg.threejs.camera.lookAt(pBg.threejs.cube.position);
-
 
 
 		if (pBg.interactivity.events.onhover.sensorStatus) {
-			//Map ArrowHelper to deviceOrientation
+			//Map camera to deviceOrientation
 			let alpha = pBg.interactivity.mobile.tilt_alpha, //counterclockwise (0 to 360)
 				beta = pBg.interactivity.mobile.tilt_beta, //up & down (-180 to 180)
 				gamma = pBg.interactivity.mobile.tilt_gamma; //left & right (-90 to 90)
@@ -320,39 +328,53 @@ let pBg = function(qSelector, parameters) {
 			//Phone Order of application: ZXY
 			//Phone-to-ThreeJS-Trait-Bryan-Order: ZXY -> YXZ
 			//Phone-to-ThreeJS-Trait-Bryan-Angles: αβγ -> βαγ
-
 			//convert & norm PhoneEulerAngles from deg
-	    	let alphaTjs = beta * Math.PI / 180.0,
-				betaTjs = alpha * Math.PI / 180.0,
-				gammaTjs = -gamma * Math.PI / 180.0;
+			let alphaTjs = Math.round((beta * Math.PI / 180.0)*10000)/10000,
+				betaTjs = Math.round((alpha * Math.PI / 180.0)*10000)/10000,
+				gammaTjs = -Math.round((gamma * Math.PI / 180.0)*10000)/10000;
 			//do eulermovement
 			let eulerMove = new THREE.Euler( alphaTjs, betaTjs, gammaTjs, 'YXZ' );
+			eulerMove.reorder('XYZ');
 
-			//initial vector = up!
-			let a = new THREE.Vector3(0,1,0);
-			a.applyEuler(eulerMove);
-			//xy&z-helper arrows
-			let ax = new THREE.Vector3(0,a.y,a.z),
-				ay = new THREE.Vector3(a.x,0,a.z),
-				az = new THREE.Vector3(a.x,a.y,0);
+			let newCameraPos = roundVector(pBg.threejs.cameraInitialPosition.clone(),pBg.threejs.vars.vectorAccuracy);
+			newCameraPos.applyEuler(eulerMove);
+			
+			//set new position
+			pBg.threejs.camera.position.x = newCameraPos.x;
+			pBg.threejs.camera.position.y = newCameraPos.y;
+			pBg.threejs.camera.position.z = newCameraPos.z;
 
-			pBg.threejs.arrowHelper.setDirection( a );   //yellow
-			pBg.threejs.arrowHelperx.setDirection( ax ); //red
-			pBg.threejs.arrowHelpery.setDirection( ay ); //green
-			pBg.threejs.arrowHelperz.setDirection( az ); //blue
+
+			//set new rotation
+			pBg.threejs.camera.setRotationFromEuler(eulerMove);
+			//rotate around X by 90 degrees, to make the camera look at the center.
+			//default camera view direction is -z, my view direction is -y
+			pBg.threejs.camera.rotateX(-(Math.PI/2));
 
 		} else {
 			//Map camera to mouse-position
-			let a = new THREE.Vector3( 1, 1, 1 );
-			a.normalize();
-			pBg.threejs.arrowHelper.setDirection( a );
+
 			//pBg.interactivity.mouse.pos_x;
 			//pBg.interactivity.mouse.pos_y;
-		}
-		//describe a circular path
-		pBg.threejs.camera.position.x = pBg.threejs.vars.camRotationRadius * Math.sin(pBg.threejs.vars.timer);
-		pBg.threejs.camera.position.z = pBg.threejs.vars.camRotationRadius * Math.cos(pBg.threejs.vars.timer);
+			
+			//describe a circular path
+			let newCameraPos = new THREE.Vector3();
 
+			newCameraPos.y = pBg.threejs.vars.camRotationRadius / 4;
+			newCameraPos.x = pBg.threejs.vars.camRotationRadius * Math.sin(pBg.threejs.vars.timer);
+			newCameraPos.z = pBg.threejs.vars.camRotationRadius * Math.cos(pBg.threejs.vars.timer);
+
+			newCameraPos = roundVector(newCameraPos,pBg.threejs.vars.vectorAccuracy);
+
+			pBg.threejs.camera.position.x = newCameraPos.x;
+			pBg.threejs.camera.position.y = newCameraPos.y;
+			pBg.threejs.camera.position.z = newCameraPos.z;
+			pBg.threejs.camera.lookAt(pBg.threejs.vars.zeroVector);
+		}
+
+
+		//camera position
+		pBg.threejs.camera.updateProjectionMatrix();
 
 		//re-render scene
 		pBg.threejs.renderer.clear();
@@ -365,16 +387,22 @@ let pBg = function(qSelector, parameters) {
 		pBg.canvas.isPortrait = (pBg.canvas.width < pBg.canvas.height);
 	}
 	pBg.functions.draw = function() {
-		pBg.functions.renderThreeJs();
-
+		//setTimeout(pBg.functions.draw,3000);
+		if (pBg.fps > 30){
+			window.requestAnimFrame(pBg.functions.draw);
+		} else {
+			setTimeout(pBg.functions.draw, 1000 / pBg.fps); //this is not on time!
+		}
 		pBg.functions.perspective();
-		window.requestAnimFrame(pBg.functions.draw);
+		
+		pBg.functions.renderThreeJs();
 	};
 
 	pBg.functions.start = function() {
 		pBg.functions.init();
 		pBg.functions.initThreeJs();
-		pBg.functions.draw();
+		//start ~three frames delayed, to give the eventlisteners time to do their stuff
+		setTimeout(pBg.functions.draw, 3*1000/pBg.fps);
 	};
 
 
@@ -403,9 +431,9 @@ window.requestAnimFrame = (function() {
 		window.mozRequestAnimationFrame ||
 		window.oRequestAnimationFrame ||
 		window.msRequestAnimationFrame ||
-		function(callback) {
-			window.setTimeout(callback, 1000 / 60);
-		};
+		function(callback){
+            window.setTimeout(callback, 1000 / 60);
+        };
 })();
 
 
@@ -429,6 +457,16 @@ const throttle = (func, limit) => {
 		}
 	}
 };
+
+function roundVector(vector, roundBy) {
+	let newVector = new THREE.Vector3();
+
+	newVector.x = Math.round(vector.x * roundBy) / roundBy;
+	newVector.y = Math.round(vector.y * roundBy) / roundBy;
+	newVector.z = Math.round(vector.z * roundBy) / roundBy;
+
+	return newVector;
+}
 
 
 
