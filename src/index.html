@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Jonas Brüggen | Webdesign</title>
-	<meta name="description" content="Jonas Brüggen | Web design and full stack development | Based in Köln, working worldwide" />
-	<meta name="keywords" content="Web Design, Full Stack, Web Development, Wordpress, Freelance, Köln, Cologne, Brüggen, Jonas " />
-	<meta name="author" content="www.jonas-brueggen.de" />
-	<meta name="viewport" content="width=device-width">
-	<link rel="icon" href="files/icon_colored.ico">
-	<!-- build:css css/jb_main.min.css -->
-		<link rel="stylesheet" href="css/jb_main.css" media="all" />
-	<!-- endbuild -->
-	<script src="js/three.min.js"></script>
-	<!-- build:js js/jb_main.min.js -->
-		<script src="js/scripts.js"></script>
-		<script src="js/jbparticlebg.js"></script>
-	<!-- endbuild -->
-	<!-- spinner style -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Jonas Brüggen | Webdesign</title>
+    <meta name="description" content="Jonas Brüggen | Web design and full stack development | Based in Köln, working worldwide" />
+    <meta name="keywords" content="Web Design, Full Stack, Web Development, Wordpress, Freelance, Köln, Cologne, Brüggen, Jonas " />
+    <meta name="author" content="www.jonas-brueggen.de" />
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="files/icon_colored.ico">
+    <!-- build:css css/jb_main.min.css -->
+        <link rel="stylesheet" href="css/jb_main.css" media="all" />
+    <!-- endbuild -->
+    <script src="js/three.min.js"></script>
+    <script src="js/stats.min.js"></script>
+    <!-- build:js js/jb_main.min.js -->
+        <script src="js/scripts.js"></script>
+        <script src="js/jbparticlebg.js"></script>
+    <!-- endbuild -->
+    <!-- spinner style -->
 <style>
 	.page_loader {
 		display: block;
@@ -66,75 +67,86 @@
 		opacity: 0;
 	}
 </style>
-	<!-- spinner javascript -->
+    <!-- spinner javascript -->
 <script>
 
-    function init_eruda(cb) {
-        var script = document.createElement('script');
-        script.src="//cdn.jsdelivr.net/npm/eruda";
-        document.body.appendChild(script);
-        script.onload = function () {
-            eruda.init();
-            if (cb) cb();
-        }
-    }
+	function init_eruda(cb) {
+		var script = document.createElement('script');
+		script.src = "//cdn.jsdelivr.net/npm/eruda";
+		document.body.appendChild(script);
+		script.onload = function() {
+			eruda.init();
+			if (cb) cb();
+		}
+	}
 
 
-    function startup(){
-    	loader();
-        init_eruda(jb_particles); //mobile console - for dev purposes
-        //jb_particles(loader);
-    }
-    function jb_particles(cb){
-        jbParticleBg('div#particle_background > canvas', {
-            interactivity: { events: {
-                onhover: { enable: true },
-                onclick: { enable: false },
-                resize: false
-            }},
-            functions: {
-                vars: { containment: 80 }
-            }
-        }, function() {
-            if(cb) cb();
-        });
-    }
-    
-    function loader(cb){
-        document.getElementsByClassName("loader")[0].classList.add("global_hide");
-        document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
-        document.getElementById("id_wrapper").classList.remove("hide_container");
-        if(cb) cb();
-    }
+function startup() {
+	//loader();
+	//init_eruda(jb_particles); //mobile console - for dev purposes
+	jb_particles(loader);
+}
 
-    window.onload = function() { startup(); };
+function jb_particles(cb) {
+	jbParticleBg('div#particle_background > canvas', {
+		interactivity: {
+			events: {
+				onhover: {
+					enable: true
+				},
+				onclick: {
+					enable: false
+				},
+				resize: false
+			}
+		},
+		functions: {
+			vars: {
+				containment: 80
+			}
+		}
+	}, function() {
+		if (cb) cb();
+	});
+}
+
+function loader(cb) {
+	document.getElementsByClassName("loader")[0].classList.add("global_hide");
+	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
+	document.getElementById("id_wrapper").classList.remove("hide_container");
+	if (cb) cb();
+}
+
+window.onload = function() {
+	startup();
+};
 </script>
 </head>
 <body>
-	<div class="page_loader">
-		<div class="loader"></div>
-	</div>
-	<div class="popup_container" onclick="this.classList.remove('active');"></div>
+    <div class="page_loader">
+        <div class="loader"></div>
+    </div>
+    <div class="popup_container" onclick="this.classList.remove('active');"></div>
 
-	<div id="id_wrapper" class="wrapper hide_container">
-		<!-- page wrapper starts here -->
-		<header class="header" id="id_header">
-			<div class="header_logo">
-				<a href="#/home">
-					<div class="logo_wrapper animate_in" id="id_logo_wrapper">
-						<img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
-						<img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
-					</div>
-				</a>
-			</div>
-			<nav>
-				<a href="#/home">home</a>
-				<a href="#/projects">projects</a>
-				<a href="#/about">about</a>
-			</nav>
-		</header>
-		<main>
-			<section class="home">
+    <div id="id_wrapper" class="wrapper hide_container">
+        <!-- page wrapper starts here -->
+        <header class="header" id="id_header">
+            <div class="header_logo">
+                <a href="#/home">
+                    <div class="logo_wrapper animate_in" id="id_logo_wrapper">
+                        <img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
+                        <img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
+                    </div>
+                </a>
+            </div>
+            <nav>
+                <a href="#/home">home</a>
+                <a href="#/projects">projects</a>
+                <a href="#/about">about</a>
+            </nav>
+        </header>
+        <main>
+            <section class="home">
 	<div>
 		<img src="files/JB_Logo_color_alpha_square.svg" class="logo" />
 	</div>
@@ -143,7 +155,7 @@
 		<h4>full stack development, web design</h4>
 	</div>
 </section>
-			<section class="projects">
+            <section class="projects">
 	<!-- Dummy-Project:
 	<div class="project_cover" onclick="tileAnimation(this);">
 		<div class="project_logo flex_align--centered_content"><img src="files/projects/logo_NAME_small.png" alt="logo project NAME" /></div>
@@ -271,7 +283,7 @@
 	</div>
 	-->
 </section>
-			<section class="about">
+            <section class="about">
 	<div class="about_text_wrapper">
 		<div class="about_text">
 			<p>After more than six years of working as a middleware developer in Germany, I decided it's time to break out of my comfort zone. I'm mostly doing volunteer work, but since webdesign has always been my main professional interest, I started freelancing in this area.</p>
@@ -303,12 +315,17 @@
 		</div>
 	</div>
 </section>
-		</main>
-		<div id="particle_background">
-			<span id="motion_dot"></span>
-			<canvas></canvas>
-		</div>
-		<!-- end of page wrapper -->
-	</div>
+            <div class="sm">
+                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>%:</label>
+                <input type="range" id="smoothing" name="smoothing" min="0" max="100">
+                
+            </div>
+        </main>
+        <div id="particle_background">
+            <span id="motion_dot"></span>
+            <canvas></canvas>
+        </div>
+        <!-- end of page wrapper -->
+    </div>
 </body>
 </html>
