@@ -105,9 +105,9 @@ let pBg = function(qSelector, parameters) {
 
 	pBg.functions.deviceMotionEvent = function(e) {
 		//round values to only capture significant motion
-		pBg.interactivity.mobile.rotation_alpha = Math.round(e.rotationRate.alpha / 10); //up & down
-		pBg.interactivity.mobile.rotation_beta = Math.round(e.rotationRate.beta / 10); //left & right
-		pBg.interactivity.mobile.rotation_gamma = Math.round(e.rotationRate.gamma / 10); //counter- & clockwise
+		pBg.interactivity.mobile.rotation_alpha = Math.round(e.rotationRate.alpha * 1000)/10000; //up & down
+		pBg.interactivity.mobile.rotation_beta = Math.round(e.rotationRate.beta * 1000)/10000; //left & right
+		pBg.interactivity.mobile.rotation_gamma = Math.round(e.rotationRate.gamma * 1000)/10000; //counter- & clockwise
 	}
 
 	pBg.functions.eventListeners = function() {
@@ -121,17 +121,19 @@ let pBg = function(qSelector, parameters) {
 				let elem = document.createElement("div");
 				elem.setAttribute("id", "infobox");
 				elem.innerHTML = "init";
-				//document.querySelector("main").append(elem);
+				document.querySelector("main").append(elem);
 
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
 
 					if (typeof(DeviceOrientationEvent.requestPermission) === 'function') {
+						window.addEventListener("deviceorientation", pBg.functions.deviceOrientationEvent);
+						window.addEventListener("devicemotion", pBg.functions.deviceMotionEvent);
 						document.body.addEventListener('click', function() {
 							DeviceOrientationEvent.requestPermission()
 								.then(function() {
-									window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 1000 / pBg.fps));
-									window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 1000 / pBg.fps));
+									window.addEventListener("deviceorientation", pBg.functions.deviceOrientationEvent);
+									window.addEventListener("devicemotion", pBg.functions.deviceMotionEvent);
 									pBg.interactivity.events.onhover.sensorStatus = true;
 								}).catch(function() {
 									pBg.interactivity.events.onhover.sensorStatus = false;
@@ -140,8 +142,8 @@ let pBg = function(qSelector, parameters) {
 							once: true
 						});
 					} else {
-						window.addEventListener("deviceorientation", throttle(pBg.functions.deviceOrientationEvent, 1000 / pBg.fps));
-						window.addEventListener("devicemotion", throttle(pBg.functions.deviceMotionEvent, 1000 / pBg.fps));
+						window.addEventListener("deviceorientation", pBg.functions.deviceOrientationEvent);
+						window.addEventListener("devicemotion", pBg.functions.deviceMotionEvent);
 						pBg.interactivity.events.onhover.sensorStatus = true;
 					}
 
@@ -153,7 +155,7 @@ let pBg = function(qSelector, parameters) {
 				//desktop!
 
 				/* el on mousemove */
-				window.addEventListener('mousemove', throttle(function(e) {
+				window.addEventListener('mousemove', function(e) {
 
 					let pos_x = e.clientX,
 						pos_y = e.clientY;
@@ -162,7 +164,7 @@ let pBg = function(qSelector, parameters) {
 					pBg.interactivity.mouse.pos_y = pos_y;
 
 					pBg.interactivity.status = 'mousemove';
-				}), 20);
+				});
 
 				/* el on onmouseleave */
 				window.addEventListener('mouseleave', function(e) {
@@ -267,7 +269,7 @@ let pBg = function(qSelector, parameters) {
 		//setup Helpers
 		//axes
 		var axesHelper = new THREE.AxesHelper(20);
-		//pBg.threejs.scene.add(axesHelper);
+		pBg.threejs.scene.add(axesHelper);
 
 		//arrow
 		arrowDir = THREE.Object3D.DefaultUp;
@@ -336,7 +338,7 @@ let pBg = function(qSelector, parameters) {
 
 		pBg.threejs.cube4.applyQuaternion(q);
 
-		//pBg.threejs.scene.add(pBg.threejs.cube1);
+		pBg.threejs.scene.add(pBg.threejs.cube1);
 		//pBg.threejs.scene.add(pBg.threejs.cube2);
 		//pBg.threejs.scene.add(pBg.threejs.cube3);
 		//pBg.threejs.scene.add(pBg.threejs.cube4);
@@ -360,8 +362,8 @@ let pBg = function(qSelector, parameters) {
 		pBg.threejs.vars.timer += pBg.threejs.vars.autoRotationSpeed;
 		//object properties
 
-		pBg.threejs.cube1.rotateY(pBg.threejs.vars.autoRotationSpeed);
-		pBg.threejs.cube1.rotateX(pBg.threejs.vars.autoRotationSpeed / 2);
+		pBg.threejs.cube1.rotateY(pBg.threejs.vars.autoRotationSpeed*10);
+		pBg.threejs.cube1.rotateX(pBg.threejs.vars.autoRotationSpeed*10 / 2);
 
 
 		if (pBg.interactivity.events.onhover.sensorStatus) {
@@ -467,7 +469,7 @@ let pBg = function(qSelector, parameters) {
 		} else {
 			setTimeout(pBg.functions.draw, 1000 / pBg.fps); //this is not on time!
 		}
-		//pBg.functions.perspective();
+		pBg.functions.perspective();
 		stats.update();
 		pBg.functions.renderThreeJs();
 	};
@@ -509,28 +511,6 @@ window.requestAnimFrame = (function() {
 			window.setTimeout(callback, 1000 / 60);
 		};
 })();
-
-
-const throttle = (func, limit) => {
-	let lastFunc
-	let lastRan
-	return function() {
-		const context = this
-		const args = arguments
-		if (!lastRan) {
-			func.apply(context, args)
-			lastRan = Date.now()
-		} else {
-			clearTimeout(lastFunc)
-			lastFunc = setTimeout(function() {
-				if ((Date.now() - lastRan) >= limit) {
-					func.apply(context, args)
-					lastRan = Date.now()
-				}
-			}, limit - (Date.now() - lastRan))
-		}
-	}
-};
 
 function roundVector(vector, roundBy) {
 	let newVector = new THREE.Vector3();
