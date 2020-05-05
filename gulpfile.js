@@ -32,10 +32,7 @@ let excludeCondition = '*.psd';
 let moveFiles = [
 			'.htaccess',
 			'impressum.htm',
-			'**/*.json',
-			'css/*.ttf',
-			'js/three.min.js',
-			'js/dot.png',
+			'js/stats.min.js',
 ];
 
 
