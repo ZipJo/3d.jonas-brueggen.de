@@ -11,6 +11,8 @@
     <!-- build:css css/jb_main.min.css -->
         <link rel="stylesheet" href="css/jb_main.css" media="all" />
     <!-- endbuild -->
+    <script src="js/three.min.js"></script>
+    <script src="js/stats.min.js"></script>
     <!-- build:js js/jb_main.min.js -->
         <script src="js/scripts.js"></script>
         <script src="js/jbparticlebg.js"></script>
@@ -45,9 +47,15 @@
             @@include('home.html')
             @@include('projects.html')
             @@include('about.html')
+            <div class="sm">
+                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>%:</label>
+                <input type="range" id="smoothing" name="smoothing" min="0" max="100">
+                
+            </div>
         </main>
         <div id="particle_background">
-            @@include('background.html')
+            <span id="motion_dot"></span>
+            <canvas></canvas>
         </div>
         <!-- end of page wrapper -->
     </div>

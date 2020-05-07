@@ -11,6 +11,8 @@
     <!-- build:css css/jb_main.min.css -->
         <link rel="stylesheet" href="css/jb_main.css" media="all" />
     <!-- endbuild -->
+    <script src="js/three.min.js"></script>
+    <script src="js/stats.min.js"></script>
     <!-- build:js js/jb_main.min.js -->
         <script src="js/scripts.js"></script>
         <script src="js/jbparticlebg.js"></script>
@@ -68,43 +70,56 @@
     <!-- spinner javascript -->
 <script>
 
-	function init_eruda() {
+	function init_eruda(cb) {
 		var script = document.createElement('script');
-		script.src="//cdn.jsdelivr.net/npm/eruda";
+		script.src = "//cdn.jsdelivr.net/npm/eruda";
 		document.body.appendChild(script);
-		script.onload = function () {
+		script.onload = function() {
 			eruda.init();
+			if (cb) cb();
 		}
 	}
 
 
-	function startup(){
-		//init_eruda(); //mobile console - for dev purposes
-		jb_particles(loader);
-	}
-	function jb_particles(cb){
-		jbParticleBg('particle_background', {
-			interactivity: { events: {
-				onhover: { enable: true },
-				onclick: { enable: false },
-				resize: false
-			}},
-			functions: {
-				vars: { containment: 80 }
-			}
-		}, function() {
-			if(cb) cb();
-		});
-	}
-	
-	function loader(cb){
-		document.getElementsByClassName("loader")[0].classList.add("global_hide");
-		document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
-		document.getElementById("id_wrapper").classList.remove("hide_container");
-		if(cb) cb();
-	}
+function startup() {
+	//loader();
+	//init_eruda(jb_particles); //mobile console - for dev purposes
+	jb_particles(loader);
+}
 
-	window.onload = function() { startup(); };
+function jb_particles(cb) {
+	jbParticleBg('div#particle_background > canvas', {
+		interactivity: {
+			events: {
+				onhover: {
+					enable: true
+				},
+				onclick: {
+					enable: false
+				},
+				resize: false
+			}
+		},
+		functions: {
+			vars: {
+				containment: 80
+			}
+		}
+	}, function() {
+		if (cb) cb();
+	});
+}
+
+function loader(cb) {
+	document.getElementsByClassName("loader")[0].classList.add("global_hide");
+	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
+	document.getElementById("id_wrapper").classList.remove("hide_container");
+	if (cb) cb();
+}
+
+window.onload = function() {
+	startup();
+};
 </script>
 </head>
 <body>
@@ -300,9 +315,15 @@
 		</div>
 	</div>
 </section>
+            <div class="sm">
+                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>%:</label>
+                <input type="range" id="smoothing" name="smoothing" min="0" max="100">
+                
+            </div>
         </main>
         <div id="particle_background">
-            <span id="motion_dot"></span><div class="cuboid_container" id="object_container"><div class="cuboid cx_0 cy_0 cz_0"> <div class="c cf_0">0</div><div class="c cf_1">1</div><div class="c cf_2">2</div><div class="c cf_3">3</div><div class="c cf_4">4</div><div class="c cf_5">5</div></div><div class="cuboid cx_0 cy_1 cz_0"> <div class="c cf_0">0</div><div class="c cf_1">1</div><div class="c cf_2">2</div><div class="c cf_3">3</div><div class="c cf_4">4</div><div class="c cf_5">5</div></div></div>
+            <span id="motion_dot"></span>
+            <canvas></canvas>
         </div>
         <!-- end of page wrapper -->
     </div>

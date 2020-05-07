@@ -70,3 +70,33 @@ function triggerContactTileAnimation(){
 		},1100);
 	});
 }
+
+function overflowIsHidden(node) {
+  var style = getComputedStyle(node);
+  return style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden';
+}
+
+function findNearestScrollableParent(firstNode) {
+  var node = firstNode;
+  var scrollable = null;
+  while(!scrollable && node) {
+    if (node.scrollWidth > node.clientWidth || node.scrollHeight > node.clientHeight) {
+      if (!overflowIsHidden(node)) {
+        scrollable = node;
+      }
+    }
+    node = node.parentNode;
+  }
+  return scrollable;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    document.body.addEventListener('touchmove', function(event) {
+      var owner = findNearestScrollableParent(event.target);
+      if (!owner || owner === document.documentElement || owner === document.body) {
+        event.preventDefault();
+      }
+    });
+
+}, false);
