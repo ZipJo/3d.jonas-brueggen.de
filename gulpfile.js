@@ -33,6 +33,10 @@ let moveFiles = [
 			'.htaccess',
 			'impressum.htm',
 			'js/stats.min.js',
+			'css/*.ttf',
+			'css/*.otf',
+			'css/*.woff',
+			'css/*.woff2'
 ];
 
 
@@ -168,7 +172,12 @@ let connectionParams = {
 };
 let sftpExclude = [
 	'files/**',
-	'.htaccess'
+	'.htaccess',
+	'css/*.ttf',
+	'css/*.otf',
+	'css/*.woff',
+	'css/*.woff2'
+
 ];
 
 gulp.task('sftp', function () {

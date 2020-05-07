@@ -1,6 +1,18 @@
 /* ####################################################### */
 /* Main Rules, set the colors and a bunch of general stuff */
 /* ####################################################### */
+@font-face {
+  font-family: "Montserrat";
+  src: url("/css/montserrat-regular.ttf") format("truetype"), url("/css/montserrat-regular.woff") format("woff"), url("/css/montserrat-regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/css/montserrat-bold.ttf") format("truetype"), url("/css/montserrat-bold.woff") format("woff"), url("/css/montserrat-bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal; }
+
 div#particle_background {
   overflow: hidden;
   position: fixed;
@@ -108,15 +120,6 @@ div.sm {
     background: #2497E3; }
   div.sm input[type=range]:focus::-ms-fill-upper {
     background: #2497E3; }
-
-@font-face {
-  font-family: 'Montserrat';
-  src: url("/css/Montserrat-Bold.ttf") format("truetype");
-  font-weight: bold; }
-
-@font-face {
-  font-family: 'Montserrat';
-  src: url("/css/Montserrat-Regular.ttf") format("truetype"); }
 
 * {
   margin: 0;
