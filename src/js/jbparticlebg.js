@@ -39,10 +39,10 @@ let pBg = function(qSelector, parameters) {
 		threejs: {
 			vars: {
 				camRotationRadius: 500,
-				autoRotationSpeed: 0.5, //in rpm
+				autoRotationSpeed: 0.1, //in rpm
 				zeroVector: new THREE.Vector3(0, 0, 0),
 				vectorAccuracy: 1000,
-				particles: 5000
+				particles: 10000
 			}
 		},
 		fps: 60
@@ -114,14 +114,14 @@ let pBg = function(qSelector, parameters) {
 		// detect mouse pos - on hover / click event
 		if (pBg.interactivity.events.onhover.enable || pBg.interactivity.events.onclick.enable) {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
-			if (true || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 				//mobile!
 
 				//debug-element:
 				let elem = document.createElement("div");
 				elem.setAttribute("id", "infobox");
 				elem.innerHTML = "init";
-				document.querySelector("main").append(elem);
+				//document.querySelector("main").append(elem);
 
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
@@ -269,7 +269,7 @@ let pBg = function(qSelector, parameters) {
 		//setup Helpers
 		//axes
 		var axesHelper = new THREE.AxesHelper(20);
-		pBg.threejs.scene.add(axesHelper);
+		//pBg.threejs.scene.add(axesHelper);
 
 		//arrow
 		arrowDir = THREE.Object3D.DefaultUp;
@@ -338,7 +338,7 @@ let pBg = function(qSelector, parameters) {
 
 		pBg.threejs.cube4.applyQuaternion(q);
 
-		pBg.threejs.scene.add(pBg.threejs.cube1);
+		//pBg.threejs.scene.add(pBg.threejs.cube1);
 		//pBg.threejs.scene.add(pBg.threejs.cube2);
 		//pBg.threejs.scene.add(pBg.threejs.cube3);
 		//pBg.threejs.scene.add(pBg.threejs.cube4);
@@ -362,8 +362,8 @@ let pBg = function(qSelector, parameters) {
 		pBg.threejs.vars.timer += pBg.threejs.vars.autoRotationSpeed;
 		//object properties
 
-		pBg.threejs.cube1.rotateY(pBg.threejs.vars.autoRotationSpeed*10);
-		pBg.threejs.cube1.rotateX(pBg.threejs.vars.autoRotationSpeed*10 / 2);
+		pBg.threejs.cube1.rotateY(pBg.threejs.vars.autoRotationSpeed);
+		pBg.threejs.cube1.rotateX(pBg.threejs.vars.autoRotationSpeed / 2);
 
 
 		if (pBg.interactivity.events.onhover.sensorStatus) {
@@ -463,13 +463,12 @@ let pBg = function(qSelector, parameters) {
 	}
 	//Animation-loop
 	pBg.functions.draw = function() {
-		//setTimeout(pBg.functions.draw,3000);
 		if (pBg.fps > 30) {
 			window.requestAnimFrame(pBg.functions.draw);
 		} else {
-			setTimeout(pBg.functions.draw, 1000 / pBg.fps); //this is not on time!
+			setTimeout(pBg.functions.draw, 1000 / pBg.fps); //this is not on time, but close enough..!
 		}
-		pBg.functions.perspective();
+		//pBg.functions.perspective();
 		stats.update();
 		pBg.functions.renderThreeJs();
 	};
