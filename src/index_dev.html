@@ -47,10 +47,12 @@
             @@include('home.html')
             @@include('projects.html')
             @@include('about.html')
-            <div class="sm">
-                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>%:</label>
-                <input type="range" id="smoothing" name="smoothing" min="0" max="100">
-                
+            <div class="sm_wrap" onclick="this.classList.toggle('expand');">
+                <div class="sm" onclick="event.stopPropagation();">
+                    <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
+                    <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
+                    
+                </div>
             </div>
         </main>
         <div id="particle_background">
