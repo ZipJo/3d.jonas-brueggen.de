@@ -18,7 +18,6 @@
         <script src="js/jbparticlebg.js"></script>
     <!-- endbuild -->
     @@include('index_inline_css.html')
-    @@include('index_inline_js.html')
 </head>
 <body>
     <div class="page_loader">
@@ -36,30 +35,29 @@
                         <img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
                     </div>
                 </a>
+                <h3>Jonas Brüggen</h3>
+                <h4>development & web design</h4>
             </div>
             <nav>
-                <a href="#/home">home</a>
                 <a href="#/projects">projects</a>
                 <a href="#/about">about</a>
             </nav>
         </header>
-        <main>
-            @@include('home.html')
-            @@include('projects.html')
-            @@include('about.html')
-            <div class="sm_wrap" onclick="this.classList.toggle('expand');">
-                <div class="sm" onclick="event.stopPropagation();">
-                    <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
-                    <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
-                    
-                </div>
+        @@include('projects.html')
+        @@include('about.html')
+        <div class="sm_wrap" onclick="this.classList.toggle('expand');">
+            <div class="sm" onclick="event.stopPropagation();">
+                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
+                <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
+                
             </div>
-        </main>
-        <div id="particle_background">
-            <span id="motion_dot"></span>
-            <canvas></canvas>
         </div>
         <!-- end of page wrapper -->
     </div>
+    <div id="particle_background">
+        <span id="motion_dot"></span>
+        <canvas></canvas>
+    </div>
+    @@include('index_inline_js.html')
 </body>
 </html>

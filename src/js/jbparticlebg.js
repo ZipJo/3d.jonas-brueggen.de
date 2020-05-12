@@ -32,7 +32,7 @@ let pBg = function(qSelector, parameters) {
 		},
 		functions: {
 			vars: {
-				containmentPercentage: 50 //100% = 90° (π/2)
+				containmentPercentage: 10 //100% = 90° (π/2)
 			},
 			actions: {}
 		},
@@ -43,7 +43,7 @@ let pBg = function(qSelector, parameters) {
 				zeroVector: new THREE.Vector3(0, 0, 0),
 				vectorAccuracy: 1000,
 				particleCount: 5000,
-				helpers: false
+				helpers: true
 			}
 		},
 		fps: 60
@@ -55,9 +55,13 @@ let pBg = function(qSelector, parameters) {
 		Object.deepExtend(pBg, parameters);
 	}
 
+
+	//set other vars
 	if (pBg.fps > 30) {
 		pBg.fps = 60
 	}
+
+	pBg.threejs.vars.camFrustumNearField = pBg.threejs.vars.camRotationRadius / 3;
 
 
 	// ======================= //
@@ -291,19 +295,64 @@ let pBg = function(qSelector, parameters) {
 
 		//setup scene
 		pBg.threejs.scene = new THREE.Scene();
-		pBg.threejs.scene.background = new THREE.Color(0x011b28);
+		pBg.threejs.scene.background = new THREE.Color(0x011823);
 		pBg.threejs.scene.fog = new THREE.Fog({
-			color: 0x011b28,
-			near: pBg.threejs.vars.camRotationRadius,
-			far: 2000
+			color: 0x011823,
+			near: pBg.threejs.vars.camFrustumNearField,
+			far: pBg.threejs.vars.camRotationRadius+750
 		});
 
 		//setup camera
-		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, pBg.threejs.vars.camRotationRadius/3, 2000);
+		pBg.threejs.camera = new THREE.PerspectiveCamera(50, pBg.threejs.aspect, pBg.threejs.vars.camFrustumNearField-50, 2000);
 		pBg.threejs.camera.position.y = pBg.threejs.vars.camRotationRadius;
 		pBg.threejs.cameraInitialPosition = pBg.threejs.camera.position.clone();
 
 		pBg.threejs.scene.add(pBg.threejs.camera);
+
+		//background-particles, spread in a cube from -750 to 750 on each axis
+		var geometry = new THREE.BufferGeometry();
+		var vertices = [];
+
+		for (var i = 0; i < pBg.threejs.vars.particleCount; i++) {
+			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // x
+			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // y
+			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // z
+		}
+
+		//push particles inwards, that would clip the frustumNearField
+		let minClippingDistance = pBg.threejs.vars.camRotationRadius - pBg.threejs.vars.camFrustumNearField,
+			clipDistX = pBg.threejs.vars.camFrustumNearField * pBg.threejs.aspect * Math.tan(25 / 180 * Math.PI),
+			clipDistY = minClippingDistance,
+			clipDistZ = pBg.threejs.vars.camFrustumNearField * Math.tan(25 / 180 * Math.PI),
+			maxClippingDistance = new THREE.Vector3(clipDistX,clipDistY,clipDistZ).length(),
+			clipDiff = maxClippingDistance - minClippingDistance;
+		
+		for (var i = 0; i < vertices.length; i+=3) {
+			let cX = vertices[i], // x
+				cY = vertices[i+1], // y
+				cZ = vertices[i+2], // z
+				cV = new THREE.Vector3(cX,cY,cZ),
+				cL = cV.length();
+
+			if (cL > minClippingDistance & cL < maxClippingDistance) {
+				cV.setLength(cL - clipDiff);
+				vertices[i] = cV.x;
+				vertices[i+1] = cV.y;
+				vertices[i+2] = cV.z;
+			}
+		}
+
+		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+		var sprite = new THREE.TextureLoader().load('js/dot.png');
+		pBg.threejs.particleObject = new THREE.Points(geometry, new THREE.PointsMaterial({
+			size: 5,
+			map: sprite,
+			color: 0xffffff,
+			transparent: true
+		}));
+
+		pBg.threejs.scene.add(pBg.threejs.particleObject);
 
 		//setup Helpers
 		if (pBg.threejs.vars.helpers) {
@@ -320,32 +369,25 @@ let pBg = function(qSelector, parameters) {
 			pBg.threejs.scene.add( pBg.threejs.arrowHelper );
 
 			var qh_geometry = new THREE.BoxBufferGeometry( 50, 50, 50 );
+			var qh_geometry2 = new THREE.BoxBufferGeometry( pBg.canvas.width/8.5, 1, pBg.canvas.height/8.5 );
+
 			var qh_material = new THREE.MeshBasicMaterial( {wireframe: true} );
-			pBg.threejs.cubeHelper = new THREE.Mesh( qh_geometry, qh_material );
+			pBg.threejs.cubeHelper = new THREE.Mesh( qh_geometry2, qh_material );
+			pBg.threejs.cubeHelper.position.x = minClippingDistance;
+			pBg.threejs.cubeHelper.rotateZ(Math.PI/2);
 			pBg.threejs.scene.add( pBg.threejs.cubeHelper );
+
+
+			pBg.threejs.cubeHelper2 = new THREE.Mesh( qh_geometry2, qh_material );
+			pBg.threejs.cubeHelper2.position.y = 0;
+			pBg.threejs.scene.add( pBg.threejs.cubeHelper2 );
+
+			pBg.threejs.cubeHelper3 = new THREE.Mesh( qh_geometry2, qh_material );
+			pBg.threejs.cubeHelper3.position.y = minClippingDistance;
+			//pBg.threejs.cubeHelper3.position.x = 100;
+			pBg.threejs.scene.add( pBg.threejs.cubeHelper3 );
 		}
 
-		//background-particles, spread in a cube from -1000 to 1000 on each axis
-		var geometry = new THREE.BufferGeometry();
-		var vertices = [];
-
-		for (var i = 0; i < pBg.threejs.vars.particleCount; i++) {
-			vertices.push(THREE.MathUtils.randFloatSpread(1000)); // x
-			vertices.push(THREE.MathUtils.randFloatSpread(1000)); // y
-			vertices.push(THREE.MathUtils.randFloatSpread(1000)); // z
-		}
-
-
-		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-
-		var sprite = new THREE.TextureLoader().load('js/dot.png');
-		pBg.threejs.particleObject = new THREE.Points(geometry, new THREE.PointsMaterial({
-			size: 5,
-			map: sprite,
-			color: 0xffffff,
-			transparent: true
-		}));
-		pBg.threejs.scene.add(pBg.threejs.particleObject);
 
 		//renderer
 		pBg.threejs.renderer = new THREE.WebGLRenderer({
@@ -401,8 +443,8 @@ let pBg = function(qSelector, parameters) {
 			percentage_y_mouse = percentage_y_mouse - pBg.functions.vars.containmentPercentage/100/2;
 
 			//±100% = ±45° (±π/4)
-			let euler_x = Math.atan(percentage_x_mouse); //in rad
-			let euler_y = -Math.atan(percentage_y_mouse); //in rad, y is inverse
+			let euler_x = Math.PI/4*percentage_x_mouse; //in rad
+			let euler_y = -Math.PI/4*percentage_y_mouse; //in rad, y is inverse
 
 
 			//transform mous-pos into x and z-angles

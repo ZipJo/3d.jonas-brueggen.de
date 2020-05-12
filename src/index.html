@@ -67,60 +67,6 @@
 		opacity: 0;
 	}
 </style>
-    <!-- spinner javascript -->
-<script>
-
-	function init_eruda(cb) {
-		var script = document.createElement('script');
-		script.src = "//cdn.jsdelivr.net/npm/eruda";
-		document.body.appendChild(script);
-		script.onload = function() {
-			eruda.init();
-			if (cb) cb();
-		}
-	}
-
-
-function startup() {
-	//loader();
-	//init_eruda(jb_particles); //mobile console - for dev purposes
-	jb_particles(loader);
-}
-
-function jb_particles(cb) {
-	jbParticleBg('div#particle_background > canvas', {
-		interactivity: {
-			events: {
-				onhover: {
-					enable: true
-				},
-				onclick: {
-					enable: false
-				},
-				resize: false
-			}
-		},
-		functions: {
-			vars: {
-				containment: 80
-			}
-		}
-	}, function() {
-		if (cb) cb();
-	});
-}
-
-function loader(cb) {
-	document.getElementsByClassName("loader")[0].classList.add("global_hide");
-	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
-	document.getElementById("id_wrapper").classList.remove("hide_container");
-	if (cb) cb();
-}
-
-window.onload = function() {
-	startup();
-};
-</script>
 </head>
 <body>
     <div class="page_loader">
@@ -138,24 +84,16 @@ window.onload = function() {
                         <img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
                     </div>
                 </a>
+                <h3>Jonas Brüggen</h3>
+                <h4>development & web design</h4>
             </div>
             <nav>
-                <a href="#/home">home</a>
                 <a href="#/projects">projects</a>
                 <a href="#/about">about</a>
             </nav>
         </header>
-        <main>
-            <section class="home">
-	<div>
-		<img src="files/JB_Logo_color_alpha_square.svg" class="logo" />
-	</div>
-	<div>
-		<h3>Jonas Brüggen</h3>
-		<h4>full stack development, web design</h4>
-	</div>
-</section>
-            <section class="projects">
+        <section class="projects">
+	<h1>Dummy-Projekt-content</h1>
 	<!-- Dummy-Project:
 	<div class="project_cover" onclick="tileAnimation(this);">
 		<div class="project_logo flex_align--centered_content"><img src="files/projects/logo_NAME_small.png" alt="logo project NAME" /></div>
@@ -281,9 +219,9 @@ window.onload = function() {
 			<img class="project_image_phone" title="Project Scouts, dhc, smartphone view" src="files/projects/dhc/phone_dhc_small.png" />
 		</div>
 	</div>
-	-->
+-->
 </section>
-            <section class="about">
+        <section class="about">
 	<div class="about_text_wrapper">
 		<div class="about_text">
 			<p>After more than six years of working as a middleware developer in Germany, I decided it's time to break out of my comfort zone. I'm mostly doing volunteer work, but since webdesign has always been my main professional interest, I started freelancing in this area.</p>
@@ -315,19 +253,73 @@ window.onload = function() {
 		</div>
 	</div>
 </section>
-            <div class="sm_wrap" onclick="this.classList.toggle('expand');">
-                <div class="sm" onclick="event.stopPropagation();">
-                    <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
-                    <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
-                    
-                </div>
+        <div class="sm_wrap" onclick="this.classList.toggle('expand');">
+            <div class="sm" onclick="event.stopPropagation();">
+                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
+                <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
+                
             </div>
-        </main>
-        <div id="particle_background">
-            <span id="motion_dot"></span>
-            <canvas></canvas>
         </div>
         <!-- end of page wrapper -->
     </div>
+    <div id="particle_background">
+        <span id="motion_dot"></span>
+        <canvas></canvas>
+    </div>
+    <!-- spinner javascript -->
+<script>
+
+	function init_eruda(cb) {
+		var script = document.createElement('script');
+		script.src = "//cdn.jsdelivr.net/npm/eruda";
+		document.body.appendChild(script);
+		script.onload = function() {
+			eruda.init();
+			if (cb) cb();
+		}
+	}
+
+
+function startup() {
+	//loader();
+	//init_eruda(jb_particles); //mobile console - for dev purposes
+	cc.init();
+	jb_particles(loader);
+}
+
+function jb_particles(cb) {
+	jbParticleBg('div#particle_background > canvas', {
+		interactivity: {
+			events: {
+				onhover: {
+					enable: true
+				},
+				onclick: {
+					enable: false
+				},
+				resize: false
+			}
+		},
+		functions: {
+			vars: {
+				containment: 80
+			}
+		}
+	}, function() {
+		if (cb) cb();
+	});
+}
+
+function loader(cb) {
+	document.getElementsByClassName("loader")[0].classList.add("global_hide");
+	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
+	document.getElementById("id_wrapper").classList.remove("hide_container");
+	if (cb) cb();
+}
+
+window.onload = function() {
+	startup();
+};
+</script>
 </body>
 </html>

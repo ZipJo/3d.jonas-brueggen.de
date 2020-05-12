@@ -1,3 +1,43 @@
+let cc = {
+
+	currentActive: null,
+
+	init(){
+		window.onhashchange = function(){ cc.changeContent(); }; 
+		
+		let name = window.location.hash,
+			hashName = name == "" ? "#/home" : name,
+			target;
+		
+		if (hashName =="#/home" ) target = document.querySelector("header");
+		else target = document.querySelector("section." + hashName.substr(2));
+		
+		target.classList.add("active");
+		this.currentActive = name;
+	},
+
+	changeContent(name = window.location.hash){
+
+		if (name !== this.currentActive){
+			let hashName = name == "" ? "#/home" : name,
+				current = document.querySelector(".active"), 
+				target;
+
+			if (hashName =="#/home" ) target = document.querySelector("header");
+			else target = document.querySelector("section." + hashName.substr(2));
+
+			current.classList.remove("active");
+			target.classList.add("active");
+
+			current.classList.add("animated")
+			target.classList.add("animated");
+
+			this.currentActive = name;
+		}
+	},
+
+}
+
 function customPopup(content, maxWidth, link = null) {
 	if (link == null){
 		//use "content"
@@ -61,7 +101,6 @@ function colorLogo(toColor = true) {
 }
 
 function triggerContactTileAnimation(){
-
 	let elem = document.getElementById("id_contact_tiles");
 	elem.classList.add("start_animation");
 	requestAnimationFrame(function(){

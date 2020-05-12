@@ -1,0 +1,212 @@
+// _animations.scss
+
+@use "sass:math";
+@use 'variables';
+
+
+$cb_quarter-sine: cubic-bezier(.4,.63,.67,1);
+$cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
+
+
+/* main perspective animations */
+.wrapper {
+	$perspective: 30vw / 3; // should be 1/3 * jbparticlebg.camRotationRadius - to match the frustum near plane!
+	$rotationRatio: 10; // to fix perspectiv-skew. works until ~45°, breaks afterwards
+
+	$maxRotation: 45deg; // max Object rotation
+	$pickupRotation: $maxRotation / 4; //where the big circle moves to the small circle
+	$pushback: -5vw; // depth for the initial "pushback"-effect on section-inactivity. Has to be 1/8th of maxDistanceZ
+	//the next two assume a 90 degree turn!
+	$maxDistanceX: 255vw; // max distance "left"
+	$maxDistanceZ: -40vw; // max depth <- pushback will be added to this!
+
+	overflow-x: hidden;
+	perspective: $perspective;
+	transform-style: preserve-3d;
+	height: 100vh;
+	width: 100vw;
+
+	section {
+		pointer-events:none;
+
+		$lr_padding: 5vw;
+		box-shadow:inset 0 0 0 1px darkred;
+
+		width: 100vw - 2 * $lr_padding;
+		
+		padding:0 $lr_padding;
+
+		position: fixed;
+		top: 0;
+
+		max-height: 100vh;
+		overflow-y: hidden;
+
+		//animation-stuff:
+		$cDegree: $maxRotation;
+		$left: math.sin($cDegree) * $maxDistanceX;
+		$translateZ: $pushback + (1 - math.cos($cDegree)) * $maxDistanceZ;
+
+		left: $left;
+		transform: rotateY($cDegree / $rotationRatio) translateZ($translateZ);
+
+		transform-origin: 50vw 50vh 0;
+	}
+	section.active {
+		max-height: 500vh;
+		left: 0;
+		transform: rotateY(0deg) translateZ(0);
+	}
+	section.animated {
+		animation: section_out--animation;
+		animation-duration: 5s;
+		animation-iteration-count: 1;
+		animation-timing-function: linear;
+	}
+	section.animated.active {
+		animation: section_in--animation;
+		animation-iteration-count: 1;
+		animation-duration: 5s;
+		animation-timing-function: linear;
+	}
+	
+	// big circle until 77%, then small circle
+	@keyframes section_in--animation {
+		// big circle
+		@for $i from 0 through 77 {
+			#{$i * 1%} {
+				$cPercent: $i / 77;
+				$cDegree: $maxRotation * (1 - $cPercent) + $pickupRotation * $cPercent;
+
+				$left: math.sin($cDegree) * $maxDistanceX;
+				$translateZ: $pushback + (1 - math.cos($cDegree)) * $maxDistanceZ;
+
+				left: $left;
+				transform: rotateY($cDegree / $rotationRatio) translateZ($translateZ);
+
+				max-height: 100vh;
+			}
+		}
+		// small circle
+		// new rotation is +1% of prev calc!
+		$maxRotationNew: 90deg - $pickupRotation; // = 78.75°
+		$maxDistanceXNew: 61.81; //because math!
+		$pushbackNew: -5.8816vw; //because math!
+
+		@for $i from 78 through 100 {
+			#{$i * 1%} {
+				//go reverse
+				$cPercent: ($i - 78) / 22;
+				$cDegreeRotateY: $pickupRotation * (1 - $cPercent);
+				$cDegree: $maxRotationNew * (1 - $cPercent);
+
+				$left: $maxDistanceXNew - math.cos($cDegree) * $maxDistanceXNew;
+				$translateZ: math.sin($cDegree) * $pushbackNew;
+
+				left: $left;
+				transform: rotateY($cDegreeRotateY / $rotationRatio) translateZ($translateZ);
+
+				max-height: 100vh + $cPercent * 400vh;
+			}
+		}
+	}
+	// small circle until 22%, then big circle
+	@keyframes section_out--animation {
+		// small circle
+		$maxRotationNew: 90deg - $pickupRotation; // = 78.75°
+		$maxDistanceXNew: 61.81; //because math!
+		$pushbackNew: -5.8816vw; //because math!
+		@for $i from 0 through 22 {
+			#{$i * 1%} {
+				//go reverse
+				$cPercent: $i / 22;
+				$cDegreeRotateY: $pickupRotation * $cPercent;
+				$cDegree: $maxRotationNew * $cPercent;
+
+				$left: $maxDistanceXNew - math.cos($cDegree) * $maxDistanceXNew;
+				$translateZ: math.sin($cDegree) * $pushbackNew;
+
+				left: $left;
+				transform: rotateY($cDegreeRotateY / $rotationRatio) translateZ($translateZ);
+
+				max-height: 100vh + (1-$cPercent) * 400vh;
+			}
+		}
+
+		// big circle
+		@for $i from 23 through 100 {
+			#{$i * 1%} {
+				$cPercent: ($i - 23) / 77;
+				$cDegree: $pickupRotation * (1 - $cPercent) + $maxRotation * $cPercent;
+
+				$left: math.sin($cDegree) * $maxDistanceX;
+				$translateZ: $pushback + (1 - math.cos($cDegree)) * $maxDistanceZ;
+
+				left: $left;
+				transform: rotateY($cDegree / $rotationRatio) translateZ($translateZ);
+
+				max-height: 100vh;
+			}
+		}
+	}
+}
+
+
+/* everything popup-related */
+
+.popup_container {
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 1%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	pointer-events: none;
+	background: variables.$color-page-main-opaque;
+	transition: opacity 0.2s;
+	z-index: 1000;
+}
+.popup_container.active {
+	opacity: 1;
+	pointer-events: all;
+}
+
+.popup_container > div {
+	transform: translateY(-60px);
+	background: variables.$color-page-bg;
+	opacity: 0;
+	max-height: 85%;
+	padding: 50px;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
+	transition: all 0.3s ease-in-out;
+	overflow-y: auto;
+}
+.popup_container > div.move {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+/* contact_tiles animation */
+.contact_tiles_grid a {
+}
+.contact_tiles_grid > a:nth-child(1) { animation-delay: 0s; }
+.contact_tiles_grid > a:nth-child(2) { animation-delay: 0.1s; }
+.contact_tiles_grid > a:nth-child(3) { animation-delay: 0.2s; }
+.contact_tiles_grid > a:nth-child(4) { animation-delay: 0.3s; }
+
+.contact_tiles_grid.start_animation a {
+	animation-name: contact_tiles--animation;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-out;
+	animation-iteration-count: 1;
+}
+
+@keyframes contact_tiles--animation {
+	from { transform: translateX(0%); }
+	20% { transform: translateX(-20%); }
+	to { transform: translateX(0%); }
+}

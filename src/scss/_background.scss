@@ -1,4 +1,6 @@
 // _background.scss
+@use 'variables';
+
 $baseLength: 100vMax;
 
 
@@ -11,7 +13,7 @@ div#particle_background {
 	z-index: -10;
 	width: 100vw;
 	height: 100vh;
-	background: $color-page-bg;
+	background: variables.$color-page-bg;
 	
 	span#motion_dot {
 		height: 10px;
