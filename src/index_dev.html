@@ -29,8 +29,8 @@
         <!-- page wrapper starts here -->
         <header class="header" id="id_header">
             <div class="header_logo">
-                <a href="#/home">
-                    <div class="logo_wrapper animate_in" id="id_logo_wrapper">
+                <a>
+                    <div class="logo_wrapper animate_in" id="id_logo_wrapper" onclick="cc.toggleHash();">
                         <img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
                         <img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
                     </div>
@@ -41,10 +41,12 @@
             <nav>
                 <a href="#/projects">projects</a>
                 <a href="#/about">about</a>
+                <a href="#/x404">TEST (404)</a>
             </nav>
         </header>
         @@include('projects.html')
         @@include('about.html')
+        @@include('x404.html')
         <div class="sm_wrap" onclick="this.classList.toggle('expand');">
             <div class="sm" onclick="event.stopPropagation();">
                 <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>

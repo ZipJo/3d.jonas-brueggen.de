@@ -1,40 +1,66 @@
 let cc = {
 
 	currentActive: null,
+	allowedNames: ["home","projects","about","x404"],
 
-	init(){
+	init() {
 		window.onhashchange = function(){ cc.changeContent(); }; 
-		
-		let name = window.location.hash,
-			hashName = name == "" ? "#/home" : name,
-			target;
-		
-		if (hashName =="#/home" ) target = document.querySelector("header");
-		else target = document.querySelector("section." + hashName.substr(2));
-		
-		target.classList.add("active");
-		this.currentActive = name;
+		this.changeContent();
 	},
 
-	changeContent(name = window.location.hash){
+	changeContent( name = window.location.hash ) {
+		let hashName = name == "" ? "home" : name.substr(2);
 
-		if (name !== this.currentActive){
-			let hashName = name == "" ? "#/home" : name,
-				current = document.querySelector(".active"), 
-				target;
+		this.clearClasses();
 
-			if (hashName =="#/home" ) target = document.querySelector("header");
-			else target = document.querySelector("section." + hashName.substr(2));
+		if (this.allowedNames.includes(hashName)){
 
-			current.classList.remove("active");
-			target.classList.add("active");
+			if (hashName !== this.currentActive && this.currentActive !== null &&  this.currentActive != "home"){
+				if (hashName == "home") {
+					// from section to home 
+					document.querySelector("header").classList.remove("top");
+					document.querySelector("section."+this.currentActive).classList.add("toHome");
+				} else {
+					// from section to section
+					document.querySelector("header").classList.add("top");
+					console.log(this.currentActive);
+					console.log(hashName);
 
-			current.classList.add("animated")
-			target.classList.add("animated");
+					document.querySelector("section."+hashName).classList.add("active", "rightToCenter");
+					document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
 
-			this.currentActive = name;
+				}
+			} else if (this.currentActive === null || this.currentActive == "home"){
+				if (hashName != "home") {
+					// from home (or nothing) to section
+					document.querySelector("header").classList.add("top");
+					document.querySelector("section."+hashName).classList.add("active", "fromHome");
+				}
+			}
+		} else {
+			//unknown hash!
+			this.changeContent("#/x404");
+			return;
 		}
+		
+		this.currentActive = hashName;
 	},
+
+	clearClasses() {
+		let sections = document.querySelectorAll("section"),
+			header = document.querySelector("header"),
+			classes = ["active","rightToCenter","leftToCenter","centerToRight","centerToLeft","toHome","fromHome","top"];
+
+		header.classList.remove(...classes);
+		sections.forEach(function(section) {
+			section.classList.remove(...classes);
+		});
+	},
+
+	toggleHash(hash = window.location.hash) {
+		if (hash == "" || hash == "#/home") window.location.hash = "#/projects";
+		else window.location.hash = "";
+	}
 
 }
 
