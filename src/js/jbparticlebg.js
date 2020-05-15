@@ -1,6 +1,6 @@
 // jbparticlebg.js
 
-let pBg = function(qSelector, parameters) {
+let pBg = function(qSelector, parameters, cb) {
 
 	let canvas_el = document.querySelector(qSelector);
 
@@ -524,7 +524,10 @@ let pBg = function(qSelector, parameters) {
 		pBg.functions.init();
 		pBg.functions.initThreeJs();
 		//start ~three frames delayed, to give the eventlisteners time to do their stuff
-		setTimeout(pBg.functions.draw, 3 * 1000 / pBg.fps);
+		setTimeout(function(){
+			pBg.functions.draw();
+			if (cb) cb();
+		}, 3 * 1000 / pBg.fps);
 	};
 
 
@@ -577,7 +580,5 @@ window.pBgDom = [];
 window.jbParticleBg = function(qSelector, parameters, cb) {
 	//console.log(parameters);
 
-	pBgDom.push(new pBg(qSelector, parameters));
-
-	if (cb) cb();
+	pBgDom.push(new pBg(qSelector, parameters, cb));
 };

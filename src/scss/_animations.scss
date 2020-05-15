@@ -4,13 +4,14 @@
 @use 'variables';
 
 
-$cb_quarter-sine: cubic-bezier(.4,.63,.67,1);
-$cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
+$cb_quarter-sin: cubic-bezier(.4,.63,.67,1); //ease-out
+$cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 
 /* main perspective animations */
 .wrapper {
-	$animationDuration: 5s;
+	$animationDurationHome: .8s;
+	$animationDurationSection: .8s;
 	$perspective: 10vw; // defines the z=0 plane with width and height at 100% as the frustum near plane
 
 	$maxRotation: 45deg; // max Object rotation
@@ -23,41 +24,100 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
 	$maxDistanceZ: -40vw; // depth at 90° excluding pushback!
 
 	//mixin for the keyframe-animation:
-	@mixin section-animation( $name, $maxRot, $maxRotCss ) {
-		@keyframes #{$name} {
-			0% {
-				max-height: 100vh;
-				$left: math.sin($maxRot) * $maxDistanceX;
-				$translateZ: $pushback + (1 - math.cos($maxRot)) * $maxDistanceZ;
-
-				left: $left;
-				transform: rotateY($maxRotCss) translateZ($translateZ);
+	@mixin section-animation( $name, $dir, $maxRot, $maxRotCss ) {
+		@if $dir == in {
+			//from back to front
+			@keyframes #{$name}-height {
+				from {
+					max-height: 100vh;
+				}
+				80% {
+					max-height: 100vh;
+				}
+				to {
+					max-height: 500vh;
+				}
 			}
-			80% {
-				max-height: 100vh;
-				transform: rotateY(0deg) translateZ($pushback);
+			@keyframes #{$name}-left {
+				from {
+					$left: math.sin($maxRot) * $maxDistanceX;
+					left: $left;
+					animation-timing-function: $cb_quarter-cos;
+				}
+				80% {
+					$left: math.sin($maxRot * .2) * $maxDistanceX;
+					left: $left;
+					animation-timing-function: $cb_quarter-sin;
+				}
+				to {
+					left: 0;
+				}
 			}
-			85% {
-				transform: rotateY(0deg) translateZ($pushback * math.sin(math.$pi * 3 / 8));
+			@keyframes #{$name}-transform {
+				from {
+					$translateZ: $pushback + (1 - math.cos($maxRot)) * $maxDistanceZ;
+					transform: rotateY($maxRotCss) translateZ($translateZ);
+					animation-timing-function: $cb_quarter-sin;
+				}
+				80% {
+					transform: rotateY(0deg) translateZ($pushback);
+					animation-timing-function: $cb_quarter-cos;
+				}
+				to {
+					transform: rotateY(0deg) translateZ(0);
+				}
 			}
-			90% {
-				transform: rotateY(0deg) translateZ($pushback * math.sin(math.$pi * 2 / 8));
-				left: 0;
+			
+		} @else {
+			//from front to back
+			@keyframes #{$name}-height {
+				from {
+					max-height: 500vh;
+				}
+				20% {
+					max-height: 100vh;
+				}
+				to {
+					max-height: 100vh;
+				}
 			}
-			95% {
-				transform: rotateY(0deg) translateZ($pushback * math.sin(math.$pi * 1 / 8));
-				//animation-timing-function: ease-out;
+			@keyframes #{$name}-left {
+				from {
+					left: 0;
+					animation-timing-function: $cb_quarter-cos;
+				}
+				20% {
+					$left: math.sin($maxRot * .2) * $maxDistanceX;
+					left: $left;
+					animation-timing-function: $cb_quarter-sin;
+				}
+				to {
+					$left: math.sin($maxRot) * $maxDistanceX;
+					left: $left;
+				}
 			}
-			100% {
-				max-height: 500vh;
-				left: 0;
-				transform: rotateY(0deg) translateZ(0);
+			@keyframes #{$name}-transform {
+				from {
+					transform: rotateY(0deg) translateZ(0);
+					animation-timing-function: $cb_quarter-sin;
+				}
+				20% {
+					transform: rotateY(0deg) translateZ($pushback);
+					animation-timing-function: $cb_quarter-cos;
+				}
+				to {
+					$translateZ: $pushback + (1 - math.cos($maxRot)) * $maxDistanceZ;
+					transform: rotateY($maxRotCss) translateZ($translateZ);
+				}
 			}
+			
 		}
 	}
 	//actual animations:
-	@include section-animation(section-rightToCenter--animation, $maxRotation, $maxRotationCss);
-	@include section-animation(section-leftToCenter--animation, -$maxRotation, -$maxRotationCss);
+	@include section-animation(section-rightToCenter--animation, in, $maxRotation, $maxRotationCss);
+	@include section-animation(section-leftToCenter--animation, in, -$maxRotation, -$maxRotationCss);
+	@include section-animation(section-centerToRight--animation, out, $maxRotation, $maxRotationCss);
+	@include section-animation(section-centerToLeft--animation, out, -$maxRotation, -$maxRotationCss);
 
 	@keyframes section-fromHome--animation {
 		0% {
@@ -118,11 +178,9 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
 
 		transform-origin: 50vw 50vh 0; //this is very different form 50% 50% 0!!!
 
-		animation-duration: $animationDuration;
 		animation-iteration-count: 1;
-		animation-timing-function: linear;
 
-		transition: max-height $animationDuration ease-in-out;
+		transition: max-height $animationDurationSection ease-in-out;
 
 		&.active {
 			max-height: 500vh;
@@ -130,19 +188,21 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
 			transform: rotateY(0deg) translateZ(0);
 			//toActive-Animations:
 			&.rightToCenter {
-				animation-name: section-rightToCenter--animation;
+				animation-duration: $animationDurationSection;
+				animation-name: section-rightToCenter--animation-height, section-rightToCenter--animation-left, section-rightToCenter--animation-transform;
 			}
 			&.leftToCenter {
-				animation-name: section-leftToCenter--animation;
+				animation-duration: $animationDurationSection;
+				animation-name: section-leftToCenter--animation-height, section-leftToCenter--animation-left, section-leftToCenter--animation-transform;
 			}
 		}
 		&.centerToRight {
-			animation-direction: reverse;
-			animation-name: section-rightToCenter--animation;
+			animation-duration: $animationDurationSection;
+			animation-name: section-centerToRight--animation-height, section-centerToRight--animation-left, section-centerToRight--animation-transform;
 		}
 		&.centerToLeft {
-			animation-direction: reverse;
-			animation-name: section-leftToCenter--animation;
+			animation-duration: $animationDurationSection;
+			animation-name: section-centerToLeft--animation-height, section-centerToLeft--animation-left, section-centerToLeft--animation-transform;
 		}
 		&.toHome {
 			left: 0;
@@ -151,10 +211,12 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
 			opacity: 0;
 			max-height: 49vh;
 
+			animation-duration: $animationDurationHome;
 			animation-name: section-toHome--animation;
 			animation-timing-function: ease-in-out;
 		}
 		&.fromHome {
+			animation-duration: $animationDurationHome;
 			animation-name: section-fromHome--animation;
 			animation-timing-function: ease-in-out;
 		}
@@ -163,16 +225,16 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
 	header {
 		top: 50vh;
 		transform: translateY(-50%);
-		transition: top $animationDuration ease-in-out, transform $animationDuration ease-in-out;
+		transition: top $animationDurationHome ease-in-out, transform $animationDurationHome ease-in-out;
 
 		.header_logo {
 			transform: rotateY(360deg);
-			transition: transform $animationDuration ease-in-out;
+			transition: transform $animationDurationHome ease-in-out;
 		}
 		nav {
 			opacity: 0;
 			visibility: hidden;
-			transition: opacity $animationDuration ease-in-out, visibility $animationDuration ease-in-out;
+			transition: opacity $animationDurationHome ease-in-out, visibility $animationDurationHome ease-in-out;
 		}
 
 		&.top {

@@ -30,12 +30,16 @@ let cc = {
 					document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
 
 				}
-			} else if (this.currentActive === null || this.currentActive == "home"){
-				if (hashName != "home") {
-					// from home (or nothing) to section
+			} else if (this.currentActive == "home" && hashName != "home"){
+				// from home to section
+				document.querySelector("header").classList.add("top");
+				document.querySelector("section."+hashName).classList.add("active", "fromHome");
+			} else if (this.currentActive === null && hashName != "home"){
+				//first call (init)
+				setTimeout(function() {
 					document.querySelector("header").classList.add("top");
 					document.querySelector("section."+hashName).classList.add("active", "fromHome");
-				}
+				}, 200)
 			}
 		} else {
 			//unknown hash!
