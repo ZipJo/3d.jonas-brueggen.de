@@ -1,65 +1,67 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Jonas Brüggen | Webdesign</title>
-    <meta name="description" content="Jonas Brüggen | Web design and full stack development | Based in Köln, working worldwide" />
-    <meta name="keywords" content="Web Design, Full Stack, Web Development, Wordpress, Freelance, Köln, Cologne, Brüggen, Jonas " />
-    <meta name="author" content="www.jonas-brueggen.de" />
-    <meta name="viewport" content="width=device-width">
-    <link rel="icon" href="files/icon_colored.ico">
-    <!-- build:css css/jb_main.min.css -->
-        <link rel="stylesheet" href="css/jb_main.css" media="all" />
-    <!-- endbuild -->
-    <script src="js/three.min.js"></script>
-    <script src="js/stats.min.js"></script>
-    <!-- build:js js/jb_main.min.js -->
-        <script src="js/scripts.js"></script>
-        <script src="js/jbparticlebg.js"></script>
-    <!-- endbuild -->
-    @@include('index_inline_css.html')
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Jonas Brüggen | Webdesign</title>
+	<meta name="description" content="Jonas Brüggen | Web design and full stack development | Based in Köln, working worldwide" />
+	<meta name="keywords" content="Web Design, Full Stack, Web Development, Wordpress, Freelance, Köln, Cologne, Brüggen, Jonas " />
+	<meta name="author" content="www.jonas-brueggen.de" />
+	<meta name="viewport" content="width=device-width">
+	<link rel="icon" href="files/icon_colored.ico">
+	<!-- build:css css/jb_main.min.css -->
+		<link rel="stylesheet" href="css/jb_main.css" media="all" />
+	<!-- endbuild -->
+	<script src="js/three.min.js"></script>
+	<script src="js/stats.min.js"></script>
+	<!-- build:js js/jb_main.min.js -->
+		<script src="js/scripts.js"></script>
+		<script src="js/jbparticlebg.js"></script>
+	<!-- endbuild -->
+	@@include('index_inline_css.html')
 </head>
 <body>
-    <div class="page_loader">
-        <div class="loader"></div>
-    </div>
-    <div class="popup_container" onclick="this.classList.remove('active');"></div>
+	<div class="page_loader">
+		<div class="loader"></div>
+	</div>
+	<div class="popup_container" onclick="this.classList.remove('active');"></div>
 
-    <div id="id_wrapper" class="wrapper hide_container">
-        <!-- page wrapper starts here -->
-        <header class="header" id="id_header">
-            <div class="header_logo">
-                <a>
-                    <div class="logo_wrapper animate_in" id="id_logo_wrapper" onclick="cc.toggleHash();">
-                        <img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
-                        <img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
-                    </div>
-                </a>
-                <h3>Jonas Brüggen</h3>
-                <h4>development & web design</h4>
-            </div>
-            <nav>
-                <a href="#/projects">projects</a>
-                <a href="#/about">about</a>
-                <a href="#/x404">TEST (404)</a>
-            </nav>
-        </header>
-        @@include('projects.html')
-        @@include('about.html')
-        @@include('x404.html')
-        <div class="sm_wrap" onclick="this.classList.toggle('expand');">
-            <div class="sm" onclick="event.stopPropagation();">
-                <label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
-                <input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
-                
-            </div>
-        </div>
-        <!-- end of page wrapper -->
-    </div>
-    <div id="particle_background">
-        <span id="motion_dot"></span>
-        <canvas></canvas>
-    </div>
-    @@include('index_inline_js.html')
+	<div id="id_wrapper" class="wrapper hide_container">
+		<!-- page wrapper starts here -->
+		<header class="header" id="id_header">
+			<div class="header_logo" onclick="cc.toggleHash();">
+				<a>
+					<div class="logo_wrapper animate_in" id="id_logo_wrapper">
+						<img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
+						<img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
+					</div>
+				</a>
+			</div>
+			<div class="logo_subtext" onclick="cc.toggleHash();">
+				<h3>Jonas Brüggen</h3>
+				<h4>development & web design</h4>
+			</div>
+			<nav>
+				<a href="#/projects">projects</a>
+				<a href="#/about">about</a>
+			</nav>
+			<span class="enter" onclick="cc.toggleHash();"></span>
+		</header>
+		@@include('projects.html')
+		@@include('about.html')
+		@@include('x404.html')
+		<div class="sm_wrap" onclick="this.classList.toggle('expand');">
+			<div class="sm" onclick="event.stopPropagation();">
+				<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
+				<input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
+				
+			</div>
+		</div>
+		<!-- end of page wrapper -->
+	</div>
+	<div id="particle_background">
+		<span id="motion_dot"></span>
+		<canvas></canvas>
+	</div>
+	@@include('index_inline_js.html')
 </body>
 </html>

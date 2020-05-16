@@ -43,7 +43,7 @@ let pBg = function(qSelector, parameters, cb) {
 				zeroVector: new THREE.Vector3(0, 0, 0),
 				vectorAccuracy: 1000,
 				particleCount: 5000,
-				helpers: true
+				helpers: false
 			}
 		},
 		fps: 60

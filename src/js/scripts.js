@@ -23,23 +23,29 @@ let cc = {
 				} else {
 					// from section to section
 					document.querySelector("header").classList.add("top");
-					console.log(this.currentActive);
-					console.log(hashName);
-
-					document.querySelector("section."+hashName).classList.add("active", "rightToCenter");
-					document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
-
+					if (this.allowedNames.indexOf(this.currentActive) < this.allowedNames.indexOf(hashName)){
+						document.querySelector("section."+hashName).classList.add("active", "rightToCenter");
+						document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
+					} else {
+						document.querySelector("section."+hashName).classList.add("active", "leftToCenter");
+						document.querySelector("section."+this.currentActive).classList.add("centerToRight");						
+					}
 				}
 			} else if (this.currentActive == "home" && hashName != "home"){
 				// from home to section
 				document.querySelector("header").classList.add("top");
 				document.querySelector("section."+hashName).classList.add("active", "fromHome");
 			} else if (this.currentActive === null && hashName != "home"){
-				//first call (init)
+				//first call (init) for not-home
 				setTimeout(function() {
 					document.querySelector("header").classList.add("top");
 					document.querySelector("section."+hashName).classList.add("active", "fromHome");
 				}, 200)
+			} else if (this.currentActive === null && hashName == "home"){
+				//first call (init) forhome
+				setTimeout(function() {
+					document.querySelector("header > span.enter").classList.add("visible");
+				}, 5000);
 			}
 		} else {
 			//unknown hash!
@@ -55,6 +61,7 @@ let cc = {
 			header = document.querySelector("header"),
 			classes = ["active","rightToCenter","leftToCenter","centerToRight","centerToLeft","toHome","fromHome","top"];
 
+		document.querySelector("header > span.enter").classList.remove("visible");
 		header.classList.remove(...classes);
 		sections.forEach(function(section) {
 			section.classList.remove(...classes);
