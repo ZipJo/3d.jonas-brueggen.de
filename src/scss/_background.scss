@@ -1,11 +1,7 @@
 // _background.scss
 @use 'variables';
 
-$baseLength: 100vMax;
-
-
-
-div#particle_background {
+div#tjs_bg {
 	overflow: hidden;
 	position: fixed;
 	top: 0;
@@ -14,17 +10,6 @@ div#particle_background {
 	width: 100vw;
 	height: 100vh;
 	background: variables.$color-page-bg;
-	
-	span#motion_dot {
-		height: 10px;
-		width: 10px;
-		border-radius: 5px;
-		background: darkred;
-		display: block;
-		transform: translate(50vw, 50vh);
-		position: absolute;
-		transition: all 0.2s;
-	}
 
 	canvas {
 		width: 100%;

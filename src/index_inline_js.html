@@ -11,35 +11,10 @@
 		}
 	}
 
-
 function startup() {
 	//loader();
-	//init_eruda(jb_particles); //mobile console - for dev purposes
-	jb_particles(loader);
-	cc.init();
-}
-
-function jb_particles(cb) {
-	jbParticleBg('div#particle_background > canvas', {
-		interactivity: {
-			events: {
-				onhover: {
-					enable: true
-				},
-				onclick: {
-					enable: false
-				},
-				resize: false
-			}
-		},
-		functions: {
-			vars: {
-				containment: 80
-			}
-		}
-	}, function() {
-		if (cb) cb();
-	});
+	//init_eruda(jb_main.init()); //mobile console - for dev purposes
+	jb_main.init(loader);
 }
 
 function loader(cb) {

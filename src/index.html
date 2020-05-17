@@ -13,9 +13,13 @@
 	<!-- endbuild -->
 	<script src="js/three.min.js"></script>
 	<script src="js/stats.min.js"></script>
-	<!-- build:js js/jb_main.min.js -->
+
+	<!-- build:js js/jb.min.js -->
 		<script src="js/scripts.js"></script>
-		<script src="js/jbparticlebg.js"></script>
+		<script src="js/events.js"></script>
+		<script src="js/canvasanimations.js"></script>
+		<script src="js/domanimations.js"></script>
+		<script src="js/main.js"></script>
 	<!-- endbuild -->
 	<!-- spinner style -->
 <style>
@@ -77,7 +81,7 @@
 	<div id="id_wrapper" class="wrapper hide_container">
 		<!-- page wrapper starts here -->
 		<header class="header" id="id_header">
-			<div class="header_logo" onclick="cc.toggleHash();">
+			<div class="header_logo" onclick="jb_scripts.contentChanger.toggleHash();">
 				<a>
 					<div class="logo_wrapper animate_in" id="id_logo_wrapper">
 						<img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
@@ -85,7 +89,7 @@
 					</div>
 				</a>
 			</div>
-			<div class="logo_subtext" onclick="cc.toggleHash();">
+			<div class="logo_subtext" onclick="jb_scripts.contentChanger.toggleHash();">
 				<h3>Jonas Brüggen</h3>
 				<h4>development & web design</h4>
 			</div>
@@ -93,7 +97,7 @@
 				<a href="#/projects">projects</a>
 				<a href="#/about">about</a>
 			</nav>
-			<span class="enter" onclick="cc.toggleHash();"></span>
+			<span class="enter" onclick="jb_scripts.contentChanger.toggleHash();"></span>
 		</header>
 		<section class="projects">
 	<h1>Dummy-Projekt-content</h1>
@@ -236,7 +240,7 @@
 
 			<p>I have a professional certification as a systems-integrator, meaning network-design and a degree in computer sciences with IT consulting and project management as a main focus.</p>
 
-			<p>If you're interested in my work, <a class="fancy_link" onclick="triggerContactTileAnimation();">just contact me</a>.</p>
+			<p>If you're interested in my work, <a class="fancy_link" onclick="jb_scripts.triggerContactTileAnimation();">just contact me</a>.</p>
 		</div>
 	</div>
 	<div class="about_sidebar">
@@ -252,14 +256,15 @@
 			<a href="https://wa.me/4915759073485" target="_blank"><span></span></a>
 		</div>
 		<div class="about_imprint">
-			<p><a class="fancy_link fancy_link--reversed"onclick="customPopup('nocontent', '1400px', 'impressum.htm');">Imprint and privacy policy</a></p>
+			<p><a class="fancy_link fancy_link--reversed"onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');">Imprint and privacy policy</a></p>
 		</div>
 	</div>
 </section>
 		<section class="x404">
 	<h1>404</h1>
 </section>
-		<div class="sm_wrap" onclick="this.classList.toggle('expand');">
+		
+		<div class="sm_wrap" style="display:none;" onclick="this.classList.toggle('expand');">
 			<div class="sm" onclick="event.stopPropagation();">
 				<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
 				<input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
@@ -268,9 +273,9 @@
 		</div>
 		<!-- end of page wrapper -->
 	</div>
-	<div id="particle_background">
-		<span id="motion_dot"></span>
-		<canvas></canvas>
+	<div id="tjs_bg">
+		<!-- <span id="motion_dot"></span> -->
+		<canvas id="bg_canvas"></canvas>
 	</div>
 	<!-- spinner javascript -->
 <script>
@@ -285,35 +290,10 @@
 		}
 	}
 
-
 function startup() {
 	//loader();
-	//init_eruda(jb_particles); //mobile console - for dev purposes
-	jb_particles(loader);
-	cc.init();
-}
-
-function jb_particles(cb) {
-	jbParticleBg('div#particle_background > canvas', {
-		interactivity: {
-			events: {
-				onhover: {
-					enable: true
-				},
-				onclick: {
-					enable: false
-				},
-				resize: false
-			}
-		},
-		functions: {
-			vars: {
-				containment: 80
-			}
-		}
-	}, function() {
-		if (cb) cb();
-	});
+	//init_eruda(jb_main.init()); //mobile console - for dev purposes
+	jb_main.init(loader);
 }
 
 function loader(cb) {
