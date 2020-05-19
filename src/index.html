@@ -13,6 +13,7 @@
 	<!-- endbuild -->
 	<script src="js/three.min.js"></script>
 	<script src="js/stats.min.js"></script>
+	<script src="js/canvasanimations-config.js"></script>
 
 	<!-- build:js js/jb.min.js -->
 		<script src="js/scripts.js"></script>
@@ -61,13 +62,12 @@
 		z-index: -1000 !important;
 	}
 
-	.wrapper {
-		z-index: 0;
+	.wrapper, .tjs_bg {
 		opacity: 1;
 		transition: opacity .4s ease-in-out;
 	}
 
-	.wrapper.hide_container {
+	.wrapper.hide_container, .tjs_bg.hide_container {
 		opacity: 0;
 	}
 </style>
@@ -229,8 +229,8 @@
 -->
 </section>
 		<section class="about">
-	<div class="about_text_wrapper">
-		<div class="about_text">
+	<div class="text_wrapper">
+		<article class="text">
 			<p>After more than six years of working as a middleware developer in Germany, I decided it's time to break out of my comfort zone. I'm mostly doing volunteer work, but since webdesign has always been my main professional interest, I started freelancing in this area.</p>
 
 			<p>I have about eight years of experience with webdevelopment and I have gotten more serious around 2017. My professional background lies mostly in process automation with big-data and focuses on performance and stability, as well as encryption and security.<br />
@@ -241,9 +241,9 @@
 			<p>I have a professional certification as a systems-integrator, meaning network-design and a degree in computer sciences with IT consulting and project management as a main focus.</p>
 
 			<p>If you're interested in my work, <a class="fancy_link" onclick="jb_scripts.triggerContactTileAnimation();">just contact me</a>.</p>
-		</div>
+		</article>
 	</div>
-	<div class="about_sidebar">
+	<aside>
 		<div class="contact_address_wrapper">
 			<div class="contact_address">
 				<p><b>Jonas Brüggen</b><br>Darmstädter Str. 4<br>50678 Cologne<br>GERMANY</p>
@@ -255,25 +255,17 @@
 			<a href="skype:jonas.brueggen@gmail.com?chat"><span></span></a>
 			<a href="https://wa.me/4915759073485" target="_blank"><span></span></a>
 		</div>
-		<div class="about_imprint">
+		<div class="imprint">
 			<p><a class="fancy_link fancy_link--reversed"onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');">Imprint and privacy policy</a></p>
 		</div>
-	</div>
+	</aside>
 </section>
 		<section class="x404">
 	<h1>404</h1>
 </section>
-		
-		<div class="sm_wrap" style="display:none;" onclick="this.classList.toggle('expand');">
-			<div class="sm" onclick="event.stopPropagation();">
-				<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
-				<input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
-				
-			</div>
-		</div>
 		<!-- end of page wrapper -->
 	</div>
-	<div id="tjs_bg">
+	<div id="tjs_bg" class="tjs_bg hide_container">
 		<!-- <span id="motion_dot"></span> -->
 		<canvas id="bg_canvas"></canvas>
 	</div>
@@ -291,15 +283,20 @@
 	}
 
 function startup() {
-	//loader();
-	//init_eruda(jb_main.init()); //mobile console - for dev purposes
-	jb_main.init(loader);
+	let dev = false;
+	if (dev) {
+		loader();
+		init_eruda(jb_main.init()); //mobile console - for dev purposes
+	} else {
+		jb_main.init(loader);
+	}
 }
 
 function loader(cb) {
 	document.getElementsByClassName("loader")[0].classList.add("global_hide");
 	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
 	document.getElementById("id_wrapper").classList.remove("hide_container");
+	document.getElementById("tjs_bg").classList.remove("hide_container");
 	if (cb) cb();
 }
 

@@ -1,75 +1,58 @@
 const jb_anim = {
 
-	// ================== //
-	// ================== //
-	// Default parameters //
-	// ================== //
-	// ================== //
-
-	//will be merged with this.obj and init-parameters in this.start
-
-	defaults: {
-		tjs_vars: {
-			camRotationRadius: 500,
-			autoRotationSpeed: 0.05, //in rpm
-			vectorAccuracy: 1000,
-			particleCount: 5000,
-			motionSmoothing: 945, //from 0 to 1000
-			helpers: true
-		},
-		hoverPerspectiveContainment: 10, //100% = 90° (π/2)
-		fps: 60,
-		threejs: {}
+	data: {
+		threejs: {},
+		options: {}
 	},
-
 	// ===================== //
 	// ===================== //
 	// init & draw-functions //
 	// ===================== //
 	// ===================== //
 
-	start(qSelector, parameters, cb){
+	start(qSelector, options, cb){
 
 		let canvas_el = document.querySelector(qSelector);
 
 		// variables with default values
-		this.obj = {
-			canvas: {
-				elem: canvas_el,
-				width: canvas_el.parentElement.offsetWidth,
-				height: canvas_el.parentElement.offsetHeight,
-			}
+		this.data.canvas = {
+			elem: canvas_el,
+			width: canvas_el.parentElement.offsetWidth,
+			height: canvas_el.parentElement.offsetHeight,			
 		}
 
-		jb_scripts.objDeepExtend(this.obj, this.defaults);
+		jb_scripts.objDeepExtend(this.data.options, jb_anim_options);
 
-		if (parameters) {
-			jb_scripts.objDeepExtend(this.obj, parameters);
+		if (options) {
+			jb_scripts.objDeepExtend(this.data.options, options);
 		}
 
-		//set other vars
-		if (this.obj.fps > 30) {
-			this.obj.fps = 60
+		//calculate global vars
+		this.data.threejs.currentQuaternion = new THREE.Quaternion();
+		this.data.threejs.aspect = this.data.canvas.width / this.data.canvas.height;
+
+
+		//set other options
+		if (this.data.options.fps > 30) {
+			this.data.options.fps = 60
 		}
-
-		this.obj.tjs_vars.camFrustumNearField = this.obj.tjs_vars.camRotationRadius / 3;
-
+		this.data.options.camFrustumNearField = this.data.options.camRotationRadius / 3;
+		//one rotation = 2PI, autoRotationSpeed is initially in rpm
+		this.data.options.autoRotationSpeed = Math.round(this.data.options.autoRotationSpeed * 2 * Math.PI / this.data.options.fps / 60 * 1000000) / 1000000;
 
 		//parameters are set, everything else can begin now!
 		//initialize all the things
 		this.init();
 		
-		//start animation-loop ~three frames delayed, to give the eventlisteners time to do their stuff
-		//last call before the animation counts as initialized!
-		setTimeout(function(){
-			jb_anim.draw();
-			if (cb) cb();
-		}, 3 * 1000 / this.obj.fps);
+		//start animation-loop
+		this.draw();
+
+		this.callback = cb;
 	},
 
 	init(){
 
-		//initialize the background-animation
+		//initialize the webgl-canvas and objects
 		this.initThreeJs();
 
 		//add worker + event, if feature available
@@ -84,60 +67,99 @@ const jb_anim = {
 			this.backgroundMathWorker.postMessage(this.getWorkerData());
 		}
 
-		//add the fps-meter
-		if (this.obj.tjs_vars.helpers) {
+		//add html-objects
+		if (this.data.options.helpers) {
+			//fps-meter
 			this.stats = new Stats();
 			document.body.appendChild( this.stats.dom );
+			
+			this.stats.dom.insertAdjacentHTML('beforeBegin', `
+			<div class="sm_wrap" onclick="this.classList.toggle('expand');">
+				<div class="sm" onclick="event.stopPropagation();">
+					<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
+					<input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
+					
+				</div>
+			</div>`);
 		}
+
 
 	},
 
 	//Animation-loop
 	draw() {
 		// set the redraw-speed according to the fps-parameter; over 30 = as fast as possible
-		if (jb_anim.obj.fps > 30) {
+		if (jb_anim.data.options.fps > 30) {
 			window.requestAnimationFrame(jb_anim.draw);
 		} else {
-			setTimeout(jb_anim.draw, 1000 / jb_anim.obj.fps); //this is not on time, but close enough..!
+			setTimeout(jb_anim.draw, 1000 / jb_anim.data.options.fps); //this is not on time, but close enough..!
 		}
 
 		//check for new events
 		jb_anim.eventLoop();
 
-		jb_anim.renderThreeJs();
+		//update helpers that need redrawing
+		if (jb_anim.data.options.helpers){
+			let smoothing = document.getElementById("smoothing").value; //how "heavy" is the previous rotation? Value between 0 and 1
+			document.getElementById("sm_value").innerText = smoothing;
+			jb_anim.data.options.motionSmoothing = 1-(smoothing/1000);
+		}
+
 
 		//if workers are available, outsource the math into a worker
 		if (typeof(jb_anim.backgroundMathWorker) !== "undefined") {
 			//only do stuff, if worker returned new Data! (flag is set in the onmessage-listener)
 			if (jb_anim.newWorkerData){
-				jb_anim.backgroundMathWorker.postMessage(jb_anim.getWorkerData());
 				jb_anim.newWorkerData = false;
 
+				let camMatrix = new THREE.Matrix4().fromArray(jb_anim.workerData.camMatrix);
+
 				//translate new data into scene
-				jb_anim.workerData;
+				jb_anim.data.threejs.camera.position.setFromMatrixPosition(camMatrix);
+				jb_anim.data.threejs.camera.rotation.setFromRotationMatrix(camMatrix);
+				jb_anim.data.threejs.particleObject.rotation.fromArray(jb_anim.workerData.particleRotation);
+				jb_anim.data.threejs.particleObject.updateMatrix();
+				jb_anim.backgroundMathWorker.postMessage(jb_anim.getWorkerData());
+
+				jb_anim.data.threejs.camera.updateMatrix();
 
 				//re-render canvas with new values:
-				jb_anim.obj.threejs.renderer.clear();
-				jb_anim.obj.threejs.renderer.render(jb_anim.obj.threejs.scene, jb_anim.obj.threejs.camera);
+				jb_anim.data.threejs.renderer.clear();
+				jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
+
+				if (jb_anim.callback) {
+					jb_anim.callback();
+					jb_anim.callback = null;
+				}
 			}
 		} else {
 			//no web worker support - do the math on the main thread
-			jb_anim.updateCanvasObjects();
-			
+			jb_anim.renderThreeJs_singlethread();
+			jb_anim.data.threejs.camera.updateMatrix();
+
 			//re-render canvas with new values:
-			jb_anim.obj.threejs.renderer.clear();
-			jb_anim.obj.threejs.renderer.render(jb_anim.obj.threejs.scene, jb_anim.obj.threejs.camera);
+			jb_anim.data.threejs.renderer.clear();
+			jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
+
+			if (jb_anim.callback) {
+				jb_anim.callback();
+				jb_anim.callback = null;
+			}
 		}
-
-
-		if (jb_anim.obj.tjs_vars.helpers) jb_anim.stats.update();
+		if (jb_anim.data.options.helpers) jb_anim.stats.update();
 	},
 
 	getWorkerData(){
-		let retObj = {};
-
-
-		return retObj;
+		return {
+			//camMatrix: this.data.threejs.camera.matrix.toArray(),
+			particleMatrix: this.data.threejs.particleObject.matrix.toArray(),
+			eventVars: jb_events.vars,
+			eventStatus: jb_events.vars.status,
+			canvas_width: this.data.canvas.width,
+			canvas_height: this.data.canvas.height,
+			camInit: this.data.threejs.cameraInitialPosition.toArray(),
+			rotationSpeed: this.data.options.autoRotationSpeed
+		};
 	},
 
 	// ================= //
@@ -147,47 +169,37 @@ const jb_anim = {
 	// ================= //
 
 	initThreeJs(){
-		//setup variables
-		this.obj.tjs_vars.timer = 0;
-		this.obj.threejs.currentQuaternion = new THREE.Quaternion();
-		this.obj.threejs.prevQuaternion = new THREE.Quaternion();
-
-		//one rotation = 2PI
-		this.obj.tjs_vars.autoRotationSpeed = Math.round(this.obj.tjs_vars.autoRotationSpeed * 2 * Math.PI / this.obj.fps / 60 * 1000000) / 1000000;
-
-		this.obj.threejs.aspect = this.obj.canvas.width / this.obj.canvas.height;
-
 		//setup scene
-		this.obj.threejs.scene = new THREE.Scene();
-		this.obj.threejs.scene.background = new THREE.Color(0x011823);
-		this.obj.threejs.scene.fog = new THREE.Fog({
+		this.data.threejs.scene = new THREE.Scene();
+		this.data.threejs.scene.background = new THREE.Color(0x011823);
+		this.data.threejs.scene.fog = new THREE.Fog({
 			color: 0x011823,
-			near: this.obj.tjs_vars.camFrustumNearField,
-			far: this.obj.tjs_vars.camRotationRadius+750
+			near: this.data.options.camFrustumNearField,
+			far: this.data.options.camRotationRadius+750
 		});
 
 		//setup camera
-		this.obj.threejs.camera = new THREE.PerspectiveCamera(50, this.obj.threejs.aspect, this.obj.tjs_vars.camFrustumNearField-50, 2000);
-		this.obj.threejs.camera.position.y = this.obj.tjs_vars.camRotationRadius;
-		this.obj.threejs.cameraInitialPosition = this.obj.threejs.camera.position.clone();
+		this.data.threejs.camera = new THREE.PerspectiveCamera(50, this.data.threejs.aspect, this.data.options.camFrustumNearField-50, 2000);
+		this.data.threejs.camera.position.y = this.data.options.camRotationRadius;
+		this.data.threejs.cameraInitialPosition = this.data.threejs.camera.position.clone();
 
-		this.obj.threejs.scene.add(this.obj.threejs.camera);
+		this.data.threejs.scene.add(this.data.threejs.camera);
 
 		//background-particles, spread in a cube from -750 to 750 on each axis
 		var geometry = new THREE.BufferGeometry();
 		var vertices = [];
 
-		for (var i = 0; i < this.obj.tjs_vars.particleCount; i++) {
+		for (var i = 0; i < this.data.options.particleCount; i++) {
 			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // x
 			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // y
 			vertices.push(THREE.MathUtils.randFloatSpread(1500)); // z
 		}
 
 		//push particles inwards, that would clip the frustumNearField
-		let minClippingDistance = this.obj.tjs_vars.camRotationRadius - this.obj.tjs_vars.camFrustumNearField,
-			clipDistX = this.obj.tjs_vars.camFrustumNearField * this.obj.threejs.aspect * Math.tan(25 / 180 * Math.PI),
+		let minClippingDistance = this.data.options.camRotationRadius - this.data.options.camFrustumNearField,
+			clipDistX = this.data.options.camFrustumNearField * this.data.threejs.aspect * Math.tan(25 / 180 * Math.PI),
 			clipDistY = minClippingDistance,
-			clipDistZ = this.obj.tjs_vars.camFrustumNearField * Math.tan(25 / 180 * Math.PI),
+			clipDistZ = this.data.options.camFrustumNearField * Math.tan(25 / 180 * Math.PI),
 			maxClippingDistance = new THREE.Vector3(clipDistX,clipDistY,clipDistZ).length(),
 			clipDiff = maxClippingDistance - minClippingDistance;
 		
@@ -209,147 +221,105 @@ const jb_anim = {
 		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
 		var sprite = new THREE.TextureLoader().load('/js/dot.png');
-		this.obj.threejs.particleObject = new THREE.Points(geometry, new THREE.PointsMaterial({
+		this.data.threejs.particleObject = new THREE.Points(geometry, new THREE.PointsMaterial({
 			size: 5,
 			map: sprite,
 			color: 0xffffff,
 			transparent: true
 		}));
 
-		this.obj.threejs.scene.add(this.obj.threejs.particleObject);
+		this.data.threejs.scene.add(this.data.threejs.particleObject);
 
 		//setup Helpers
-		if (this.obj.tjs_vars.helpers) {
+		if (this.data.options.helpers) {
 			//axes
 			var axesHelper = new THREE.AxesHelper(20);
-			this.obj.threejs.scene.add(axesHelper);
+			this.data.threejs.scene.add(axesHelper);
 
 			//arrow+cube
 			var ah_dir = new THREE.Vector3( 0, 1, 0 );
 			var ah_origin = new THREE.Vector3( 0, 0, 0 );
 			var ah_length = 100;
 			var ah_hex = 0xffff00;
-			this.obj.threejs.arrowHelper = new THREE.ArrowHelper( ah_dir, ah_origin, ah_length, ah_hex );
-			this.obj.threejs.scene.add( this.obj.threejs.arrowHelper );
+			this.data.threejs.arrowHelper = new THREE.ArrowHelper( ah_dir, ah_origin, ah_length, ah_hex );
+			this.data.threejs.scene.add( this.data.threejs.arrowHelper );
 
 			var qh_geometry = new THREE.BoxBufferGeometry( 50, 50, 50 );
-			var qh_geometry2 = new THREE.BoxBufferGeometry( this.obj.canvas.width/8.5, 1, this.obj.canvas.height/8.5 );
+			var qh_geometry2 = new THREE.BoxBufferGeometry( this.data.canvas.width/8.5, 1, this.data.canvas.height/8.5 );
 
 			var qh_material = new THREE.MeshBasicMaterial( {wireframe: true} );
-			this.obj.threejs.cubeHelper = new THREE.Mesh( qh_geometry2, qh_material );
-			this.obj.threejs.cubeHelper.position.x = minClippingDistance;
-			this.obj.threejs.cubeHelper.rotateZ(Math.PI/2);
-			this.obj.threejs.scene.add( this.obj.threejs.cubeHelper );
+			this.data.threejs.cubeHelper = new THREE.Mesh( qh_geometry2, qh_material );
+			this.data.threejs.cubeHelper.position.x = minClippingDistance;
+			this.data.threejs.cubeHelper.rotateZ(Math.PI/2);
+			this.data.threejs.scene.add( this.data.threejs.cubeHelper );
 
 
-			this.obj.threejs.cubeHelper2 = new THREE.Mesh( qh_geometry2, qh_material );
-			this.obj.threejs.cubeHelper2.position.y = 0;
-			this.obj.threejs.scene.add( this.obj.threejs.cubeHelper2 );
+			this.data.threejs.cubeHelper2 = new THREE.Mesh( qh_geometry2, qh_material );
+			this.data.threejs.cubeHelper2.position.y = 0;
+			this.data.threejs.scene.add( this.data.threejs.cubeHelper2 );
 
-			this.obj.threejs.cubeHelper3 = new THREE.Mesh( qh_geometry2, qh_material );
-			this.obj.threejs.cubeHelper3.position.y = minClippingDistance;
-			//this.obj.threejs.cubeHelper3.position.x = 100;
-			this.obj.threejs.scene.add( this.obj.threejs.cubeHelper3 );
+			this.data.threejs.cubeHelper3 = new THREE.Mesh( qh_geometry2, qh_material );
+			this.data.threejs.cubeHelper3.position.y = minClippingDistance;
+			//this.data.threejs.cubeHelper3.position.x = 100;
+			this.data.threejs.scene.add( this.data.threejs.cubeHelper3 );
 		}
+
+		//disable auto-updates. this will be handeled in the draw-method!
+		this.data.threejs.camera.matrixAutoUpdate = false;
+		this.data.threejs.particleObject.matrixAutoUpdate = false;
 
 
 		//renderer
-		this.obj.threejs.renderer = new THREE.WebGLRenderer({
-			canvas: this.obj.canvas.elem,
+		this.data.threejs.renderer = new THREE.WebGLRenderer({
+			canvas: this.data.canvas.elem,
 			antialias: true
 		});
-		this.obj.threejs.renderer.setPixelRatio(window.devicePixelRatio);
-		this.obj.threejs.renderer.setSize(this.obj.canvas.width, this.obj.canvas.height);
-		this.obj.threejs.renderer.autoClear = false;
+		this.data.threejs.renderer.setPixelRatio(window.devicePixelRatio);
+		this.data.threejs.renderer.setSize(this.data.canvas.width, this.data.canvas.height);
+		this.data.threejs.renderer.autoClear = false;
 	},
 
-	 renderThreeJs() {
+	 renderThreeJs_singlethread() {
+	 	//do the same stuff the worker does, but on main thread
 
 		// ================== //		
 		// 01 - camera-motion //
 		// ================== //
 		
-		if (this.obj.tjs_vars.helpers){
-			let smoothing = document.getElementById("smoothing").value; //how "heavy" is the previous rotation? Value between 0 and 1
-			document.getElementById("sm_value").innerText = smoothing;
-			this.obj.tjs_vars.motionSmoothing = smoothing
-		}
-		let motion_smoothing = 1-(this.obj.tjs_vars.motionSmoothing/1000);
+
 		let eulerObj = null;
-
 		if (jb_events.vars.deviceOrientation.sensorStatus) {
-			//Map camera to deviceOrientation
-			let alpha = jb_events.vars.deviceOrientation.tilt_alpha, //counterclockwise (0 to 360)
-				beta = jb_events.vars.deviceOrientation.tilt_beta, //up & down (-180 to 180)
-				gamma = jb_events.vars.deviceOrientation.tilt_gamma; //left & right (-90 to 90)
-
-			//Phone-to-ThreeJS-coordinate-System: XYZ -> XZY
-			//ThreeJS Order of application: XYZ
-			//Phone Order of application: ZXY
-			//Phone-to-ThreeJS-Trait-Bryan-Order: ZXY -> YXZ
-			//Phone-to-ThreeJS-Trait-Bryan-Angles: αβγ -> βαγ
-			//convert & norm PhoneEulerAngles from deg
-			let alphaTjs = Math.round((beta * Math.PI / 180.0) * 10000) / 10000,
-				betaTjs = Math.round((alpha * Math.PI / 180.0) * 10000) / 10000,
-				gammaTjs = -Math.round((gamma * Math.PI / 180.0) * 10000) / 10000;
-			//Calculate ThreeJS Euler-Object
-			eulerObj = new THREE.Euler(alphaTjs, betaTjs, gammaTjs, 'YXZ');
-			eulerObj.reorder('XYZ');
-
-			//Calculate stabilized Quaternion
-			this.obj.threejs.currentQuaternion = this.calc.calculateCurrentQuaternionFromEulerObj(this.obj.threejs.currentQuaternion, eulerObj,motion_smoothing);
-
+			eulerObj = this.calc.getEulerObjFromDeviceOrientation(jb_events.vars.deviceOrientation.tilt_alpha,jb_events.vars.deviceOrientation.tilt_beta,jb_events.vars.deviceOrientation.tilt_gamma);			//Calculate stabilized Quaternion
+			this.data.threejs.currentQuaternion = this.calc.calculateCurrentQuaternionFromEulerObj(this.data.threejs.currentQuaternion, eulerObj,this.data.options.motionSmoothing);
 		} else {
-			//Map camera to mouse-position
-			//normalized percentage
-			let percentage_x_mouse = jb_events.vars.onhover.pos_x / this.obj.canvas.width * this.obj.hoverPerspectiveContainment / 100;
-			let percentage_y_mouse = jb_events.vars.onhover.pos_y / this.obj.canvas.height * this.obj.hoverPerspectiveContainment / 100;
-			//so half of containmentPercentage = 0
-			percentage_x_mouse = percentage_x_mouse - this.obj.hoverPerspectiveContainment/100/2;
-			percentage_y_mouse = percentage_y_mouse - this.obj.hoverPerspectiveContainment/100/2;
-
-			//±100% = ±45° (±π/4)
-			let euler_x = Math.PI/4*percentage_x_mouse; //in rad
-			let euler_y = -Math.PI/4*percentage_y_mouse; //in rad, y is inverse
-
-
-			//transform mous-pos into x and z-angles
-			eulerObj = new THREE.Euler(euler_y,0,euler_x,'XYZ');
-
+			eulerObj = this.calc.getEulerObjFromMousePosition(jb_events.vars.onhover.pos_x,jb_events.vars.onhover.pos_y, this.data.canvas.width, this.data.canvas.height, this.data.options.hoverPerspectiveContainment);
 			//Calculate stabilized Quaternion
-			this.obj.threejs.currentQuaternion = this.calc.calculateCurrentQuaternionFromEulerObj(this.obj.threejs.currentQuaternion, eulerObj,motion_smoothing);
+			this.data.threejs.currentQuaternion = this.calc.calculateCurrentQuaternionFromEulerObj(this.data.threejs.currentQuaternion, eulerObj,this.data.options.motionSmoothing);
 		}
 
-		//the if/else re-calculates this.obj.threejs.currentQuaternion, based on either phone-motion, or mousemove. Set it here! 
-		let newCameraPos = this.calc.roundVector(this.obj.threejs.cameraInitialPosition.clone(), this.obj.tjs_vars.vectorAccuracy);
-		newCameraPos.applyQuaternion(this.obj.threejs.currentQuaternion);
+		//the if/else re-calculates this.data.threejs.currentQuaternion, based on either phone-motion, or mousemove. Set it here! 
+		let newCameraPos = this.calc.roundVector(this.data.threejs.cameraInitialPosition, this.data.options.vectorAccuracy);
+		newCameraPos.applyQuaternion(this.data.threejs.currentQuaternion);
 
 		//set new position
-		this.obj.threejs.camera.position.x = newCameraPos.x;
-		this.obj.threejs.camera.position.y = newCameraPos.y;
-		this.obj.threejs.camera.position.z = newCameraPos.z;
+		this.data.threejs.camera.position.x = newCameraPos.x;
+		this.data.threejs.camera.position.y = newCameraPos.y;
+		this.data.threejs.camera.position.z = newCameraPos.z;
 
 		//set new camera rotation
-		this.obj.threejs.camera.setRotationFromQuaternion(this.obj.threejs.currentQuaternion);
+		this.data.threejs.camera.setRotationFromQuaternion(this.data.threejs.currentQuaternion);
 		//rotate around X by 90 degrees, to make the camera look at the center.
 		//default camera view direction is -z, my view direction is -y
-		this.obj.threejs.camera.rotateX(-(Math.PI / 2));
-
-		//update camera position
-		this.obj.threejs.camera.updateProjectionMatrix();
+		this.data.threejs.camera.rotateX(-(Math.PI / 2));
 
 		// ==================== //		
 		// 02 - particle-motion //
 		// ==================== //
-		//timer is in rad
-		this.obj.tjs_vars.timer += this.obj.tjs_vars.autoRotationSpeed;
-
 		let particleRotationAxis = new THREE.Vector3(0,1,-4);
 		particleRotationAxis.normalize();
-		particleRotationAxis.applyQuaternion(this.obj.threejs.currentQuaternion);
+		particleRotationAxis.applyQuaternion(this.data.threejs.currentQuaternion);
 
-		if (this.obj.tjs_vars.helpers) this.obj.threejs.arrowHelper.setDirection(particleRotationAxis);
-		this.obj.threejs.particleObject.rotateOnAxis(particleRotationAxis,this.obj.tjs_vars.autoRotationSpeed)
+		this.data.threejs.particleObject.rotateOnAxis(particleRotationAxis,this.data.options.autoRotationSpeed)
 	},
 
 	// ================================= //
@@ -370,6 +340,51 @@ const jb_anim = {
 			return newVector;
 		},
 
+		getEulerObjFromDeviceOrientation(alpha, beta, gamma) {
+			//Map deviceOrientation to ThreeJS Euler-object
+			
+			//alpha: counterclockwise (0 to 360)
+			//beta:  up & down (-180 to 180)
+			//gamma: left & right (-90 to 90)
+
+			//Phone-to-ThreeJS-coordinate-System: XYZ -> XZY
+			//ThreeJS Order of application: XYZ
+			//Phone Order of application: ZXY
+			//Phone-to-ThreeJS-Trait-Bryan-Order: ZXY -> YXZ
+			//Phone-to-ThreeJS-Trait-Bryan-Angles: αβγ -> βαγ
+			//convert & norm PhoneEulerAngles from deg
+			let alphaTjs = Math.round((beta * Math.PI / 180.0) * 10000) / 10000,
+				betaTjs = Math.round((alpha * Math.PI / 180.0) * 10000) / 10000,
+				gammaTjs = -Math.round((gamma * Math.PI / 180.0) * 10000) / 10000;
+			//Calculate ThreeJS Euler-Object
+			let eulerObj = new THREE.Euler(alphaTjs, betaTjs, gammaTjs, 'YXZ');
+			eulerObj.reorder('XYZ');
+
+			return eulerObj;
+		},
+
+		getEulerObjFromMousePosition(pos_x, pos_y, canvas_width, canvas_height, contain){
+			//Map mouse-position to ThreeJS Euler-object
+			if (pos_x === undefined || pos_y === undefined){
+				pos_x = 0.5;
+				pos_y = 0.5;
+			}
+			//normalized percentage
+			let percentage_x_mouse = pos_x / canvas_width * contain / 100;
+			let percentage_y_mouse = pos_y / canvas_height * contain / 100;
+			//so half of containmentPercentage = 0
+			percentage_x_mouse = percentage_x_mouse - contain/100/2;
+			percentage_y_mouse = percentage_y_mouse - contain/100/2;
+
+			//±100% = ±45° (±π/4)
+			let euler_x = Math.PI/4*percentage_x_mouse; //in rad
+			let euler_y = -Math.PI/4*percentage_y_mouse; //in rad, y is inverse
+
+			//transform mous-pos into x and z-angles
+			let eulerObj = new THREE.Euler(euler_y,0,euler_x,'XYZ');
+			return eulerObj;
+		},
+
 		calculateCurrentQuaternionFromEulerObj(startQt, eulerObj, smoothing) {
 			//Calculate stabilized Quaternion
 			let retQt = new THREE.Quaternion();
@@ -378,7 +393,6 @@ const jb_anim = {
 			targetQuaternion.setFromEuler(eulerObj);
 			//Calculate smoothed-position with slerp
 			THREE.Quaternion.slerp(startQt, targetQuaternion, retQt, smoothing);
-			
 			return retQt;
 		},
 
@@ -392,20 +406,22 @@ const jb_anim = {
 	// =================== //
 
 	eventLoop() {
-		if (jb_events.isResized){
-			this.obj.canvas.width = this.obj.canvas.elem.parentElement.offsetWidth;
-			this.obj.canvas.height = this.obj.canvas.elem.parentElement.offsetHeight;
-			this.obj.canvas.isPortrait = (this.obj.canvas.width < this.obj.canvas.height);
+		if (jb_events.vars.isResized){
+			this.data.canvas.width = this.data.canvas.elem.parentElement.offsetWidth;
+			this.data.canvas.height = this.data.canvas.elem.parentElement.offsetHeight;
+			this.data.canvas.elem.width = this.data.canvas.width;
+			this.data.canvas.elem.height = this.data.canvas.height;
+			this.data.canvas.isPortrait = (this.data.canvas.width < this.data.canvas.height);
 
 
-			this.obj.threejs.aspect = this.obj.canvas.width / this.obj.canvas.height;
+			this.data.threejs.aspect = this.data.canvas.width / this.data.canvas.height;
 
-			this.obj.threejs.renderer.setSize(this.obj.canvas.width, this.obj.canvas.height);
+			this.data.threejs.renderer.setSize(this.data.canvas.width, this.data.canvas.height);
 
-			this.obj.threejs.camera.aspect = this.obj.threejs.aspect;
-			this.obj.threejs.camera.updateProjectionMatrix();
+			this.data.threejs.camera.aspect = this.data.threejs.aspect;
+			this.data.threejs.camera.updateProjectionMatrix();
 
-			jb_events.isResized = false;
+			jb_events.vars.isResized = false;
 		}
 	}
 }

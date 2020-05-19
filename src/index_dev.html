@@ -13,6 +13,7 @@
 	<!-- endbuild -->
 	<script src="js/three.min.js"></script>
 	<script src="js/stats.min.js"></script>
+	<script src="js/canvasanimations-config.js"></script>
 
 	<!-- build:js js/jb.min.js -->
 		<script src="js/scripts.js"></script>
@@ -53,17 +54,9 @@
 		@@include('projects.html')
 		@@include('about.html')
 		@@include('x404.html')
-		
-		<div class="sm_wrap" style="display:none;" onclick="this.classList.toggle('expand');">
-			<div class="sm" onclick="event.stopPropagation();">
-				<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
-				<input type="range" id="smoothing" name="smoothing" min="900" max="999" value="945">
-				
-			</div>
-		</div>
 		<!-- end of page wrapper -->
 	</div>
-	<div id="tjs_bg">
+	<div id="tjs_bg" class="tjs_bg hide_container">
 		<!-- <span id="motion_dot"></span> -->
 		<canvas id="bg_canvas"></canvas>
 	</div>

@@ -11,12 +11,14 @@ const jb_events = {
 			sensorStatus: false,
 			tiltAccuracy: 1000, // <- 1 divided by this
 			motionAccuracy: 1000, // <- 1 divided by this
-		}
+		},
+		scroll: {
+			homeTouchstart: null
+		},
+		status: "initial",
+		isResized: false,
 	},
 
-	interactivity: {
-		status: "initial"
-	},
 
 	addEvents(){
 
@@ -55,6 +57,9 @@ const jb_events = {
 					this.vars.deviceOrientation.sensorStatus = false;
 				}
 
+				// ontouch event
+				window.addEventListener('touch', this.clickAction);
+
 			} else {
 				//desktop!
 
@@ -63,30 +68,50 @@ const jb_events = {
 
 				/* el on onmouseleave */
 				window.addEventListener('mouseleave', this.mouseLeaveAction);
+
+				// onclick event
+				window.addEventListener('click', this.clickAction);
+			
 			}
 
-			// onclick event
-			if (this.vars.onclick.enable) {
-				window.addEventListener('click', this.clickAction);
-			}
+			
 		}
 
-
-		// resize event
+		// resize, orientationchange events
 		window.addEventListener("resize", function(){
-			this.isResized = true;
+			jb_events.vars.isResized = true;
 		});
 
+	},
 
-		//remove iOS rubber-scroll on body
-		document.addEventListener('DOMContentLoaded', function(){
-			document.body.addEventListener('touchmove', function(event) {
-				var owner = jb_scripts.findNearestScrollableParent(event.target);
-				if (!owner || owner === document.documentElement || owner === document.body) {
-					event.preventDefault();
-				}
-			});
-		}, false);
+	addHomeScrollEvents(){
+		window.addEventListener('wheel',this.home_wheelAction);
+		window.addEventListener('touchmove',this.home_touchmoveAction);
+	},
+
+	destroyHomeScrollEvents(){
+		window.removeEventListener('wheel',this.home_wheelAction);
+		window.removeEventListener('touchmove',this.home_touchmoveAction);
+	},
+
+	home_wheelAction(e){
+		if (e.deltaY > 0) {
+			jb_scripts.contentChanger.toggleHash();
+			jb_events.destroyHomeScrollEvents();
+		}
+	},
+	home_touchmoveAction(e){
+		if (jb_events.vars.scroll.homeTouchstart === null){
+			jb_events.vars.scroll.homeTouchstart = e.touches[0].clientY;
+		}
+		jb_events.vars.scroll.homeTouchdeltaY = jb_events.vars.scroll.homeTouchstart - e.touches[0].clientY;
+		console.log(jb_events.vars.scroll.homeTouchdeltaY);
+		if (jb_events.vars.scroll.homeTouchdeltaY > 20) {
+			jb_events.vars.scroll.homeTouchstart = null;
+			jb_scripts.contentChanger.toggleHash();
+			jb_events.destroyHomeScrollEvents();
+		}
+
 	},
 
 	mouseMoveAction(e){
@@ -96,13 +121,13 @@ const jb_events = {
 		jb_events.vars.onhover.pos_x = pos_x;
 		jb_events.vars.onhover.pos_y = pos_y;
 
-		jb_events.interactivity.status = 'mousemove';
+		jb_events.vars.status = 'mousemove';
 	},
 
 	mouseLeaveAction(){
 		jb_events.vars.onhover.pos_x = null;
 		jb_events.vars.onhover.pos_y = null;
-		jb_events.interactivity.status = 'mouseleave';
+		jb_events.vars.status = 'mouseleave';
 	},
 
 	clickAction(e){
@@ -114,7 +139,7 @@ const jb_events = {
 	
 
 	deviceOrientationEvent(e) {
-		jb_events.interactivity.status = 'tilt';
+		jb_events.vars.status = 'tilt';
 
 		let alpha = e.alpha, //counter- & clockwise (0 to 360)
 			beta = e.beta, //up & down (-180 to 180)
@@ -137,11 +162,12 @@ const jb_events = {
 	},
 
 	deviceMotionEvent(e) {
-		jb_events.interactivity.status = 'tilt';
+		jb_events.vars.status = 'tilt';
 		
 		//round values to only capture significant motion
 		jb_events.vars.deviceOrientation.rotation_alpha = Math.round(e.rotationRate.alpha * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //up & down
 		jb_events.vars.deviceOrientation.rotation_beta = Math.round(e.rotationRate.beta * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //left & right
 		jb_events.vars.deviceOrientation.rotation_gamma = Math.round(e.rotationRate.gamma * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //counter- & clockwise
-	}
+	},
+
 }

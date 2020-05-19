@@ -13,6 +13,7 @@ const jb_scripts = {
 			let hashName = name == "" ? "home" : name.substr(2);
 
 			this.clearClasses();
+			jb_events.destroyHomeScrollEvents();
 
 			if (this.allowedNames.includes(hashName)){
 
@@ -21,6 +22,7 @@ const jb_scripts = {
 						// from section to home 
 						document.querySelector("header").classList.remove("top");
 						document.querySelector("section."+this.currentActive).classList.add("toHome");
+						jb_events.addHomeScrollEvents();
 					} else {
 						// from section to section
 						document.querySelector("header").classList.add("top");
@@ -44,6 +46,7 @@ const jb_scripts = {
 					}, 200)
 				} else if (this.currentActive === null && hashName == "home"){
 					//first call (init) forhome
+					jb_events.addHomeScrollEvents();
 					setTimeout(function() {
 						if (jb_scripts.contentChanger.currentActive == "home"){
 							document.querySelector("header > span.enter").classList.add("visible")

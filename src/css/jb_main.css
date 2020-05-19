@@ -927,9 +927,9 @@ a {
   text-decoration: none;
   display: inline-block;
   cursor: pointer;
+  outline: 0;
 }
-
-a:hover {
+a:hover, a:active, a:focus {
   color: #fbf9ef;
 }
 
@@ -953,7 +953,6 @@ p {
   box-shadow: inset 0 -2px 0 0 #cdeefe;
   z-index: 0;
 }
-
 .fancy_link:before, .fancy_link:after {
   z-index: -1;
   content: "";
@@ -963,36 +962,29 @@ p {
   width: 0%;
   transition: width 0.12s linear;
 }
-
 .fancy_link:before {
   left: -3%;
   bottom: 0;
 }
-
 .fancy_link:after {
   right: -3%;
   top: 0;
 }
-
-.fancy_link:hover {
+.fancy_link:hover, .fancy_link:active, .fancy_link:focus {
   color: #011b28;
 }
-
-.fancy_link:hover:before, .fancy_link:hover:after {
+.fancy_link:hover:before, .fancy_link:hover:after, .fancy_link:active:before, .fancy_link:active:after, .fancy_link:focus:before, .fancy_link:focus:after {
   width: 106%;
 }
-
 .fancy_link.fancy_link--reversed {
   color: #011b28;
   box-shadow: inset 0 -2px 0 0 #011b28;
 }
-
 .fancy_link.fancy_link--reversed:before, .fancy_link.fancy_link--reversed:after {
   content: "";
   background: #011b28;
 }
-
-.fancy_link.fancy_link--reversed:hover {
+.fancy_link.fancy_link--reversed:hover, .fancy_link.fancy_link--reversed:active, .fancy_link.fancy_link--reversed:focus {
   color: #cdeefe;
 }
 
@@ -1010,18 +1002,6 @@ p {
   /* ##################### */
   /* general section-rules */
   /* ##################### */
-  /* #################### */
-  /* Page-specific rules: */
-  /* #### About-page #### */
-  /* #################### */
-  /* about-sidebar */
-  /* about-sidebar -> address */
-  /* about-sidebar -> contact tiles */
-  /* mail */
-  /* phone */
-  /* skype */
-  /* whatsapp */
-  /* about-sidebar -> imprint-link */
 }
 .wrapper header {
   margin: 0;
@@ -1111,53 +1091,57 @@ p {
   padding: 0 5vw 0;
   position: fixed;
   overflow-y: hidden;
+  /* #################### */
+  /* Page-specific rules: */
+  /* ## Projects-page ### */
+  /* #################### */
+  /* #################### */
+  /* Page-specific rules: */
+  /* #### About-page #### */
+  /* #################### */
 }
-.wrapper .about_text_wrapper {
+.wrapper section.about {
+  /* about-sidebar */
+}
+.wrapper section.about .text_wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.wrapper .about_text {
+.wrapper section.about .text_wrapper .text {
   width: 800px;
 }
-.wrapper .about_text p {
+.wrapper section.about .text_wrapper .text p {
   margin: 0 20px 20px;
 }
-.wrapper .about_sidebar {
+.wrapper section.about aside {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 5fr 6fr 1fr;
+  /* about-sidebar -> address */
+  /* about-sidebar -> contact tiles */
+  /* about-sidebar -> imprint-link */
 }
-.wrapper .contact_address_wrapper {
+.wrapper section.about aside .contact_address_wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.wrapper .contact_address {
+.wrapper section.about aside .contact_address_wrapper .contact_address {
   color: #011b28;
 }
-.wrapper .contact_tiles_grid {
+.wrapper section.about aside .contact_tiles_grid {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr 2fr 2fr;
   grid-template-rows: 1fr 2fr 2fr 1fr;
 }
-.wrapper .contact_tiles_grid > a:nth-child(1) {
-  grid-column: 2/span 1;
-  grid-row: 2/span 1;
+.wrapper section.about aside .contact_tiles_grid > a {
+  /* mail */
+  /* phone */
+  /* skype */
+  /* whatsapp */
 }
-.wrapper .contact_tiles_grid > a:nth-child(2) {
-  grid-column: 2/span 1;
-  grid-row: 3/span 1;
-}
-.wrapper .contact_tiles_grid > a:nth-child(3) {
-  grid-column: 4/span 1;
-  grid-row: 2/span 1;
-}
-.wrapper .contact_tiles_grid > a:nth-child(4) {
-  grid-column: 4/span 1;
-  grid-row: 3/span 1;
-}
-.wrapper .contact_tiles_grid > a > span {
+.wrapper section.about aside .contact_tiles_grid > a > span {
   height: 100%;
   width: 100%;
   display: block;
@@ -1165,31 +1149,47 @@ p {
   background-repeat: no-repeat;
   background-size: 400%;
 }
-.wrapper .contact_tiles_grid > a:nth-child(1) > span {
-  background-position-x: 0%;
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(1) {
+  grid-column: 2/span 1;
+  grid-row: 2/span 1;
 }
-.wrapper .contact_tiles_grid > a:nth-child(2) > span {
-  background-position-x: calc(100% / 3);
-}
-.wrapper .contact_tiles_grid > a:nth-child(3) > span {
-  background-position-x: calc(200% / 3);
-}
-.wrapper .contact_tiles_grid > a:nth-child(4) > span {
-  background-position-x: 100%;
-}
-.wrapper .contact_tiles_grid > a:nth-child(1):hover {
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(1):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):focus {
   background-color: #dd4c3c;
 }
-.wrapper .contact_tiles_grid > a:nth-child(2):hover {
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(1) > span {
+  background-position-x: 0%;
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(2) {
+  grid-column: 2/span 1;
+  grid-row: 3/span 1;
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(2):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):focus {
   background-color: #3d559e;
 }
-.wrapper .contact_tiles_grid > a:nth-child(3):hover {
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(2) > span {
+  background-position-x: calc(100% / 3);
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(3) {
+  grid-column: 4/span 1;
+  grid-row: 2/span 1;
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(3):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):focus {
   background-color: #1dabe5;
 }
-.wrapper .contact_tiles_grid > a:nth-child(4):hover {
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(3) > span {
+  background-position-x: calc(200% / 3);
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(4) {
+  grid-column: 4/span 1;
+  grid-row: 3/span 1;
+}
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(4):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):focus {
   background-color: #20d442;
 }
-.wrapper .about_imprint {
+.wrapper section.about aside .contact_tiles_grid > a:nth-child(4) > span {
+  background-position-x: 100%;
+}
+.wrapper section.about aside .imprint {
   justify-self: center;
 }
 
@@ -1197,37 +1197,33 @@ p {
 /* Other stuff */
 /* ########### */
 /*  impressum-style */
-.impressum_div, .impressum_div p {
+.impressum_div {
   line-height: 20pt;
 }
-
+.impressum_div p {
+  line-height: 20pt;
+}
 .impressum_div li {
   list-style: unset;
   margin-top: 8px;
 }
-
 .impressum_div table, .impressum_div tr {
   border: 1px solid rgba(251, 249, 239, 0);
   border-collapse: collapse;
 }
-
 .impressum_div .first_column {
   width: 250px;
 }
-
 .impressum_div a {
   display: inline-block;
   text-decoration: underline;
 }
-
 .impressum_div h1 {
   padding-top: 40px;
 }
-
 .impressum_div h1:first-child {
   padding-top: 0;
 }
-
 .impressum_div h2 {
   padding-top: 15px;
 }

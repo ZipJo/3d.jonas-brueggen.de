@@ -12,15 +12,20 @@
 	}
 
 function startup() {
-	//loader();
-	//init_eruda(jb_main.init()); //mobile console - for dev purposes
-	jb_main.init(loader);
+	let dev = false;
+	if (dev) {
+		loader();
+		init_eruda(jb_main.init()); //mobile console - for dev purposes
+	} else {
+		jb_main.init(loader);
+	}
 }
 
 function loader(cb) {
 	document.getElementsByClassName("loader")[0].classList.add("global_hide");
 	document.getElementsByClassName("page_loader")[0].classList.add("global_hide");
 	document.getElementById("id_wrapper").classList.remove("hide_container");
+	document.getElementById("tjs_bg").classList.remove("hide_container");
 	if (cb) cb();
 }
 
