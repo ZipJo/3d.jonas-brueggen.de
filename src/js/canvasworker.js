@@ -32,11 +32,11 @@ onmessage = function(e) {
 	// 01 - camera-motion //
 	// ================== //
 
-	let eulerObj = null;
-	if (data.eventVars.deviceOrientation.sensorStatus) {
+	let eulerObj = new THREE.Euler();
+	if (data.eventVars.status == "tilt") {
 		//if possible, use device-orientation
 		eulerObj = calc.getEulerObjFromDeviceOrientation(data.eventVars.deviceOrientation.tilt_alpha, data.eventVars.deviceOrientation.tilt_beta, data.eventVars.deviceOrientation.tilt_gamma);			//Calculate stabilized Quaternion
-	} else {
+	} else if (data.eventVars.status == "mousemove"){
 		//else: use mouse-position
 		eulerObj = calc.getEulerObjFromMousePosition(data.eventVars.onhover.pos_x,data.eventVars.onhover.pos_y, data.canvas_width, data.canvas_height, config.hoverPerspectiveContainment);
 	}

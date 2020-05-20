@@ -60,12 +60,16 @@ div.testcube_cb {
 	}
 }
 
+div.infobox {
+	position: fixed;
+	top: 60px;
+}
 
 div.sm_wrap.expand div.sm {
 	visibility: visible;
 	opacity: 1;
-	right: 0;
-	transition: right 0.2s 0s, visibility 0s 0s, opacity 0.2s 0s;
+	bottom: -2px;
+	transition: bottom 0.2s 0s, visibility 0s 0s, opacity 0.2s 0s;
 }
 
 div.sm_wrap {
@@ -75,13 +79,18 @@ div.sm_wrap {
 	background-size: 80%;
 	background-color: white;
 	position: fixed;
-	right:5vw;
-	bottom:5vmin;
-	height:7vmin;
-	width:7vmin;
+	right:20px;
+	bottom:20px;
+	height:30px;
+	width:30px;
 	border-radius: 1vmin;
 	cursor: pointer;
+	opacity: .2;
+	transition: opacity 0.2s ease-in-out;
 
+	&:hover {
+		opacity: 1;
+	}
 
 
 	div.sm {
@@ -89,11 +98,11 @@ div.sm_wrap {
 		visibility: hidden;
 		opacity: 0;
 		position: absolute;
-		width: 90vw;
-		bottom: 10vmin;
-		right: -10vmin;
+		width: calc(100vw - 110px);
+		bottom: -40px;
+		right: 40px;
 		overflow-x: hidden;
-		transition: right 0.2s 0s, visibility 0s 0.5s, opacity 0.2s 0s;
+		transition: bottom 0.2s 0s, visibility 0s 0.5s, opacity 0.2s 0s;
 
 		input[type=range] {
 			height: 25px;

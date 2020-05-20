@@ -81,6 +81,16 @@ const jb_scripts = {
 
 	},
 
+	tileAnimation(elem){
+		if (elem.classList.contains("active")) {
+			elem.classList.add("fromActive");
+			setTimeout(function () {
+				elem.classList.remove("fromActive");
+			}, 800);
+		}
+		elem.classList.toggle("active");
+	},
+
 	customPopup(content, maxWidth, link = null) {
 		if (link == null){
 			//use "content"
@@ -151,25 +161,6 @@ const jb_scripts = {
 				elem.classList.remove("start_animation");
 			},1100);
 		});
-	},
-
-	overflowIsHidden(node) {
-		var style = getComputedStyle(node);
-		return style.overflow === 'hidden' || style.overflowX === 'hidden' || style.overflowY === 'hidden';
-	},
-
-	findNearestScrollableParent(firstNode) {
-		var node = firstNode;
-		var scrollable = null;
-		while(!scrollable && node) {
-			if (node.scrollWidth > node.clientWidth || node.scrollHeight > node.clientHeight) {
-				if (!this.overflowIsHidden(node)) {
-					scrollable = node;
-				}
-			}
-			node = node.parentNode;
-		}
-		return scrollable;
 	},
 
 	objDeepExtend(destination, source) {

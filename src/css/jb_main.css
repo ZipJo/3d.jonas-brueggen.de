@@ -771,11 +771,16 @@ div.testcube_cb {
     left: 50vw;
   }
 }
+div.infobox {
+  position: fixed;
+  top: 60px;
+}
+
 div.sm_wrap.expand div.sm {
   visibility: visible;
   opacity: 1;
-  right: 0;
-  transition: right 0.2s 0s, visibility 0s 0s, opacity 0.2s 0s;
+  bottom: -2px;
+  transition: bottom 0.2s 0s, visibility 0s 0s, opacity 0.2s 0s;
 }
 
 div.sm_wrap {
@@ -785,23 +790,28 @@ div.sm_wrap {
   background-size: 80%;
   background-color: white;
   position: fixed;
-  right: 5vw;
-  bottom: 5vmin;
-  height: 7vmin;
-  width: 7vmin;
+  right: 20px;
+  bottom: 20px;
+  height: 30px;
+  width: 30px;
   border-radius: 1vmin;
   cursor: pointer;
+  opacity: 0.2;
+  transition: opacity 0.2s ease-in-out;
+}
+div.sm_wrap:hover {
+  opacity: 1;
 }
 div.sm_wrap div.sm {
   cursor: unset;
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  width: 90vw;
-  bottom: 10vmin;
-  right: -10vmin;
+  width: calc(100vw - 110px);
+  bottom: -40px;
+  right: 40px;
   overflow-x: hidden;
-  transition: right 0.2s 0s, visibility 0s 0.5s, opacity 0.2s 0s;
+  transition: bottom 0.2s 0s, visibility 0s 0.5s, opacity 0.2s 0s;
 }
 div.sm_wrap div.sm input[type=range] {
   height: 25px;
@@ -1087,8 +1097,8 @@ p {
 }
 .wrapper section {
   box-shadow: inset 0 0 0 1px darkred;
-  width: 90vw;
-  padding: 0 5vw 0;
+  width: 100vw;
+  padding: 20px 0;
   position: fixed;
   overflow-y: hidden;
   /* #################### */
@@ -1099,6 +1109,82 @@ p {
   /* Page-specific rules: */
   /* #### About-page #### */
   /* #################### */
+}
+.wrapper section.projects .project {
+  position: relative;
+  width: 90vw;
+  max-width: 1000px;
+}
+.wrapper section.projects .project .cover {
+  border: 1px solid yellow;
+  background: rgba(251, 249, 239, 0.25);
+  display: flex;
+  flex-direction: row-reverse;
+  position: relative;
+  cursor: pointer;
+}
+.wrapper section.projects .project .cover:before {
+  content: "";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  background: #4aa569;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
+          clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
+  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  opacity: 1;
+}
+.wrapper section.projects .project .cover:hover:before {
+  -webkit-clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
+          clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
+  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+}
+.wrapper section.projects .project .cover.active:before {
+  opacity: 0;
+  -webkit-clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
+          clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
+  transition: opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
+  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s;
+  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
+}
+.wrapper section.projects .project .cover.fromActive:before {
+  transition: opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s;
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+}
+.wrapper section.projects .project .cover .logo {
+  margin: 20px;
+}
+.wrapper section.projects .project .cover .logo img {
+  height: 100px;
+  width: 100px;
+}
+.wrapper section.projects .project .cover .title {
+  text-align: center;
+}
+.wrapper section.projects .project .cover.active ~ .details {
+  max-height: 1000px;
+  padding: 50px;
+  transition: max-height 0.2s ease-in-out 0.35s, padding 0.2s ease-in-out 0.35s;
+}
+.wrapper section.projects .project .details {
+  border: 1px solid blue;
+  padding: 0 50px;
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out;
+}
+.wrapper section.projects .project .details .description {
+  max-width: 600px;
+}
+.wrapper section.projects .project .details .pictures {
+  position: absolute;
+  visibility: hidden;
 }
 .wrapper section.about {
   /* about-sidebar */

@@ -2,9 +2,10 @@ const jb_anim_options = {
 	camRotationRadius: 500,
 	autoRotationSpeed: 0.05, //in rpm
 	vectorAccuracy: 1000,
-	particleCount: 10000000,
+	particleCount: 10000,
 	motionSmoothing: 0.055, //from 0 = no movement, 1 = no smoothing, should be below 0.1
 	helpers: true,
+	helpers3D: false,
 	hoverPerspectiveContainment: 10, //100% = 90° (π/2)
 	fps: 60,
 };

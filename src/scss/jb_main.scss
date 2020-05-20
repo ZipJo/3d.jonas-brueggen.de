@@ -228,11 +228,10 @@ p {
 	/* ##################### */
 
 	section {
-		$lr_padding: 5vw;
 		box-shadow:inset 0 0 0 1px darkred;
 
-		width: 100vw - 2 * $lr_padding;
-		padding:0 $lr_padding 0;
+		width: 100vw;
+		padding: 20px 0;
 
 		position: fixed;
 		overflow-y: hidden;
@@ -242,7 +241,107 @@ p {
 		/* ## Projects-page ### */
 		/* #################### */
 
-		&.projects {}
+		&.projects {
+
+			.project {
+				position: relative;
+				width: 90vw;
+				max-width: 1000px;
+
+				.cover {
+					border: 1px solid yellow;
+					background: variables.$color-page-main-25;
+					display: flex;
+					flex-direction: row-reverse;
+					position: relative;
+					cursor: pointer;
+
+					&:before {
+						content:'';
+						height: 100%;
+						width: 100%;
+					    position: absolute;
+					    left: 0;
+					    background: variables.$color-accent-3;
+					    $width: 100%;
+					    $indent: 25px;
+					    clip-path: polygon(0 0, $width 0, $width calc(50% - #{$indent}), calc(#{$width} - #{$indent})  50%, $width calc(50% + #{$indent}), $width 100%, 0 100%);
+						transition: clip-path 0.4s cubic-bezier(.4,0,.35,1.35);
+					    opacity: 1;
+
+					}
+
+					&:hover:before {
+						$width: calc(100% - 120px);
+					    $indent: 25px;
+					    clip-path: polygon(0 0, $width 0, $width calc(50% - #{$indent}), calc(#{$width} - #{$indent})  50%, $width calc(50% + #{$indent}), $width 100%, 0 100%);
+						transition: clip-path 0.4s cubic-bezier(.4,0,.35,1.35)
+					}
+
+					&.active:before {
+						opacity: 0;
+						$width: 0%;
+					    $indent: 25px;
+					    clip-path: polygon(0 0, $width 0, $width calc(50% - #{$indent}), calc(#{$width} - #{$indent})  50%, $width calc(50% + #{$indent}), $width 100%, 0 100%);	
+					    transition: clip-path 0.5s cubic-bezier(.4,-0.4,.58,1), opacity 0.2s ease-in-out 0.3s;
+					}
+
+					&.fromActive:before {
+					    transition: clip-path 0.6s cubic-bezier(.4,0,.60,1.25), opacity 0.5s ease-in-out 0.1s;
+					}
+
+					.logo {
+
+						margin: 20px;
+
+						img {
+							height: 100px;
+							width: 100px;
+						}
+					}
+
+					.title{
+						text-align: center;
+
+						h1 {
+
+						}
+						h2 {
+
+						}
+					}
+
+				}
+
+				.cover.active ~ .details {
+					max-height: 1000px;
+					padding: 50px;
+					transition: max-height 0.2s ease-in-out 0.35s, padding 0.2s ease-in-out 0.35s;
+				}
+
+				.details {
+					border: 1px solid blue;
+					padding: 0 50px;
+					max-height: 0;
+					overflow-y: hidden;
+					transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out;
+
+					.description {
+						max-width: 600px
+					}
+
+					.pictures {
+						position: absolute;
+						visibility: hidden;
+
+						img {
+							&.image_pc {  }
+							&.image_phone {  }
+						}
+					}
+				}
+			}
+		}
 
 		/* #################### */
 		/* Page-specific rules: */

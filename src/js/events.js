@@ -31,7 +31,6 @@ const jb_events = {
 
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
-
 					if (typeof(DeviceOrientationEvent.requestPermission) === 'function') {
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
@@ -40,9 +39,6 @@ const jb_events = {
 								.then(function(){
 									window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 									window.addEventListener("devicemotion", this.deviceMotionEvent);
-									this.vars.deviceOrientation.sensorStatus = true;
-								}).catch(function(){
-									this.vars.deviceOrientation.sensorStatus = false;
 								})
 						}, {
 							once: true
@@ -50,11 +46,8 @@ const jb_events = {
 					} else {
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
-						this.vars.deviceOrientation.sensorStatus = true;
 					}
 
-				} else {
-					this.vars.deviceOrientation.sensorStatus = false;
 				}
 
 				// ontouch event
@@ -139,6 +132,7 @@ const jb_events = {
 	
 
 	deviceOrientationEvent(e) {
+		jb_events.vars.deviceOrientation.sensorStatus = true;
 		jb_events.vars.status = 'tilt';
 
 		let alpha = e.alpha, //counter- & clockwise (0 to 360)
@@ -162,6 +156,7 @@ const jb_events = {
 	},
 
 	deviceMotionEvent(e) {
+		jb_events.vars.deviceOrientation.sensorStatus = true;
 		jb_events.vars.status = 'tilt';
 		
 		//round values to only capture significant motion

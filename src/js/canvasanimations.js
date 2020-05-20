@@ -71,9 +71,10 @@ const jb_anim = {
 		if (this.data.options.helpers) {
 			//fps-meter
 			this.stats = new Stats();
-			document.body.appendChild( this.stats.dom );
+			document.body.append( this.stats.dom );
 			
-			this.stats.dom.insertAdjacentHTML('beforeBegin', `
+			//slider
+			document.body.insertAdjacentHTML( 'beforeend',`
 			<div class="sm_wrap" onclick="this.classList.toggle('expand');">
 				<div class="sm" onclick="event.stopPropagation();">
 					<label for="smoothing">motion-smoothing - current: <span id="sm_value"></span>/1000:</label>
@@ -81,6 +82,12 @@ const jb_anim = {
 					
 				</div>
 			</div>`);
+
+			//infobox
+			this.infobox = document.createElement("div");
+			this.infobox.classList.add("infobox");
+			document.body.append( this.infobox );
+			this.infobox.innerHTML = "init";
 		}
 
 
@@ -127,6 +134,8 @@ const jb_anim = {
 				jb_anim.data.threejs.renderer.clear();
 				jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
 
+				jb_anim.infobox.thread = "multithread";
+
 				if (jb_anim.callback) {
 					jb_anim.callback();
 					jb_anim.callback = null;
@@ -141,12 +150,18 @@ const jb_anim = {
 			jb_anim.data.threejs.renderer.clear();
 			jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
 
+			jb_anim.infobox.thread = "singlethread";
+			
 			if (jb_anim.callback) {
 				jb_anim.callback();
 				jb_anim.callback = null;
 			}
 		}
-		if (jb_anim.data.options.helpers) jb_anim.stats.update();
+		if (jb_anim.data.options.helpers){
+			jb_anim.stats.update();
+			jb_anim.infobox.innerHTML = "thread: " + jb_anim.infobox.thread + "<br>perspective-animation: " +
+										jb_events.vars.status + "<br>"; 
+		}
 	},
 
 	getWorkerData(){
@@ -231,12 +246,12 @@ const jb_anim = {
 		this.data.threejs.scene.add(this.data.threejs.particleObject);
 
 		//setup Helpers
-		if (this.data.options.helpers) {
+		if (this.data.options.helpers3D) {
 			//axes
 			var axesHelper = new THREE.AxesHelper(20);
 			this.data.threejs.scene.add(axesHelper);
 
-			//arrow+cube
+			//arrow+cubes
 			var ah_dir = new THREE.Vector3( 0, 1, 0 );
 			var ah_origin = new THREE.Vector3( 0, 0, 0 );
 			var ah_length = 100;
@@ -260,7 +275,7 @@ const jb_anim = {
 
 			this.data.threejs.cubeHelper3 = new THREE.Mesh( qh_geometry2, qh_material );
 			this.data.threejs.cubeHelper3.position.y = minClippingDistance;
-			//this.data.threejs.cubeHelper3.position.x = 100;
+			this.data.threejs.cubeHelper3.position.x = 100;
 			this.data.threejs.scene.add( this.data.threejs.cubeHelper3 );
 		}
 
