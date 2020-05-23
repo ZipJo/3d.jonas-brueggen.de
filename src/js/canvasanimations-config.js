@@ -4,7 +4,7 @@ const jb_anim_options = {
 	vectorAccuracy: 1000,
 	particleCount: 10000,
 	motionSmoothing: 0.055, //from 0 = no movement, 1 = no smoothing, should be below 0.1
-	helpers: true,
+	helpers: false,
 	helpers3D: false,
 	hoverPerspectiveContainment: 10, //100% = 90° (π/2)
 	fps: 60,

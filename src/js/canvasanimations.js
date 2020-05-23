@@ -134,7 +134,7 @@ const jb_anim = {
 				jb_anim.data.threejs.renderer.clear();
 				jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
 
-				jb_anim.infobox.thread = "multithread";
+				if (jb_anim.data.options.helpers){ jb_anim.infobox.thread = "multithread"; }
 
 				if (jb_anim.callback) {
 					jb_anim.callback();
@@ -150,7 +150,7 @@ const jb_anim = {
 			jb_anim.data.threejs.renderer.clear();
 			jb_anim.data.threejs.renderer.render(jb_anim.data.threejs.scene, jb_anim.data.threejs.camera);
 
-			jb_anim.infobox.thread = "singlethread";
+			if (jb_anim.data.options.helpers){ jb_anim.infobox.thread = "singlethread"; }
 			
 			if (jb_anim.callback) {
 				jb_anim.callback();
@@ -235,10 +235,12 @@ const jb_anim = {
 
 		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
-		var sprite = new THREE.TextureLoader().load('/js/dot.png');
+		var sprite = new THREE.TextureLoader().load('/js/dot.gif');
+		var spriteAlpha = new THREE.TextureLoader().load('/js/dot_alpha.bmp');
 		this.data.threejs.particleObject = new THREE.Points(geometry, new THREE.PointsMaterial({
 			size: 5,
 			map: sprite,
+			alphaMap: spriteAlpha,
 			color: 0xffffff,
 			transparent: true
 		}));

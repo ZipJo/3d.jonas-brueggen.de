@@ -35,7 +35,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 					opacity: 0;
 				}
 				60% {
-					max-height: 100vh;	
+					max-height: 100vh;
 				}
 				to {
 					max-height: 500vh;
@@ -71,7 +71,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 					transform: rotateY(0deg) translateZ(0);
 				}
 			}
-			
+
 		} @else {
 			//from front to back
 			@keyframes #{$name}-height-opacity {
@@ -116,7 +116,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 					transform: rotateY($maxRotCss) translateZ($translateZ);
 				}
 			}
-			
+
 		}
 	}
 	//actual animations:
@@ -158,6 +158,8 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	width: 100vw;
 
 	section {
+		will-change: top, left, transform, opacity, max-height;
+
 		top: $homeHeight;
 
 		pointer-events:none;
@@ -166,8 +168,8 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		$translateZ: $pushback + (1 - math.cos($maxRotation)) * $maxDistanceZ;
 		$left: math.sin($maxRotation) * $maxDistanceX;
 
-		max-height: 50vh;	
-		opacity: 0;	
+		max-height: 50vh;
+		opacity: 0;
 
 		left: $left;
 		transform: rotateY($maxRotationCss) translateZ($translateZ);
@@ -205,9 +207,9 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		&.toHome {
 			left: 0;
 			transform: rotateY(0deg) translateZ(0);
-			top: 60vh;
+			top: 70vh;
 			opacity: 0;
-			max-height: 39vh;
+			max-height: 29vh;
 
 			animation-duration: $animationDurationHome;
 			animation-name: section-toHome--animation;
@@ -219,22 +221,26 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			animation-timing-function: ease-in-out;
 		}
 	}
-	
+
 	header {
+		will-change: transform, top;
 		top: 50vh;
 		transform: translateY(-50%);
 		transition: top $animationDurationHome ease-in-out, transform $animationDurationHome ease-in-out;
 
 		.header_logo {
+			will-change: transform;
 			transform: rotateY(360deg);
 			transition: transform $animationDurationHome ease-in-out;
 		}
 		.logo_subtext {
+			will-change: opacity, visibility;
 			opacity: 1;
 			visibility: visible;
-			transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3;		
+			transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3;
 		}
 		nav {
+			will-change: opacity, visibility;
 			opacity: 0;
 			visibility: hidden;
 			transition: all $animationDurationHome*.7 ease-in-out 0s;
@@ -243,6 +249,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			50% { transform: translateX(-50%) scale(1.05); }
 		}
 		.enter {
+			will-change: transform, opacity;
 			opacity: 0;
 			animation-name: enter--animation;
 			animation-iteration-count: infinite;
@@ -260,10 +267,130 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		&.top {
 			top: 0;
 			transform: translateY(0);
-			
+
 			.header_logo { transform: rotateY(0); }
 			.logo_subtext { opacity: 0;	visibility: hidden; transition: all $animationDurationHome*.7 ease-in-out 0s; }
 			nav { opacity: 1; visibility: visible; transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3; }
+		}
+	}
+
+
+
+	/* section specific animations */
+
+	section.projects {
+		&.toHome .project {
+			animation: project-out--animation;
+			animation-duration: 1s;
+			animation-delay: 0;
+			animation-fill-mode: both;
+		}
+
+		&.fromHome.active .project {
+			animation: project-in--animation;
+			animation-duration: 1s;
+			animation-fill-mode: both;
+			@for $i from 1 through 10 {
+				&:nth-child(#{$i}) { animation-delay: calc(.5s + (.1s * #{$i})); }
+			}
+		}
+
+		@keyframes project-in--animation {
+			from {
+				transform: translateX(-100%);
+			}
+			to {
+				transform: translateX(0);
+			  }
+		}
+		@keyframes project-out--animation {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(-100%);
+			  }
+		}
+
+		.project {
+			will-change: transform;
+
+			$move_dur: 60s;
+			$move_dur_mod: 5s;
+
+			@for $i from 1 through 10 {
+				&:nth-child(#{$i}) .cover {
+					animation-delay: calc( -#{($move_dur + $move_dur_mod) * 2} * var(--rnd-1) );
+					animation-duration: calc( #{$move_dur} + ( #{$move_dur_mod} * var(--rnd-2) ) );
+				}
+			}
+
+			.cover {
+				will-change: transform;
+				
+				
+				animation: cover-move--animation;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+				animation-timing-function: cubic-bezier(.25,0,.75,1);
+				
+				@keyframes cover-move--animation {
+					from { transform: translateX(0); }
+					to   { transform: translateX(-30%); }
+				}
+
+				&.active {
+					transition: transform 0.4s cubic-bezier(.4,0,.35,1.35);
+				}
+
+				$arrow_indent: 25px;
+				
+				&:before {
+					will-change: clip-path, opacity;
+					content:'';
+					height: 100%;
+					width: 100%;
+					position: absolute;
+					left: 0;
+					$width: 100%;
+
+					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
+					transition: clip-path 0.4s cubic-bezier(.4,0,.35,1.35);
+					opacity: 1;
+
+				}
+
+				&:hover:before {
+					$width: calc(100% - 120px);
+					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
+					transition: clip-path 0.4s cubic-bezier(.4,0,.35,1.35);
+				}
+
+				&.active:before {
+					opacity: 0;
+					$width: 0%;
+					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
+					transition: clip-path 0.5s cubic-bezier(.4,-0.4,.58,1), opacity 0.2s ease-in-out 0.3s;
+				}
+
+				&.fromActive:before {
+					$width: calc(100%);
+					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
+					transition: clip-path 0.6s cubic-bezier(.4,0,.60,1.25), opacity 0.5s ease-in-out 0.1s;
+				}
+
+			}
+
+			.details {
+				will-change: max-height, padding;
+				max-height: 0;
+				overflow-y: hidden;
+				transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+			}
+
+			.cover.active ~ .details {
+				transition: max-height 0.3s ease-in-out 0.35s, padding 0.3s ease-in-out 0.35s;
+			}
 		}
 	}
 }
@@ -272,6 +399,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 /* everything popup-related */
 
 .popup_container {
+	will-change: opacity;
 	position: fixed;
 	display: flex;
 	justify-content: center;
@@ -286,40 +414,43 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	background: variables.$color-page-main-opaque;
 	transition: opacity 0.2s;
 	z-index: 1000;
-}
-.popup_container.active {
-	opacity: 1;
-	pointer-events: all;
-}
 
-.popup_container > div {
-	transform: translateY(-60px);
-	background: variables.$color-page-bg;
-	opacity: 0;
-	max-height: 85%;
-	padding: 50px;
-	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
-	transition: all 0.3s ease-in-out;
-	overflow-y: auto;
-}
-.popup_container > div.move {
-	transform: translateY(0);
-	opacity: 1;
+	&.active {
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	> div {
+		will-change: transform, opacity;
+		transform: translateY(-60px);
+		background: variables.$color-page-bg;
+		opacity: 0;
+		max-height: 85%;
+		padding: 50px;
+		box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
+		transition: all 0.3s ease-in-out;
+		overflow-y: auto;
+		
+		&.move {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
 }
 
 /* contact_tiles animation */
-.contact_tiles_grid a {
-}
-.contact_tiles_grid > a:nth-child(1) { animation-delay: 0s; }
-.contact_tiles_grid > a:nth-child(2) { animation-delay: 0.1s; }
-.contact_tiles_grid > a:nth-child(3) { animation-delay: 0.2s; }
-.contact_tiles_grid > a:nth-child(4) { animation-delay: 0.3s; }
-
-.contact_tiles_grid.start_animation a {
-	animation-name: contact_tiles--animation;
-	animation-duration: 0.8s;
-	animation-timing-function: ease-out;
-	animation-iteration-count: 1;
+.contact_tiles_grid {
+	a:nth-child(1) { animation-delay: 0s; }
+	a:nth-child(2) { animation-delay: 0.1s; }
+	a:nth-child(3) { animation-delay: 0.2s; }
+	a:nth-child(4) { animation-delay: 0.3s; }
+	
+	&.start_animation a {
+		animation-name: contact_tiles--animation;
+		animation-duration: 0.8s;
+		animation-timing-function: ease-out;
+		animation-iteration-count: 1;
+	}
 }
 
 @keyframes contact_tiles--animation {

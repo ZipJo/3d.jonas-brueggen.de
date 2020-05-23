@@ -53,6 +53,18 @@ const jb_scripts = {
 						}
 					}, 5000);
 				}
+
+				//section specific js
+				if (hashName == "projects") {
+					// rng for projects
+					let pElem = document.querySelectorAll(".wrapper section.projects .project .cover");
+					pElem.forEach(function(cElem){
+						cElem.style.setProperty("--rnd-1",Math.random());
+						cElem.style.setProperty("--rnd-2",Math.random());
+					});
+					jb_scripts.setRandomBackgrounds(".wrapper section.projects .project .cover");
+				} 
+
 			} else {
 				//unknown hash!
 				this.changeContent("#/x404");
@@ -81,14 +93,38 @@ const jb_scripts = {
 
 	},
 
-	tileAnimation(elem){
+	projectCoverAnimation(elem){
+
 		if (elem.classList.contains("active")) {
+
+			elem.classList.remove("active");
 			elem.classList.add("fromActive");
+			elem.style.removeProperty("animation-name");
 			setTimeout(function () {
 				elem.classList.remove("fromActive");
 			}, 800);
+
+			let details = elem.parentElement.querySelector(".details");
+			details.style.removeProperty("max-height");
+			details.style.removeProperty("padding");
+
+
+		} else {
+
+			let cTransform = window.getComputedStyle(elem).transform;
+			elem.style.setProperty("transform",cTransform);
+			elem.style.setProperty("animation-name","none");
+			window.requestAnimationFrame(function(){
+				elem.classList.add("active");
+				elem.style.removeProperty("transform");
+				elem.style.setProperty("--rnd-1","0s");
+
+				let details = elem.parentElement.querySelector(".details");
+				details.style.setProperty("max-height", details.scrollHeight+"px");
+				details.style.setProperty("padding", "var(--padding)");
+			});
+
 		}
-		elem.classList.toggle("active");
 	},
 
 	customPopup(content, maxWidth, link = null) {
@@ -124,26 +160,28 @@ const jb_scripts = {
 		}
 	},
 
-	setRandomBackgrounds(className){
+	setRandomBackgrounds(qsa){
 		let classesBg = ["bg1","bg2","bg3","bg4","bg5"],
 			classesBorder = ["border1","border2","border3","border4","border5"],
-			elems = document.getElementsByClassName(className),
-			prevNumber = -1,
-			modNumbers1 = [-1,-1],
-			modNumbers2 = [-1,-1,-1,-1];
+			elems = document.querySelectorAll(qsa),
+			prevNumber1 = -1,
+			prevNumber2 = -1;
+			//modNumbers1 = [-1,-1],
+			//modNumbers2 = [-1,-1,-1,-1];
 
 		for(let i = 0; i < elems.length; i++){
 			let rNumber = Math.floor(Math.random() * classesBg.length),
-				evilNumber1 = prevNumber,
-				evilNumber2 = modNumbers1[i%2],
-				evilNumber3 = modNumbers2[i%4];
-			while (rNumber == evilNumber1 || rNumber == evilNumber2 || rNumber == evilNumber3) rNumber = Math.floor(Math.random() * classesBg.length);
+				evilNumber1 = prevNumber1,
+				evilNumber2 = prevNumber2;
+				//evilNumber3 = modNumbers2[i%4];
+			//while (rNumber == evilNumber1 || rNumber == evilNumber2 || rNumber == evilNumber3) rNumber = Math.floor(Math.random() * classesBg.length);
+			while (rNumber == evilNumber1 || rNumber == evilNumber2 ) rNumber = Math.floor(Math.random() * classesBg.length);
 			
 			elems[i].classList.add(classesBg[rNumber], classesBorder[rNumber]);
-
-			prevNumber = rNumber;
-			modNumbers1[i%2] = rNumber;
-			modNumbers2[i%4] = rNumber;
+			prevNumber2 = prevNumber1;
+			prevNumber1 = rNumber;
+			//modNumbers1[i%2] = rNumber;
+			//modNumbers2[i%4] = rNumber;
 		}
 	},
 

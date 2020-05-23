@@ -38,6 +38,7 @@ div#tjs_bg canvas {
   transform-style: preserve-3d;
   height: 100vh;
   width: 100vw;
+  /* section specific animations */
 }
 @-webkit-keyframes section-rightToCenter--animation-height-opacity {
   from {
@@ -432,6 +433,7 @@ div#tjs_bg canvas {
   }
 }
 .wrapper section {
+  will-change: top, left, transform, opacity, max-height;
   top: 170px;
   pointer-events: none;
   max-height: 50vh;
@@ -477,9 +479,9 @@ div#tjs_bg canvas {
 .wrapper section.toHome {
   left: 0;
   transform: rotateY(0deg) translateZ(0);
-  top: 60vh;
+  top: 70vh;
   opacity: 0;
-  max-height: 39vh;
+  max-height: 29vh;
   -webkit-animation-duration: 0.8s;
           animation-duration: 0.8s;
   -webkit-animation-name: section-toHome--animation;
@@ -496,20 +498,24 @@ div#tjs_bg canvas {
           animation-timing-function: ease-in-out;
 }
 .wrapper header {
+  will-change: transform, top;
   top: 50vh;
   transform: translateY(-50%);
   transition: top 0.8s ease-in-out, transform 0.8s ease-in-out;
 }
 .wrapper header .header_logo {
+  will-change: transform;
   transform: rotateY(360deg);
   transition: transform 0.8s ease-in-out;
 }
 .wrapper header .logo_subtext {
+  will-change: opacity, visibility;
   opacity: 1;
   visibility: visible;
   transition: all 0.56s ease-in-out 0.24s;
 }
 .wrapper header nav {
+  will-change: opacity, visibility;
   opacity: 0;
   visibility: hidden;
   transition: all 0.56s ease-in-out 0s;
@@ -525,6 +531,7 @@ div#tjs_bg canvas {
   }
 }
 .wrapper header .enter {
+  will-change: transform, opacity;
   opacity: 0;
   -webkit-animation-name: enter--animation;
           animation-name: enter--animation;
@@ -559,9 +566,238 @@ div#tjs_bg canvas {
   visibility: visible;
   transition: all 0.56s ease-in-out 0.24s;
 }
+.wrapper section.projects.toHome .project {
+  -webkit-animation: project-out--animation;
+          animation: project-out--animation;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-delay: 0;
+          animation-delay: 0;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+.wrapper section.projects.fromHome.active .project {
+  -webkit-animation: project-in--animation;
+          animation: project-in--animation;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+.wrapper section.projects.fromHome.active .project:nth-child(1) {
+  -webkit-animation-delay: calc(.5s + (.1s * 1));
+          animation-delay: calc(.5s + (.1s * 1));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(2) {
+  -webkit-animation-delay: calc(.5s + (.1s * 2));
+          animation-delay: calc(.5s + (.1s * 2));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(3) {
+  -webkit-animation-delay: calc(.5s + (.1s * 3));
+          animation-delay: calc(.5s + (.1s * 3));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(4) {
+  -webkit-animation-delay: calc(.5s + (.1s * 4));
+          animation-delay: calc(.5s + (.1s * 4));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(5) {
+  -webkit-animation-delay: calc(.5s + (.1s * 5));
+          animation-delay: calc(.5s + (.1s * 5));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(6) {
+  -webkit-animation-delay: calc(.5s + (.1s * 6));
+          animation-delay: calc(.5s + (.1s * 6));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(7) {
+  -webkit-animation-delay: calc(.5s + (.1s * 7));
+          animation-delay: calc(.5s + (.1s * 7));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(8) {
+  -webkit-animation-delay: calc(.5s + (.1s * 8));
+          animation-delay: calc(.5s + (.1s * 8));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(9) {
+  -webkit-animation-delay: calc(.5s + (.1s * 9));
+          animation-delay: calc(.5s + (.1s * 9));
+}
+.wrapper section.projects.fromHome.active .project:nth-child(10) {
+  -webkit-animation-delay: calc(.5s + (.1s * 10));
+          animation-delay: calc(.5s + (.1s * 10));
+}
+@-webkit-keyframes project-in--animation {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes project-in--animation {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@-webkit-keyframes project-out--animation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes project-out--animation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+.wrapper section.projects .project {
+  will-change: transform;
+}
+.wrapper section.projects .project:nth-child(1) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(2) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(3) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(4) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(5) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(6) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(7) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(8) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(9) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project:nth-child(10) .cover {
+  -webkit-animation-delay: calc( -130s * var(--rnd-1) );
+          animation-delay: calc( -130s * var(--rnd-1) );
+  -webkit-animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+          animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
+}
+.wrapper section.projects .project .cover {
+  will-change: transform;
+  -webkit-animation: cover-move--animation;
+          animation: cover-move--animation;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+  -webkit-animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
+          animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
+}
+@-webkit-keyframes cover-move--animation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-30%);
+  }
+}
+@keyframes cover-move--animation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-30%);
+  }
+}
+.wrapper section.projects .project .cover.active {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+}
+.wrapper section.projects .project .cover:before {
+  will-change: clip-path, opacity;
+  content: "";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
+          clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
+  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  opacity: 1;
+}
+.wrapper section.projects .project .cover:hover:before {
+  -webkit-clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
+          clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
+  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+}
+.wrapper section.projects .project .cover.active:before {
+  opacity: 0;
+  -webkit-clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
+          clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
+  transition: opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
+  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s;
+  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
+}
+.wrapper section.projects .project .cover.fromActive:before {
+  -webkit-clip-path: polygon(0 0, calc(100%) 0, calc(100%) calc(50% - 25px), calc(calc(100%) - 25px) 50%, calc(100%) calc(50% + 25px), calc(100%) 100%, 0 100%);
+          clip-path: polygon(0 0, calc(100%) 0, calc(100%) calc(50% - 25px), calc(calc(100%) - 25px) 50%, calc(100%) calc(50% + 25px), calc(100%) 100%, 0 100%);
+  transition: opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s;
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+}
+.wrapper section.projects .project .details {
+  will-change: max-height, padding;
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+}
+.wrapper section.projects .project .cover.active ~ .details {
+  transition: max-height 0.3s ease-in-out 0.35s, padding 0.3s ease-in-out 0.35s;
+}
 
 /* everything popup-related */
 .popup_container {
+  will-change: opacity;
   position: fixed;
   display: flex;
   justify-content: center;
@@ -577,13 +813,12 @@ div#tjs_bg canvas {
   transition: opacity 0.2s;
   z-index: 1000;
 }
-
 .popup_container.active {
   opacity: 1;
   pointer-events: all;
 }
-
 .popup_container > div {
+  will-change: transform, opacity;
   transform: translateY(-60px);
   background: #011b28;
   opacity: 0;
@@ -593,33 +828,28 @@ div#tjs_bg canvas {
   transition: all 0.3s ease-in-out;
   overflow-y: auto;
 }
-
 .popup_container > div.move {
   transform: translateY(0);
   opacity: 1;
 }
 
 /* contact_tiles animation */
-.contact_tiles_grid > a:nth-child(1) {
+.contact_tiles_grid a:nth-child(1) {
   -webkit-animation-delay: 0s;
           animation-delay: 0s;
 }
-
-.contact_tiles_grid > a:nth-child(2) {
+.contact_tiles_grid a:nth-child(2) {
   -webkit-animation-delay: 0.1s;
           animation-delay: 0.1s;
 }
-
-.contact_tiles_grid > a:nth-child(3) {
+.contact_tiles_grid a:nth-child(3) {
   -webkit-animation-delay: 0.2s;
           animation-delay: 0.2s;
 }
-
-.contact_tiles_grid > a:nth-child(4) {
+.contact_tiles_grid a:nth-child(4) {
   -webkit-animation-delay: 0.3s;
           animation-delay: 0.3s;
 }
-
 .contact_tiles_grid.start_animation a {
   -webkit-animation-name: contact_tiles--animation;
           animation-name: contact_tiles--animation;
@@ -905,6 +1135,8 @@ div.sm_wrap div.sm input[type=range]:focus::-ms-fill-upper {
 /* ####################################################### */
 /* Main Rules, set the colors and a bunch of general stuff */
 /* ####################################################### */
+/* responsive-design-mixin: */
+/* root and body style */
 * {
   margin: 0;
   padding: 0;
@@ -932,6 +1164,7 @@ body {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+/* Link-styles */
 a {
   color: #cdeefe;
   text-decoration: none;
@@ -948,12 +1181,12 @@ a:hover, a:active, a:focus {
 }
 
 p {
-  margin: 8pt;
-  font-size: 12pt;
-  line-height: 18pt;
+  margin: 0.8em;
+  font-size: 1em;
+  line-height: 1.5em;
 }
 
-/* Link-FX*/
+/* fancy link-FX */
 .fancy_link {
   color: #cdeefe;
   display: inline-block;
@@ -1072,9 +1305,14 @@ p {
   max-width: 700px;
   transition: all 0.2s ease-in-out;
 }
+@media all and (max-width: 900px) {
+  .wrapper header nav {
+    max-width: 100%;
+  }
+}
 .wrapper header nav a {
   letter-spacing: 1px;
-  font-size: 10pt;
+  font-size: 0.9em;
   text-transform: uppercase;
   padding: 10px 15px;
 }
@@ -1096,9 +1334,9 @@ p {
   cursor: pointer;
 }
 .wrapper section {
-  box-shadow: inset 0 0 0 1px darkred;
+  /*		box-shadow:inset 0 0 0 1px darkred; */
   width: 100vw;
-  padding: 20px 0;
+  padding: 20px 0 0;
   position: fixed;
   overflow-y: hidden;
   /* #################### */
@@ -1116,88 +1354,104 @@ p {
   max-width: 1000px;
 }
 .wrapper section.projects .project .cover {
-  border: 1px solid yellow;
   background: rgba(251, 249, 239, 0.25);
   display: flex;
   flex-direction: row-reverse;
+  align-items: center;
   position: relative;
   cursor: pointer;
 }
-.wrapper section.projects .project .cover:before {
-  content: "";
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0;
+.wrapper section.projects .project .cover.bg1:before {
+  background: #02324b;
+}
+.wrapper section.projects .project .cover.bg2:before {
+  background: #0497a4;
+}
+.wrapper section.projects .project .cover.bg3:before {
   background: #4aa569;
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
-          clip-path: polygon(0 0, 100% 0, 100% calc(50% - 25px), calc(100% - 25px) 50%, 100% calc(50% + 25px), 100% 100%, 0 100%);
-  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  opacity: 1;
 }
-.wrapper section.projects .project .cover:hover:before {
-  -webkit-clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
-          clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 25px), calc(calc(100% - 120px) - 25px) 50%, calc(100% - 120px) calc(50% + 25px), calc(100% - 120px) 100%, 0 100%);
-  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+.wrapper section.projects .project .cover.bg4:before {
+  background: #eab03e;
 }
-.wrapper section.projects .project .cover.active:before {
-  opacity: 0;
-  -webkit-clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
-          clip-path: polygon(0 0, 0% 0, 0% calc(50% - 25px), calc(0% - 25px) 50%, 0% calc(50% + 25px), 0% 100%, 0 100%);
-  transition: opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
-  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s;
-  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
-}
-.wrapper section.projects .project .cover.fromActive:before {
-  transition: opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s;
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+.wrapper section.projects .project .cover.bg5:before {
+  background: #da654e;
 }
 .wrapper section.projects .project .cover .logo {
   margin: 20px;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .cover .logo {
+    margin: 15px;
+  }
 }
 .wrapper section.projects .project .cover .logo img {
   height: 100px;
   width: 100px;
 }
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .cover .logo img {
+    height: 60px;
+    width: 60px;
+  }
+}
 .wrapper section.projects .project .cover .title {
   text-align: center;
+  flex-grow: 1;
 }
-.wrapper section.projects .project .cover.active ~ .details {
-  max-height: 1000px;
-  padding: 50px;
-  transition: max-height 0.2s ease-in-out 0.35s, padding 0.2s ease-in-out 0.35s;
+.wrapper section.projects .project .cover .title h1 {
+  font-size: 1.3em;
+  margin: 0.3em;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .cover .title h1 {
+    font-size: 1em;
+    margin: 0.2em;
+  }
+}
+.wrapper section.projects .project .cover .title h2 {
+  font-size: 1em;
+  margin: 0.2em;
+  font-weight: normal;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .cover .title h2 {
+    font-size: 0.8em;
+  }
 }
 .wrapper section.projects .project .details {
-  border: 1px solid blue;
-  padding: 0 50px;
-  max-height: 0;
-  overflow-y: hidden;
-  transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out;
+  --padding: 50px;
+  padding: 0 var(--padding);
+}
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .details {
+    --padding: 20px;
+  }
 }
 .wrapper section.projects .project .details .description {
   max-width: 600px;
+}
+.wrapper section.projects .project .details .description h4 {
+  font-size: 0.7em;
 }
 .wrapper section.projects .project .details .pictures {
   position: absolute;
   visibility: hidden;
 }
 .wrapper section.about {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
   /* about-sidebar */
 }
-.wrapper section.about .text_wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media all and (max-width: 900px) {
+  .wrapper section.about {
+    grid-template-columns: 1fr;
+  }
 }
-.wrapper section.about .text_wrapper .text {
-  width: 800px;
+.wrapper section.about article {
+  align-self: center;
+  max-width: 800px;
 }
-.wrapper section.about .text_wrapper .text p {
+.wrapper section.about article p {
   margin: 0 20px 20px;
 }
 .wrapper section.about aside {
@@ -1208,18 +1462,25 @@ p {
   /* about-sidebar -> contact tiles */
   /* about-sidebar -> imprint-link */
 }
+@media all and (max-width: 900px) {
+  .wrapper section.about aside {
+    grid-template-rows: 6fr 9fr 2fr;
+  }
+}
 .wrapper section.about aside .contact_address_wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.wrapper section.about aside .contact_address_wrapper .contact_address {
-  color: #011b28;
-}
 .wrapper section.about aside .contact_tiles_grid {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr 2fr 2fr;
   grid-template-rows: 1fr 2fr 2fr 1fr;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.about aside .contact_tiles_grid {
+    grid-template-rows: 1fr 3fr 3fr 1fr;
+  }
 }
 .wrapper section.about aside .contact_tiles_grid > a {
   /* mail */
@@ -1284,18 +1545,31 @@ p {
 /* ########### */
 /*  impressum-style */
 .impressum_div {
-  line-height: 20pt;
+  line-height: 1.6em;
 }
 .impressum_div p {
-  line-height: 20pt;
+  line-height: 1.6em;
 }
 .impressum_div li {
   list-style: unset;
   margin-top: 8px;
 }
-.impressum_div table, .impressum_div tr {
-  border: 1px solid rgba(251, 249, 239, 0);
-  border-collapse: collapse;
+.impressum_div .table-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 6fr;
+  border-top: 1px solid rgba(251, 249, 239, 0.25);
+  border-left: 1px solid rgba(251, 249, 239, 0.25);
+}
+@media all and (max-width: 900px) {
+  .impressum_div .table-2-cols {
+    grid-template-columns: 1fr;
+  }
+}
+.impressum_div .table-2-cols p {
+  border-bottom: 1px solid rgba(251, 249, 239, 0.25);
+  border-right: 1px solid rgba(251, 249, 239, 0.25);
+  margin: 0;
+  padding: 1em;
 }
 .impressum_div .first_column {
   width: 250px;
@@ -1312,15 +1586,4 @@ p {
 }
 .impressum_div h2 {
   padding-top: 15px;
-}
-
-/* ################# */
-/* Responsive design */
-/* ################# */
-/* medium screens */
-/* small screens */
-@media all and (max-width: 900px) {
-  header nav {
-    max-width: 100%;
-  }
 }
