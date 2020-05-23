@@ -280,14 +280,14 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 	section.projects {
 		&.toHome .project {
-			animation: project-out--animation;
+			animation-name: project-out--animation;
 			animation-duration: 1s;
-			animation-delay: 0;
 			animation-fill-mode: both;
+			animation-delay: 0s;
 		}
 
 		&.fromHome.active .project {
-			animation: project-in--animation;
+			animation-name: project-in--animation;
 			animation-duration: 1s;
 			animation-fill-mode: both;
 			@for $i from 1 through 10 {
@@ -329,7 +329,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				will-change: transform;
 				
 				
-				animation: cover-move--animation;
+				animation-name: cover-move--animation;
 				animation-iteration-count: infinite;
 				animation-direction: alternate;
 				animation-timing-function: cubic-bezier(.25,0,.75,1);

@@ -567,18 +567,18 @@ div#tjs_bg canvas {
   transition: all 0.56s ease-in-out 0.24s;
 }
 .wrapper section.projects.toHome .project {
-  -webkit-animation: project-out--animation;
-          animation: project-out--animation;
+  -webkit-animation-name: project-out--animation;
+          animation-name: project-out--animation;
   -webkit-animation-duration: 1s;
           animation-duration: 1s;
-  -webkit-animation-delay: 0;
-          animation-delay: 0;
   -webkit-animation-fill-mode: both;
           animation-fill-mode: both;
+  -webkit-animation-delay: 0s;
+          animation-delay: 0s;
 }
 .wrapper section.projects.fromHome.active .project {
-  -webkit-animation: project-in--animation;
-          animation: project-in--animation;
+  -webkit-animation-name: project-in--animation;
+          animation-name: project-in--animation;
   -webkit-animation-duration: 1s;
           animation-duration: 1s;
   -webkit-animation-fill-mode: both;
@@ -721,8 +721,8 @@ div#tjs_bg canvas {
 }
 .wrapper section.projects .project .cover {
   will-change: transform;
-  -webkit-animation: cover-move--animation;
-          animation: cover-move--animation;
+  -webkit-animation-name: cover-move--animation;
+          animation-name: cover-move--animation;
   -webkit-animation-iteration-count: infinite;
           animation-iteration-count: infinite;
   -webkit-animation-direction: alternate;

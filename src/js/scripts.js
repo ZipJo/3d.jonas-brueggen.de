@@ -57,10 +57,13 @@ const jb_scripts = {
 				//section specific js
 				if (hashName == "projects") {
 					// rng for projects
-					let pElem = document.querySelectorAll(".wrapper section.projects .project .cover");
+					let pElem = document.querySelectorAll(".wrapper section.projects .project .cover"),
+						bgs = ["bg1","bg2","bg3","bg4","bg5"];
+
 					pElem.forEach(function(cElem){
 						cElem.style.setProperty("--rnd-1",Math.random());
 						cElem.style.setProperty("--rnd-2",Math.random());
+						cElem.classList.remove(...bgs);
 					});
 					jb_scripts.setRandomBackgrounds(".wrapper section.projects .project .cover");
 				} 
@@ -162,7 +165,7 @@ const jb_scripts = {
 
 	setRandomBackgrounds(qsa){
 		let classesBg = ["bg1","bg2","bg3","bg4","bg5"],
-			classesBorder = ["border1","border2","border3","border4","border5"],
+			//classesBorder = ["border1","border2","border3","border4","border5"],
 			elems = document.querySelectorAll(qsa),
 			prevNumber1 = -1,
 			prevNumber2 = -1;
@@ -177,7 +180,7 @@ const jb_scripts = {
 			//while (rNumber == evilNumber1 || rNumber == evilNumber2 || rNumber == evilNumber3) rNumber = Math.floor(Math.random() * classesBg.length);
 			while (rNumber == evilNumber1 || rNumber == evilNumber2 ) rNumber = Math.floor(Math.random() * classesBg.length);
 			
-			elems[i].classList.add(classesBg[rNumber], classesBorder[rNumber]);
+			elems[i].classList.add(classesBg[rNumber]);
 			prevNumber2 = prevNumber1;
 			prevNumber1 = rNumber;
 			//modNumbers1[i%2] = rNumber;
