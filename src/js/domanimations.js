@@ -3,8 +3,13 @@ const jb_DOManimation = {
 
 
 	vars: {
-		containmentPercentage: 50,
-		mouseAccuracy: 1000
+		mouseAccuracy: 1000,
+		rotation_accuracy: 50,
+		animation: false,
+		mod_logo: 10,
+		mod_text: 6,
+		c_x: 0,
+		c_y: 0,
 	},
 
 	perspective(){
@@ -12,28 +17,61 @@ const jb_DOManimation = {
 		// TODO!
 		if (!document.querySelector("header.top")) {
 
-			if (jb_events.vars.onhover.enable && jb_events.interactivity.status == 'mousemove') {
-				let percentage_x_mouse = Math.round(jb_events.vars.onhover.pos_x / window.innerWidth * this.vars.mouseAccuracy) / this.vars.mouseAccuracy;
-				let percentage_y_mouse = Math.round(jb_events.vars.onhover.pos_y / window.innerHeight * this.vars.mouseAccuracy) / this.vars.mouseAccuracy;
-				let cP = this.vars.containmentPercentage,
-					pMax = (100 + cP) / 2,
-
-					perspectiveOrigin = 
-						(pMax - (cP * percentage_x_mouse)) + "vw " +
-						(pMax - (cP * percentage_y_mouse)) + "vh";
-
-				document.querySelector("header").style.perspectiveOrigin = perspectiveOrigin;
+			if (jb_events.vars.onhover.enable && jb_events.vars.status == 'mousemove') {
+				let percentage_x_mouse = -0.5 + Math.round(jb_events.vars.onhover.pos_x / window.innerWidth * this.vars.mouseAccuracy) / this.vars.mouseAccuracy;
+				let percentage_y_mouse = -0.5 + Math.round(jb_events.vars.onhover.pos_y / window.innerHeight * this.vars.mouseAccuracy) / this.vars.mouseAccuracy;
+				this.vars.c_x = this.ease(this.vars.c_x, percentage_x_mouse, 0.055);
+				this.vars.c_y = this.ease(this.vars.c_y, percentage_y_mouse, 0.055);
+				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin)");
+				this.vars.text_elem.style.setProperty("transform","translateY(-100%) translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin)");
 			}
 
-			if (jb_events.vars.onhover.enable && jb_events.interactivity.status == 'tilt') {
-
-				let rot_alpha = jb_events.vars.deviceOrientation.rotation_alpha,
-					rot_beta = jb_events.vars.deviceOrientation.rotation_beta;
-
-				document.querySelector("header").style.top = rot_alpha + "px";
-				document.querySelector("header").style.left = rot_beta + "px";
-
+			if (jb_events.vars.onhover.enable && jb_events.vars.status == 'tilt') {
+				let rot_alpha = jb_events.vars.deviceOrientation.rotation_alpha / this.vars.rotation_accuracy,
+					rot_beta = jb_events.vars.deviceOrientation.rotation_beta / this.vars.rotation_accuracy;
+				this.vars.c_x = this.ease(this.vars.c_x, rot_beta, 0.035);
+				this.vars.c_y = this.ease(this.vars.c_y, rot_alpha, 0.035);
+				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin)");
+				this.vars.text_elem.style.setProperty("transform","translateY(-100%) translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin)");
 			}
 		}
+	},
+
+	start(){
+		this.vars.logo_elem = document.querySelector("header .header_logo");
+		this.vars.text_elem = document.querySelector("header .logo_subtext");
+		this.vars.c_x = 0;
+		this.vars.c_y = 0;
+		this.vars.animation = true;
+
+		setTimeout(function(){
+			if(jb_DOManimation.vars.animation === true){
+				jb_DOManimation.draw();
+				jb_DOManimation.vars.logo_elem.style.setProperty("transition","none");
+				jb_DOManimation.vars.text_elem.style.setProperty("transition","none");
+			}
+		},200);
+	},
+
+	stop(){
+		if(this.vars.animation === true) {
+			this.vars.animation = false;
+			this.vars.logo_elem.style.removeProperty("transform");
+			this.vars.text_elem.style.removeProperty("transform");
+			this.vars.logo_elem.style.removeProperty("transition");
+			this.vars.text_elem.style.removeProperty("transition");
+		}
+	},
+
+	draw(){
+		if (jb_DOManimation.vars.animation){
+			window.requestAnimationFrame(jb_DOManimation.draw);
+			jb_DOManimation.perspective();
+		}
+	},
+
+	ease(current, target, slerp = 0.055){
+		let ret = current + ((target - current) * slerp);
+		return ret;
 	}
 }

@@ -22,8 +22,8 @@ const jb_events = {
 
 	addEvents(){
 
-		// detect mouse pos - on hover / click event
-		if (this.vars.onhover.enable || this.vars.onclick.enable) {
+		// detect mouse pos on hover
+		if (this.vars.onhover.enable) {
 
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
 			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -50,9 +50,6 @@ const jb_events = {
 
 				}
 
-				// ontouch event
-				window.addEventListener('touch', this.clickAction);
-
 			} else {
 				//desktop!
 
@@ -61,15 +58,18 @@ const jb_events = {
 
 				/* el on onmouseleave */
 				window.addEventListener('mouseleave', this.mouseLeaveAction);
-
-				// onclick event
-				window.addEventListener('click', this.clickAction);
 			
 			}
-
-			
 		}
 
+		//click-events
+		if (this.vars.onclick.enable) {
+			// ontouch event
+			window.addEventListener('touch', this.clickAction);
+			// onclick event
+			window.addEventListener('click', this.clickAction);
+		}
+		
 		// resize, orientationchange events
 		window.addEventListener("resize", function(){
 			jb_events.vars.isResized = true;

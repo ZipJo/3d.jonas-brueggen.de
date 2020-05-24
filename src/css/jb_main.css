@@ -33,7 +33,6 @@ div#tjs_bg canvas {
 
 /* main perspective animations */
 .wrapper {
-  overflow-x: hidden;
   perspective: 10vw;
   transform-style: preserve-3d;
   height: 100vh;
@@ -437,6 +436,7 @@ div#tjs_bg canvas {
   top: 170px;
   pointer-events: none;
   max-height: 50vh;
+  overflow-y: hidden;
   opacity: 0;
   left: 146.2619912695vw;
   transform: rotateY(8.75deg) translateZ(-12.2339182284vw);
@@ -509,7 +509,7 @@ div#tjs_bg canvas {
   transition: transform 0.8s ease-in-out;
 }
 .wrapper header .logo_subtext {
-  will-change: opacity, visibility;
+  will-change: opacity, visibility, transform;
   opacity: 1;
   visibility: visible;
   transition: all 0.56s ease-in-out 0.24s;
@@ -544,10 +544,21 @@ div#tjs_bg canvas {
   transition: opacity 0.4s ease-in-out;
   visibility: hidden;
 }
+.wrapper header .enter circle {
+  will-change: transform, stroke-dashoffset;
+  stroke-dashoffset: 1300;
+  transform: rotate(90deg);
+  transform-origin: center;
+  transition: transform 1s ease-in-out 0.5s, stroke-dashoffset 1.3s ease-in-out 0.2s;
+}
 .wrapper header .enter.visible {
   visibility: visible;
   opacity: 1;
-  transition: opacity 3s ease-in-out;
+  transition: opacity 1s ease-in-out;
+}
+.wrapper header .enter.visible circle {
+  stroke-dashoffset: 0;
+  transform: rotate(270deg);
 }
 .wrapper header.top {
   top: 0;
@@ -1241,6 +1252,7 @@ p {
 /* ############### */
 .wrapper {
   margin: 0;
+  overflow-x: hidden;
   /* logo and menu */
   /* ##################### */
   /* general section-rules */
@@ -1261,6 +1273,7 @@ p {
   width: 100px;
   height: 100px;
   position: relative;
+  z-index: 10;
 }
 .wrapper header .header_logo .logo_wrapper {
   overflow: hidden;
@@ -1284,6 +1297,7 @@ p {
   position: absolute;
   width: 200%;
   left: -50%;
+  z-index: 5;
   transform: translateY(-100%);
 }
 .wrapper header .logo_subtext h3, .wrapper header .logo_subtext h4 {
@@ -1317,14 +1331,8 @@ p {
   padding: 10px 15px;
 }
 .wrapper header .enter {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 560'%3E%3Cdefs/%3E%3Cpath fill='%23fbf9ef' d='M480 344L269 132a40 40 0 00-57 0 41 41 0 000 57l237 239c9 9 20 13 31 12 11 1 22-3 31-12l237-239c16-16 16-41 0-57s-41-16-57 0L480 344z'/%3E%3C/svg%3E");
-  background-size: 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
   width: 50px;
   height: 50px;
-  border: 1px solid #fbf9ef;
-  border-radius: 100%;
   display: block;
   position: fixed;
   top: 50vh;
@@ -1333,12 +1341,20 @@ p {
   transform: translateX(-50%);
   cursor: pointer;
 }
+.wrapper header .enter circle {
+  fill: none;
+  stroke: #fbf9ef;
+  stroke-width: 16;
+  stroke-dasharray: 1300;
+}
+.wrapper header .enter path {
+  fill: #fbf9ef;
+}
 .wrapper section {
-  /*		box-shadow:inset 0 0 0 1px darkred; */
+  /*box-shadow:inset 0 0 0 1px darkred; */
   width: 100vw;
   padding: 20px 0 0;
-  position: fixed;
-  overflow-y: hidden;
+  position: absolute;
   /* #################### */
   /* Page-specific rules: */
   /* ## Projects-page ### */
@@ -1436,11 +1452,17 @@ p {
 .wrapper section.projects .project .details .pictures {
   position: absolute;
   visibility: hidden;
+  display: none;
 }
 .wrapper section.about {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: auto auto;
   /* about-sidebar */
+}
+@media all and (min-width: 901px) and (max-width: 1199px) {
+  .wrapper section.about {
+    grid-template-columns: 1fr;
+  }
 }
 @media all and (max-width: 900px) {
   .wrapper section.about {
@@ -1448,7 +1470,9 @@ p {
   }
 }
 .wrapper section.about article {
+  padding: 0 3vw;
   align-self: center;
+  justify-self: center;
   max-width: 800px;
 }
 .wrapper section.about article p {
@@ -1457,29 +1481,46 @@ p {
 .wrapper section.about aside {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 5fr 6fr 1fr;
+  grid-template-rows: 6fr 9fr 2fr;
   /* about-sidebar -> address */
   /* about-sidebar -> contact tiles */
   /* about-sidebar -> imprint-link */
 }
-@media all and (max-width: 900px) {
+@media all and (min-width: 901px) and (max-width: 1199px) {
   .wrapper section.about aside {
-    grid-template-rows: 6fr 9fr 2fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 3fr 1fr;
   }
 }
-.wrapper section.about aside .contact_address_wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media all and (max-width: 900px) {
+  .wrapper section.about aside {
+    grid-template-rows: 6fr 3fr 2fr;
+  }
+}
+.wrapper section.about aside .contact_address {
+  align-self: center;
+  justify-self: center;
 }
 .wrapper section.about aside .contact_tiles_grid {
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr 2fr 2fr;
-  grid-template-rows: 1fr 2fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 15%;
+  justify-self: center;
+  align-self: center;
+}
+@media all and (min-width: 901px) and (max-width: 1199px) {
+  .wrapper section.about aside .contact_tiles_grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 10%;
+  }
 }
 @media all and (max-width: 900px) {
   .wrapper section.about aside .contact_tiles_grid {
-    grid-template-rows: 1fr 3fr 3fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 10%;
   }
 }
 .wrapper section.about aside .contact_tiles_grid > a {
@@ -1489,16 +1530,14 @@ p {
   /* whatsapp */
 }
 .wrapper section.about aside .contact_tiles_grid > a > span {
-  height: 100%;
-  width: 100%;
+  height: 2vmin;
+  width: 2vmin;
+  max-width: 50px;
+  max-height: 50px;
   display: block;
   background-image: url("../files/logos.svg");
   background-repeat: no-repeat;
   background-size: 400%;
-}
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(1) {
-  grid-column: 2/span 1;
-  grid-row: 2/span 1;
 }
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):focus {
   background-color: #dd4c3c;
@@ -1506,29 +1545,17 @@ p {
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(1) > span {
   background-position-x: 0%;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(2) {
-  grid-column: 2/span 1;
-  grid-row: 3/span 1;
-}
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):focus {
   background-color: #3d559e;
 }
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(2) > span {
   background-position-x: calc(100% / 3);
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(3) {
-  grid-column: 4/span 1;
-  grid-row: 2/span 1;
-}
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):focus {
   background-color: #1dabe5;
 }
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(3) > span {
   background-position-x: calc(200% / 3);
-}
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(4) {
-  grid-column: 4/span 1;
-  grid-row: 3/span 1;
 }
 .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):focus {
   background-color: #20d442;
@@ -1538,6 +1565,11 @@ p {
 }
 .wrapper section.about aside .imprint {
   justify-self: center;
+}
+@media all and (min-width: 901px) and (max-width: 1199px) {
+  .wrapper section.about aside .imprint {
+    grid-column: span 2;
+  }
 }
 
 /* ########### */

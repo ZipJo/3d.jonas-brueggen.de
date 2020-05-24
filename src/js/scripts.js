@@ -14,6 +14,7 @@ const jb_scripts = {
 
 			this.clearClasses();
 			jb_events.destroyHomeScrollEvents();
+			jb_DOManimation.stop();
 
 			if (this.allowedNames.includes(hashName)){
 
@@ -23,6 +24,7 @@ const jb_scripts = {
 						document.querySelector("header").classList.remove("top");
 						document.querySelector("section."+this.currentActive).classList.add("toHome");
 						jb_events.addHomeScrollEvents();
+						setTimeout(function(){jb_DOManimation.start();},600);
 					} else {
 						// from section to section
 						document.querySelector("header").classList.add("top");
@@ -47,6 +49,7 @@ const jb_scripts = {
 				} else if (this.currentActive === null && hashName == "home"){
 					//first call (init) forhome
 					jb_events.addHomeScrollEvents();
+					jb_DOManimation.start();
 					setTimeout(function() {
 						if (jb_scripts.contentChanger.currentActive == "home"){
 							document.querySelector("header > span.enter").classList.add("visible")
@@ -104,7 +107,12 @@ const jb_scripts = {
 			elem.classList.add("fromActive");
 			elem.style.removeProperty("animation-name");
 			setTimeout(function () {
-				elem.classList.remove("fromActive");
+				console.log("timeout");
+				elem.addEventListener("mouseleave", function oml() {
+					console.log("el called");
+					elem.classList.remove("fromActive");
+					elem.removeEventListener("mouseleave", oml);
+				});
 			}, 800);
 
 			let details = elem.parentElement.querySelector(".details");

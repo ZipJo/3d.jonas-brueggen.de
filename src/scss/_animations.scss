@@ -151,7 +151,6 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	}
 
 
-	overflow-x: hidden;
 	perspective: $perspective;
 	transform-style: preserve-3d;
 	height: 100vh;
@@ -169,6 +168,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		$left: math.sin($maxRotation) * $maxDistanceX;
 
 		max-height: 50vh;
+		overflow-y: hidden;
 		opacity: 0;
 
 		left: $left;
@@ -234,7 +234,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			transition: transform $animationDurationHome ease-in-out;
 		}
 		.logo_subtext {
-			will-change: opacity, visibility;
+			will-change: opacity, visibility, transform;
 			opacity: 1;
 			visibility: visible;
 			transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3;
@@ -245,9 +245,11 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			visibility: hidden;
 			transition: all $animationDurationHome*.7 ease-in-out 0s;
 		}
+
 		@keyframes enter--animation {
 			50% { transform: translateX(-50%) scale(1.05); }
 		}
+
 		.enter {
 			will-change: transform, opacity;
 			opacity: 0;
@@ -257,12 +259,27 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			animation-timing-function: ease-in-out;
 			transition: opacity $animationDurationHome/2 ease-in-out;
 			visibility: hidden;
+
+			circle {
+				will-change: transform, stroke-dashoffset;
+				stroke-dashoffset: 1300;
+				transform: rotate(90deg);
+				transform-origin: center;
+				transition: transform 1s ease-in-out 0.5s, stroke-dashoffset 1.3s ease-in-out 0.2s;
+			}
+
 			&.visible {
 				visibility: visible;
 				opacity: 1;
-				transition: opacity 3s ease-in-out;
+				transition: opacity 1s ease-in-out;
+
+				circle {
+					stroke-dashoffset: 0;
+					transform: rotate(270deg);
+				}
 			}
 		}
+
 
 		&.top {
 			top: 0;
