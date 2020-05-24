@@ -343,7 +343,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 					transition: transform 0.4s cubic-bezier(.4,0,.35,1.35);
 				}
 
-				$arrow_indent: 25px;
+				$arrow_indent: 15px;
 				
 				&:before {
 					will-change: clip-path, opacity;
