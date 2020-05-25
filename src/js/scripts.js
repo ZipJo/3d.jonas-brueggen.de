@@ -126,6 +126,7 @@ const jb_scripts = {
 			elem.style.setProperty("transform",cTransform);
 			elem.style.setProperty("animation-name","none");
 			window.requestAnimationFrame(function(){
+				elem.classList.remove("fromActive");
 				elem.classList.add("active");
 				elem.style.removeProperty("transform");
 				elem.style.setProperty("--rnd-1","0s");

@@ -31,6 +31,8 @@ div#tjs_bg canvas {
   transform: translate(-50%, -50%);
 }
 
+/* _functions.scss */
+/* responsive-design-mixin: */
 /* main perspective animations */
 .wrapper {
   perspective: 10vw;
@@ -740,6 +742,7 @@ div#tjs_bg canvas {
           animation-direction: alternate;
   -webkit-animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
           animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
+  --logo-width: 141px;
 }
 @-webkit-keyframes cover-move--animation {
   from {
@@ -760,41 +763,32 @@ div#tjs_bg canvas {
 .wrapper section.projects .project .cover.active {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
 }
-.wrapper section.projects .project .cover:before {
+@media all and (max-width: 900px) {
+  .wrapper section.projects .project .cover {
+    --logo-width: 91px;
+  }
+}
+.wrapper section.projects .project .cover:hover:before, .wrapper section.projects .project .cover.active:before {
+  -webkit-clip-path: polygon(0 0, 0% 0, 0% calc(50% - 15px), calc(0% - 15px) 50%, 0% calc(50% + 15px), 0% 100%, 0 100%);
+          clip-path: polygon(0 0, 0% 0, 0% calc(50% - 15px), calc(0% - 15px) 50%, 0% calc(50% + 15px), 0% 100%, 0 100%);
+  transition: opacity 0.3s ease-in-out 0.2s, -webkit-clip-path 0.6s cubic-bezier(0.4, -0.1, 0.35, 1.35);
+  transition: clip-path 0.6s cubic-bezier(0.4, -0.1, 0.35, 1.35), opacity 0.3s ease-in-out 0.2s;
+  transition: clip-path 0.6s cubic-bezier(0.4, -0.1, 0.35, 1.35), opacity 0.3s ease-in-out 0.2s, -webkit-clip-path 0.6s cubic-bezier(0.4, -0.1, 0.35, 1.35);
+  opacity: 0;
+}
+.wrapper section.projects .project .cover:before, .wrapper section.projects .project .cover.fromActive:before {
   will-change: clip-path, opacity;
   content: "";
   height: 100%;
   width: 100%;
   position: absolute;
   left: 0;
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(50% - 15px), calc(100% - 15px) 50%, 100% calc(50% + 15px), 100% 100%, 0 100%);
-          clip-path: polygon(0 0, 100% 0, 100% calc(50% - 15px), calc(100% - 15px) 50%, 100% calc(50% + 15px), 100% 100%, 0 100%);
-  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
+  -webkit-clip-path: polygon(0 0, calc(100% - var(--logo-width)) 0, calc(100% - var(--logo-width)) calc(50% - 15px), calc(calc(100% - var(--logo-width)) - 15px) 50%, calc(100% - var(--logo-width)) calc(50% + 15px), calc(100% - var(--logo-width)) 100%, 0 100%);
+          clip-path: polygon(0 0, calc(100% - var(--logo-width)) 0, calc(100% - var(--logo-width)) calc(50% - 15px), calc(calc(100% - var(--logo-width)) - 15px) 50%, calc(100% - var(--logo-width)) calc(50% + 15px), calc(100% - var(--logo-width)) 100%, 0 100%);
+  transition: opacity 0.3s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.3s ease-in-out 0.1s;
+  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.3s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
   opacity: 1;
-}
-.wrapper section.projects .project .cover:hover:before {
-  -webkit-clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 15px), calc(calc(100% - 120px) - 15px) 50%, calc(100% - 120px) calc(50% + 15px), calc(100% - 120px) 100%, 0 100%);
-          clip-path: polygon(0 0, calc(100% - 120px) 0, calc(100% - 120px) calc(50% - 15px), calc(calc(100% - 120px) - 15px) 50%, calc(100% - 120px) calc(50% + 15px), calc(100% - 120px) 100%, 0 100%);
-  transition: -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.35, 1.35);
-}
-.wrapper section.projects .project .cover.active:before {
-  opacity: 0;
-  -webkit-clip-path: polygon(0 0, 0% 0, 0% calc(50% - 15px), calc(0% - 15px) 50%, 0% calc(50% + 15px), 0% 100%, 0 100%);
-          clip-path: polygon(0 0, 0% 0, 0% calc(50% - 15px), calc(0% - 15px) 50%, 0% calc(50% + 15px), 0% 100%, 0 100%);
-  transition: opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
-  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s;
-  transition: clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1), opacity 0.2s ease-in-out 0.3s, -webkit-clip-path 0.5s cubic-bezier(0.4, -0.4, 0.58, 1);
-}
-.wrapper section.projects .project .cover.fromActive:before {
-  -webkit-clip-path: polygon(0 0, calc(100%) 0, calc(100%) calc(50% - 15px), calc(calc(100%) - 15px) 50%, calc(100%) calc(50% + 15px), calc(100%) 100%, 0 100%);
-          clip-path: polygon(0 0, calc(100%) 0, calc(100%) calc(50% - 15px), calc(calc(100%) - 15px) 50%, calc(100%) calc(50% + 15px), calc(100%) 100%, 0 100%);
-  transition: opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s;
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.5s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
 }
 .wrapper section.projects .project .details {
   will-change: max-height, padding;
@@ -803,7 +797,7 @@ div#tjs_bg canvas {
   transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
 }
 .wrapper section.projects .project .cover.active ~ .details {
-  transition: max-height 0.3s ease-in-out 0.35s, padding 0.3s ease-in-out 0.35s;
+  transition: max-height 0.3s ease-in-out 0.15s, padding 0.3s ease-in-out 0.15s;
 }
 
 /* everything popup-related */
@@ -1146,7 +1140,6 @@ div.sm_wrap div.sm input[type=range]:focus::-ms-fill-upper {
 /* ####################################################### */
 /* Main Rules, set the colors and a bunch of general stuff */
 /* ####################################################### */
-/* responsive-design-mixin: */
 /* root and body style */
 * {
   margin: 0;
@@ -1377,27 +1370,27 @@ p {
   position: relative;
   cursor: pointer;
 }
-.wrapper section.projects .project .cover.bg1:before {
+.wrapper section.projects .project .cover.bg1:before, .wrapper section.projects .project .cover.bg1 .logo {
   background: #02324b;
 }
-.wrapper section.projects .project .cover.bg2:before {
+.wrapper section.projects .project .cover.bg2:before, .wrapper section.projects .project .cover.bg2 .logo {
   background: #0497a4;
 }
-.wrapper section.projects .project .cover.bg3:before {
+.wrapper section.projects .project .cover.bg3:before, .wrapper section.projects .project .cover.bg3 .logo {
   background: #4aa569;
 }
-.wrapper section.projects .project .cover.bg4:before {
+.wrapper section.projects .project .cover.bg4:before, .wrapper section.projects .project .cover.bg4 .logo {
   background: #eab03e;
 }
-.wrapper section.projects .project .cover.bg5:before {
+.wrapper section.projects .project .cover.bg5:before, .wrapper section.projects .project .cover.bg5 .logo {
   background: #da654e;
 }
 .wrapper section.projects .project .cover .logo {
-  margin: 20px;
+  padding: 20px;
 }
 @media all and (max-width: 900px) {
   .wrapper section.projects .project .cover .logo {
-    margin: 15px;
+    padding: 15px;
   }
 }
 .wrapper section.projects .project .cover .logo img {
@@ -1455,121 +1448,131 @@ p {
   display: none;
 }
 .wrapper section.about {
-  display: grid;
-  grid-template-columns: auto auto;
+  display: flex;
+  flex-direction: row;
+  min-height: 60vh;
+  align-items: center;
+  justify-content: space-around;
   /* about-sidebar */
-}
-@media all and (min-width: 901px) and (max-width: 1199px) {
-  .wrapper section.about {
-    grid-template-columns: 1fr;
-  }
 }
 @media all and (max-width: 900px) {
   .wrapper section.about {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 }
 .wrapper section.about article {
+  flex: 1 1 70%;
   padding: 0 3vw;
-  align-self: center;
-  justify-self: center;
   max-width: 800px;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.about article {
+    flex-basis: 100%;
+  }
 }
 .wrapper section.about article p {
   margin: 0 20px 20px;
 }
 .wrapper section.about aside {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 6fr 9fr 2fr;
+  align-self: stretch;
+  flex: 1 1 30%;
+  min-width: 250px;
+  max-width: 350px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   /* about-sidebar -> address */
   /* about-sidebar -> contact tiles */
   /* about-sidebar -> imprint-link */
 }
-@media all and (min-width: 901px) and (max-width: 1199px) {
-  .wrapper section.about aside {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 3fr 1fr;
-  }
-}
 @media all and (max-width: 900px) {
   .wrapper section.about aside {
-    grid-template-rows: 6fr 3fr 2fr;
+    align-self: center;
   }
 }
 .wrapper section.about aside .contact_address {
-  align-self: center;
-  justify-self: center;
+  flex: 0 0 auto;
+  margin: auto;
 }
-.wrapper section.about aside .contact_tiles_grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-gap: 15%;
-  justify-self: center;
-  align-self: center;
-}
-@media all and (min-width: 901px) and (max-width: 1199px) {
-  .wrapper section.about aside .contact_tiles_grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 10%;
-  }
+.wrapper section.about aside .grid_wrap {
+  flex: 0 0 auto;
+  margin: 15px auto;
+  width: 50%;
+  position: relative;
 }
 @media all and (max-width: 900px) {
-  .wrapper section.about aside .contact_tiles_grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 10%;
+  .wrapper section.about aside .grid_wrap {
+    width: 80%;
   }
 }
-.wrapper section.about aside .contact_tiles_grid > a {
+.wrapper section.about aside .grid_wrap:before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+  /* in direct correlation to grid-gap */
+}
+@media all and (max-width: 900px) {
+  .wrapper section.about aside .grid_wrap:before {
+    padding-top: calc(25% * 0.7);
+  }
+}
+.wrapper section.about aside .grid_wrap .contact_tiles_grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  grid-gap: 10%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+@media all and (max-width: 900px) {
+  .wrapper section.about aside .grid_wrap .contact_tiles_grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a {
   /* mail */
   /* phone */
   /* skype */
   /* whatsapp */
 }
-.wrapper section.about aside .contact_tiles_grid > a > span {
-  height: 2vmin;
-  width: 2vmin;
-  max-width: 50px;
-  max-height: 50px;
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a > span {
+  height: 100%;
+  width: 100%;
   display: block;
   background-image: url("../files/logos.svg");
   background-repeat: no-repeat;
   background-size: 400%;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(1):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(1):focus {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):focus {
   background-color: #dd4c3c;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(1) > span {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1) > span {
   background-position-x: 0%;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(2):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(2):focus {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):focus {
   background-color: #3d559e;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(2) > span {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2) > span {
   background-position-x: calc(100% / 3);
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(3):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(3):focus {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):focus {
   background-color: #1dabe5;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(3) > span {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3) > span {
   background-position-x: calc(200% / 3);
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(4):hover, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):active, .wrapper section.about aside .contact_tiles_grid > a:nth-child(4):focus {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):focus {
   background-color: #20d442;
 }
-.wrapper section.about aside .contact_tiles_grid > a:nth-child(4) > span {
+.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4) > span {
   background-position-x: 100%;
 }
 .wrapper section.about aside .imprint {
-  justify-self: center;
-}
-@media all and (min-width: 901px) and (max-width: 1199px) {
-  .wrapper section.about aside .imprint {
-    grid-column: span 2;
-  }
+  margin-top: auto;
+  flex: 0 0 auto;
 }
 
 /* ########### */
