@@ -313,24 +313,26 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			}
 		}
 
+		/* translateZ is here to move the animation to the GPU and allow anti-aliasing! */
 		@keyframes project-in--animation {
 			from {
-				transform: translateX(-100%);
+				transform: translateX(-100%) translateZ(0);
 			}
 			to {
-				transform: translateX(0);
+				transform: translateX(0) translateZ(0);
 			  }
 		}
 		@keyframes project-out--animation {
 			from {
-				transform: translateX(0);
+				transform: translateX(0) translateZ(0);
 			}
 			to {
-				transform: translateX(-100%);
+				transform: translateX(-100%) translateZ(0);
 			  }
 		}
 
 		.project {
+			transform-style: preserve-3d;
 			will-change: transform;
 
 			$move_dur: 60s;
@@ -344,6 +346,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			}
 
 			.cover {
+				transform-style: preserve-3d;
 				will-change: transform;
 				
 				animation-name: cover-move--animation;
@@ -352,8 +355,8 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				animation-timing-function: cubic-bezier(.25,0,.75,1);
 				
 				@keyframes cover-move--animation {
-					from { transform: translateX(0); }
-					to   { transform: translateX(-30%); }
+					from { transform: translateX(0) translateZ(0) rotate(0.01deg); }
+					to   { transform: translateX(-30%) translateZ(0) rotate(0.01deg); }
 				}
 
 				&.active {
@@ -361,8 +364,12 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				}
 
 				$arrow_indent: 15px;
-				--logo-width: 141px;
-				@include functions.mq(small) { --logo-width: 91px; }
+				--logo-width: 140px;
+				@include functions.mq(small) { --logo-width: 90px; }
+
+				/* Order is important here. First animation, then the basestyle, so the hover gets */
+				/* overwritten, if fromActive is applied. This is because of css-specifity:        */
+				/* ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0  */
 				
 				&:hover:before, &.active:before {
 					$width: 0%;
@@ -379,28 +386,12 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 					position: absolute;
 					left: 0;
 
-					$width: calc(100% - var(--logo-width));
+					$width: calc(100% - var(--logo-width) - 1px);
 					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
 					transition: clip-path 0.6s cubic-bezier(.4,0,.60,1.25), opacity 0.3s ease-in-out 0.1s;
 					opacity: 1;
 
 				}
-
-				
-
-//				&.active:before {
-//					opacity: 0;
-//					$width: 0%;
-//					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
-//					transition: clip-path 0.5s cubic-bezier(.4,-0.4,.58,1), opacity 0.2s ease-in-out 0.3s;
-//				}
-
-//				&.fromActive:before {
-//					$width: calc(100% - var(--logo-width));
-//					clip-path: polygon(0 0, $width 0, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0 100%);
-//					transition: clip-path 0.6s cubic-bezier(.4,0,.60,1.25), opacity 0.5s ease-in-out 0.1s;
-//					opacity: 1;
-//				}
 
 			}
 
@@ -416,7 +407,59 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			}
 		}
 	}
+
+
+
+
+	section.about {
+
+
+		/* contact_tiles animation */
+		.contact_tiles_grid {
+			a:nth-child(1) { animation-delay: 0s; }
+			a:nth-child(2) { animation-delay: 0.1s; }
+			a:nth-child(3) { animation-delay: 0.2s; }
+			a:nth-child(4) { animation-delay: 0.3s; }
+			
+			&.start_animation a {
+				animation-name: contact_tiles--animation;
+				animation-duration: 0.8s;
+				animation-timing-function: ease-out;
+				animation-iteration-count: 1;
+			}
+
+			a {
+				will-change: background-color;
+				transition: background-color 0.2s ease-in-out;
+				background-color: transparent;
+				/* mail */
+				&:nth-child(1) {
+					&:hover, &:active, &:focus { background-color: #dd4c3c; }
+				}
+				/* phone */
+				&:nth-child(2) {
+					&:hover, &:active, &:focus { background-color: #3d559e; }
+				}
+				/* skype */
+				&:nth-child(3) {
+					&:hover, &:active, &:focus { background-color: #1dabe5; }
+				}
+				/* whatsapp */
+				&:nth-child(4) {
+					&:hover, &:active, &:focus { background-color: #20d442; }
+				}
+			}
+		}
+
+		@keyframes contact_tiles--animation {
+			from { transform: translateX(0%) translateZ(0); }
+			30% { transform: translateX(-20%) translateZ(0); }
+			to { transform: translateX(0%) translateZ(0); }
+		}
+	}
 }
+
+
 
 
 /* everything popup-related */
@@ -459,25 +502,4 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			opacity: 1;
 		}
 	}
-}
-
-/* contact_tiles animation */
-.contact_tiles_grid {
-	a:nth-child(1) { animation-delay: 0s; }
-	a:nth-child(2) { animation-delay: 0.1s; }
-	a:nth-child(3) { animation-delay: 0.2s; }
-	a:nth-child(4) { animation-delay: 0.3s; }
-	
-	&.start_animation a {
-		animation-name: contact_tiles--animation;
-		animation-duration: 0.8s;
-		animation-timing-function: ease-out;
-		animation-iteration-count: 1;
-	}
-}
-
-@keyframes contact_tiles--animation {
-	from { transform: translateX(0%); }
-	20% { transform: translateX(-20%); }
-	to { transform: translateX(0%); }
 }

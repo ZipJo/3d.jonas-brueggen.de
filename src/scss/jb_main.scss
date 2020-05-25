@@ -79,8 +79,8 @@ p {
 	display: inline-block;
 	position: relative;
 	cursor: pointer;
-	transition: color 0.12s linear;
-	box-shadow:inset 0 -2px 0 0 variables.$color-accent-6;
+	transition: color 180ms linear;
+	box-shadow: inset 0 -2px 0 0 variables.$color-accent-6;
 	z-index: 0;
 
 
@@ -88,12 +88,13 @@ p {
 		z-index: -1;
 		content: "";
 		background: variables.$color-accent-6;
+		opacity: 0.6;
 
 		position: absolute;
 		height: 50%;
 		width: 0%;
 
-		transition: width 0.12s linear;
+		transition: width 180ms ease-in, opacity 80ms ease-in 100ms;
 	}
 	&:before { left: -3%; bottom: 0; }
 	&:after { right: -3%; top: 0; }
@@ -103,6 +104,8 @@ p {
 		color: variables.$color-page-bg;
 		&:before, &:after {
 			width: 106%;
+			opacity: 1;
+			transition: width 180ms ease-out, opacity 80ms ease-out 0ms;
 		}
 	}
 
@@ -119,7 +122,6 @@ p {
 			color: variables.$color-accent-6;
 		}
 	}
-
 }
 
 
@@ -270,6 +272,7 @@ p {
 					}
 
 					.logo {
+						transform: translateX(1px);
 
 						padding: 20px;
 						@include functions.mq(small) { padding: 15px; }
@@ -280,8 +283,7 @@ p {
 							@include functions.mq(small) {
 								height: 60px;
 								width: 60px;
-							}
-						}
+							}						}
 					}
 
 					.title{
@@ -413,25 +415,13 @@ p {
 							}
 
 							/* mail */
-							&:nth-child(1) {
-								&:hover, &:active, &:focus { background-color: #dd4c3c; }
-								> span { background-position-x: 0%; }
-							}
+							&:nth-child(1) > span { background-position-x: 0%; }
 							/* phone */
-							&:nth-child(2) {
-								&:hover, &:active, &:focus { background-color: #3d559e; }
-								> span { background-position-x: calc(100% / 3); }
-							}
+							&:nth-child(2) > span { background-position-x: calc(100% / 3); }
 							/* skype */
-							&:nth-child(3) {
-								&:hover, &:active, &:focus { background-color: #1dabe5; }
-								> span { background-position-x: calc(200% / 3); }
-							}
+							&:nth-child(3) > span { background-position-x: calc(200% / 3); }
 							/* whatsapp */
-							&:nth-child(4) {
-								&:hover, &:active, &:focus { background-color: #20d442; }
-								> span { background-position-x: 100%; }
-							}
+							&:nth-child(4) > span { background-position-x: 100%; }
 						}
 					}
 				}

@@ -579,6 +579,9 @@ div#tjs_bg canvas {
   visibility: visible;
   transition: all 0.56s ease-in-out 0.24s;
 }
+.wrapper section.projects {
+  /* translateZ is here to move the animation to the GPU and allow anti-aliasing! */
+}
 .wrapper section.projects.toHome .project {
   -webkit-animation-name: project-out--animation;
           animation-name: project-out--animation;
@@ -639,37 +642,38 @@ div#tjs_bg canvas {
 }
 @-webkit-keyframes project-in--animation {
   from {
-    transform: translateX(-100%);
+    transform: translateX(-100%) translateZ(0);
   }
   to {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
 }
 @keyframes project-in--animation {
   from {
-    transform: translateX(-100%);
+    transform: translateX(-100%) translateZ(0);
   }
   to {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
 }
 @-webkit-keyframes project-out--animation {
   from {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
   to {
-    transform: translateX(-100%);
+    transform: translateX(-100%) translateZ(0);
   }
 }
 @keyframes project-out--animation {
   from {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
   to {
-    transform: translateX(-100%);
+    transform: translateX(-100%) translateZ(0);
   }
 }
 .wrapper section.projects .project {
+  transform-style: preserve-3d;
   will-change: transform;
 }
 .wrapper section.projects .project:nth-child(1) .cover {
@@ -733,6 +737,7 @@ div#tjs_bg canvas {
           animation-duration: calc( 60s + ( 5s * var(--rnd-2) ) );
 }
 .wrapper section.projects .project .cover {
+  transform-style: preserve-3d;
   will-change: transform;
   -webkit-animation-name: cover-move--animation;
           animation-name: cover-move--animation;
@@ -742,22 +747,25 @@ div#tjs_bg canvas {
           animation-direction: alternate;
   -webkit-animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
           animation-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
-  --logo-width: 141px;
+  --logo-width: 140px;
+  /* Order is important here. First animation, then the basestyle, so the hover gets */
+  /* overwritten, if fromActive is applied. This is because of css-specifity:        */
+  /* ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0  */
 }
 @-webkit-keyframes cover-move--animation {
   from {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0) rotate(0.01deg);
   }
   to {
-    transform: translateX(-30%);
+    transform: translateX(-30%) translateZ(0) rotate(0.01deg);
   }
 }
 @keyframes cover-move--animation {
   from {
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0) rotate(0.01deg);
   }
   to {
-    transform: translateX(-30%);
+    transform: translateX(-30%) translateZ(0) rotate(0.01deg);
   }
 }
 .wrapper section.projects .project .cover.active {
@@ -765,7 +773,7 @@ div#tjs_bg canvas {
 }
 @media all and (max-width: 900px) {
   .wrapper section.projects .project .cover {
-    --logo-width: 91px;
+    --logo-width: 90px;
   }
 }
 .wrapper section.projects .project .cover:hover:before, .wrapper section.projects .project .cover.active:before {
@@ -783,8 +791,8 @@ div#tjs_bg canvas {
   width: 100%;
   position: absolute;
   left: 0;
-  -webkit-clip-path: polygon(0 0, calc(100% - var(--logo-width)) 0, calc(100% - var(--logo-width)) calc(50% - 15px), calc(calc(100% - var(--logo-width)) - 15px) 50%, calc(100% - var(--logo-width)) calc(50% + 15px), calc(100% - var(--logo-width)) 100%, 0 100%);
-          clip-path: polygon(0 0, calc(100% - var(--logo-width)) 0, calc(100% - var(--logo-width)) calc(50% - 15px), calc(calc(100% - var(--logo-width)) - 15px) 50%, calc(100% - var(--logo-width)) calc(50% + 15px), calc(100% - var(--logo-width)) 100%, 0 100%);
+  -webkit-clip-path: polygon(0 0, calc(100% - var(--logo-width) - 1px) 0, calc(100% - var(--logo-width) - 1px) calc(50% - 15px), calc(calc(100% - var(--logo-width) - 1px) - 15px) 50%, calc(100% - var(--logo-width) - 1px) calc(50% + 15px), calc(100% - var(--logo-width) - 1px) 100%, 0 100%);
+          clip-path: polygon(0 0, calc(100% - var(--logo-width) - 1px) 0, calc(100% - var(--logo-width) - 1px) calc(50% - 15px), calc(calc(100% - var(--logo-width) - 1px) - 15px) 50%, calc(100% - var(--logo-width) - 1px) calc(50% + 15px), calc(100% - var(--logo-width) - 1px) 100%, 0 100%);
   transition: opacity 0.3s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
   transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.3s ease-in-out 0.1s;
   transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25), opacity 0.3s ease-in-out 0.1s, -webkit-clip-path 0.6s cubic-bezier(0.4, 0, 0.6, 1.25);
@@ -798,6 +806,78 @@ div#tjs_bg canvas {
 }
 .wrapper section.projects .project .cover.active ~ .details {
   transition: max-height 0.3s ease-in-out 0.15s, padding 0.3s ease-in-out 0.15s;
+}
+.wrapper section.about {
+  /* contact_tiles animation */
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(1) {
+  -webkit-animation-delay: 0s;
+          animation-delay: 0s;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(2) {
+  -webkit-animation-delay: 0.1s;
+          animation-delay: 0.1s;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(3) {
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(4) {
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
+}
+.wrapper section.about .contact_tiles_grid.start_animation a {
+  -webkit-animation-name: contact_tiles--animation;
+          animation-name: contact_tiles--animation;
+  -webkit-animation-duration: 0.8s;
+          animation-duration: 0.8s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
+}
+.wrapper section.about .contact_tiles_grid a {
+  will-change: background-color;
+  transition: background-color 0.2s ease-in-out;
+  background-color: transparent;
+  /* mail */
+  /* phone */
+  /* skype */
+  /* whatsapp */
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(1):hover, .wrapper section.about .contact_tiles_grid a:nth-child(1):active, .wrapper section.about .contact_tiles_grid a:nth-child(1):focus {
+  background-color: #dd4c3c;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(2):hover, .wrapper section.about .contact_tiles_grid a:nth-child(2):active, .wrapper section.about .contact_tiles_grid a:nth-child(2):focus {
+  background-color: #3d559e;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(3):hover, .wrapper section.about .contact_tiles_grid a:nth-child(3):active, .wrapper section.about .contact_tiles_grid a:nth-child(3):focus {
+  background-color: #1dabe5;
+}
+.wrapper section.about .contact_tiles_grid a:nth-child(4):hover, .wrapper section.about .contact_tiles_grid a:nth-child(4):active, .wrapper section.about .contact_tiles_grid a:nth-child(4):focus {
+  background-color: #20d442;
+}
+@-webkit-keyframes contact_tiles--animation {
+  from {
+    transform: translateX(0%) translateZ(0);
+  }
+  30% {
+    transform: translateX(-20%) translateZ(0);
+  }
+  to {
+    transform: translateX(0%) translateZ(0);
+  }
+}
+@keyframes contact_tiles--animation {
+  from {
+    transform: translateX(0%) translateZ(0);
+  }
+  30% {
+    transform: translateX(-20%) translateZ(0);
+  }
+  to {
+    transform: translateX(0%) translateZ(0);
+  }
 }
 
 /* everything popup-related */
@@ -838,57 +918,6 @@ div#tjs_bg canvas {
   opacity: 1;
 }
 
-/* contact_tiles animation */
-.contact_tiles_grid a:nth-child(1) {
-  -webkit-animation-delay: 0s;
-          animation-delay: 0s;
-}
-.contact_tiles_grid a:nth-child(2) {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s;
-}
-.contact_tiles_grid a:nth-child(3) {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s;
-}
-.contact_tiles_grid a:nth-child(4) {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s;
-}
-.contact_tiles_grid.start_animation a {
-  -webkit-animation-name: contact_tiles--animation;
-          animation-name: contact_tiles--animation;
-  -webkit-animation-duration: 0.8s;
-          animation-duration: 0.8s;
-  -webkit-animation-timing-function: ease-out;
-          animation-timing-function: ease-out;
-  -webkit-animation-iteration-count: 1;
-          animation-iteration-count: 1;
-}
-
-@-webkit-keyframes contact_tiles--animation {
-  from {
-    transform: translateX(0%);
-  }
-  20% {
-    transform: translateX(-20%);
-  }
-  to {
-    transform: translateX(0%);
-  }
-}
-
-@keyframes contact_tiles--animation {
-  from {
-    transform: translateX(0%);
-  }
-  20% {
-    transform: translateX(-20%);
-  }
-  to {
-    transform: translateX(0%);
-  }
-}
 div.testcube_cb {
   position: fixed;
   top: 50vh;
@@ -1196,7 +1225,7 @@ p {
   display: inline-block;
   position: relative;
   cursor: pointer;
-  transition: color 0.12s linear;
+  transition: color 180ms linear;
   box-shadow: inset 0 -2px 0 0 #cdeefe;
   z-index: 0;
 }
@@ -1204,10 +1233,11 @@ p {
   z-index: -1;
   content: "";
   background: #cdeefe;
+  opacity: 0.6;
   position: absolute;
   height: 50%;
   width: 0%;
-  transition: width 0.12s linear;
+  transition: width 180ms ease-in, opacity 80ms ease-in 100ms;
 }
 .fancy_link:before {
   left: -3%;
@@ -1222,6 +1252,8 @@ p {
 }
 .fancy_link:hover:before, .fancy_link:hover:after, .fancy_link:active:before, .fancy_link:active:after, .fancy_link:focus:before, .fancy_link:focus:after {
   width: 106%;
+  opacity: 1;
+  transition: width 180ms ease-out, opacity 80ms ease-out 0ms;
 }
 .fancy_link.fancy_link--reversed {
   color: #011b28;
@@ -1386,6 +1418,7 @@ p {
   background: #da654e;
 }
 .wrapper section.projects .project .cover .logo {
+  transform: translateX(1px);
   padding: 20px;
 }
 @media all and (max-width: 900px) {
@@ -1546,26 +1579,14 @@ p {
   background-repeat: no-repeat;
   background-size: 400%;
 }
-.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1):focus {
-  background-color: #dd4c3c;
-}
 .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(1) > span {
   background-position-x: 0%;
-}
-.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2):focus {
-  background-color: #3d559e;
 }
 .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(2) > span {
   background-position-x: calc(100% / 3);
 }
-.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3):focus {
-  background-color: #1dabe5;
-}
 .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(3) > span {
   background-position-x: calc(200% / 3);
-}
-.wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):hover, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):active, .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4):focus {
-  background-color: #20d442;
 }
 .wrapper section.about aside .grid_wrap .contact_tiles_grid > a:nth-child(4) > span {
   background-position-x: 100%;

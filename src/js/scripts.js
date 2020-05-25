@@ -64,8 +64,8 @@ const jb_scripts = {
 						bgs = ["bg1","bg2","bg3","bg4","bg5"];
 
 					pElem.forEach(function(cElem){
-						cElem.style.setProperty("--rnd-1",Math.random());
-						cElem.style.setProperty("--rnd-2",Math.random());
+						cElem.style.setProperty("--rnd-1",Math.floor(Math.random()*1000) / 1000);
+						cElem.style.setProperty("--rnd-2",Math.floor(Math.random()*1000) / 1000);
 						cElem.classList.remove(...bgs);
 					});
 					jb_scripts.setRandomBackgrounds(".wrapper section.projects .project .cover");
