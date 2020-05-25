@@ -125,14 +125,16 @@ const jb_scripts = {
 			let cTransform = window.getComputedStyle(elem).transform;
 			elem.style.setProperty("transform",cTransform);
 			elem.style.setProperty("animation-name","none");
+			elem.classList.remove("fromActive");
+			
 			window.requestAnimationFrame(function(){
-				elem.classList.remove("fromActive");
+				elem.style.setProperty("--rnd-1","0");
+				
 				elem.classList.add("active");
-				elem.style.removeProperty("transform");
-				elem.style.setProperty("--rnd-1","0s");
+				window.requestAnimationFrame(function(){ elem.style.removeProperty("transform"); });
 
 				let details = elem.parentElement.querySelector(".details");
-				details.style.setProperty("max-height", details.scrollHeight+"px");
+				details.style.setProperty("max-height", 10+details.scrollHeight+"px");
 				details.style.setProperty("padding", "var(--padding)");
 			});
 

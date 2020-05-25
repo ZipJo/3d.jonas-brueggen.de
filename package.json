@@ -13,6 +13,7 @@
     "dart-sass": "^1.25.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
+    "gulp-clean-css": "^4.3.0",
     "gulp-connect-php": "^1.0.3",
     "gulp-csso": "^4.0.1",
     "gulp-file-include": "^2.1.1",
