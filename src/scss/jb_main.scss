@@ -344,9 +344,12 @@ p {
 			display: flex;
 			flex-direction: row;
 			min-height: 60vh;
-			@include functions.mq(small) { flex-direction: column; }
 			align-items: center;
 			justify-content: space-around;
+			@include functions.mq(small) {
+				flex-direction: column;
+				justify-content: flex-start;
+			}
 
 			article {
 				flex: 1 1 70%;
