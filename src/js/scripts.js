@@ -68,7 +68,7 @@ const jb_scripts = {
 						cElem.style.setProperty("--rnd-2",Math.floor(Math.random()*1000) / 1000);
 						cElem.classList.remove(...bgs);
 					});
-					jb_scripts.setRandomBackgrounds(".wrapper section.projects .project .cover");
+					jb_scripts.setRandomBackgrounds();
 				} 
 
 			} else {
@@ -107,9 +107,7 @@ const jb_scripts = {
 			elem.classList.add("fromActive");
 			elem.style.removeProperty("animation-name");
 			setTimeout(function () {
-				console.log("timeout");
 				elem.addEventListener("mouseleave", function oml() {
-					console.log("el called");
 					elem.classList.remove("fromActive");
 					elem.removeEventListener("mouseleave", oml);
 				});
@@ -167,35 +165,21 @@ const jb_scripts = {
 		}
 	},
 
-	removeElementsByClass(className){
-		let elements = document.getElementsByClassName(className);
-		while(elements.length > 0){
-			elements[0].parentNode.removeChild(elements[0]);
-		}
-	},
-
-	setRandomBackgrounds(qsa){
+	setRandomBackgrounds(){
 		let classesBg = ["bg1","bg2","bg3","bg4","bg5"],
-			//classesBorder = ["border1","border2","border3","border4","border5"],
-			elems = document.querySelectorAll(qsa),
+			elems = document.querySelectorAll(".wrapper section.projects .project"),
 			prevNumber1 = -1,
 			prevNumber2 = -1;
-			//modNumbers1 = [-1,-1],
-			//modNumbers2 = [-1,-1,-1,-1];
 
 		for(let i = 0; i < elems.length; i++){
 			let rNumber = Math.floor(Math.random() * classesBg.length),
 				evilNumber1 = prevNumber1,
 				evilNumber2 = prevNumber2;
-				//evilNumber3 = modNumbers2[i%4];
-			//while (rNumber == evilNumber1 || rNumber == evilNumber2 || rNumber == evilNumber3) rNumber = Math.floor(Math.random() * classesBg.length);
 			while (rNumber == evilNumber1 || rNumber == evilNumber2 ) rNumber = Math.floor(Math.random() * classesBg.length);
 			
 			elems[i].classList.add(classesBg[rNumber]);
 			prevNumber2 = prevNumber1;
 			prevNumber1 = rNumber;
-			//modNumbers1[i%2] = rNumber;
-			//modNumbers2[i%4] = rNumber;
 		}
 	},
 

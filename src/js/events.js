@@ -98,7 +98,6 @@ const jb_events = {
 			jb_events.vars.scroll.homeTouchstart = e.touches[0].clientY;
 		}
 		jb_events.vars.scroll.homeTouchdeltaY = jb_events.vars.scroll.homeTouchstart - e.touches[0].clientY;
-		console.log(jb_events.vars.scroll.homeTouchdeltaY);
 		if (jb_events.vars.scroll.homeTouchdeltaY > 20) {
 			jb_events.vars.scroll.homeTouchstart = null;
 			jb_scripts.contentChanger.toggleHash();
@@ -126,7 +125,6 @@ const jb_events = {
 	clickAction(e){
 		jb_events.vars.onclick.click_pos_x = e.clientX;
 		jb_events.vars.onclick.click_pos_y = e.clientY;
-		console.log("click at X:" + jb_events.vars.onclick.click_pos_x + " Y:" + jb_events.vars.onclick.click_pos_y);
 	},
 
 	

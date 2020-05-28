@@ -5,13 +5,13 @@
 @use 'functions';
 
 
-$cb_quarter-sin: cubic-bezier(.4,.63,.67,1); //ease-out
-$cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
+$cb_quarter-sin: cubic-bezier(.4,.63,.67,1); // ease-out
+$cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 
 
-/* main perspective animations */
+// main perspective animations
 .wrapper {
-	$homeHeight: 170px; //logo-height+nav-height
+	$homeHeight: 170px; // logo-height+nav-height
 
 	$animationDurationHome: .8s;
 	$animationDurationSection: .5s;
@@ -26,10 +26,10 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	$maxDistanceX: 255vw; // distance from left at 90°
 	$maxDistanceZ: -40vw; // depth at 90° excluding pushback!
 
-	//mixin for the keyframe-animation:
+	// mixin for the keyframe-animation:
 	@mixin section-animation( $name, $dir, $maxRot, $maxRotCss ) {
 		@if $dir == in {
-			//from back to front
+			// from back to front
 			@keyframes #{$name}-height-opacity {
 				from {
 					max-height: 50vh;
@@ -74,7 +74,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			}
 
 		} @else {
-			//from front to back
+			// from front to back
 			@keyframes #{$name}-height-opacity {
 				from {
 					max-height: 500vh;
@@ -120,7 +120,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 		}
 	}
-	//actual animations:
+	// actual animations:
 	@include section-animation(section-rightToCenter--animation, in, $maxRotation, $maxRotationCss);
 	@include section-animation(section-leftToCenter--animation, in, -$maxRotation, -$maxRotationCss);
 	@include section-animation(section-centerToRight--animation, out, $maxRotation, $maxRotationCss);
@@ -164,7 +164,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 		pointer-events:none;
 
-		//animation-stuff - default states (inactive):
+		// animation-stuff - default states (inactive):
 		$translateZ: $pushback + (1 - math.cos($maxRotation)) * $maxDistanceZ;
 		$left: math.sin($maxRotation) * $maxDistanceX;
 
@@ -175,7 +175,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		left: $left;
 		transform: rotateY($maxRotationCss) translateZ($translateZ);
 
-		transform-origin: 50vw 50vh 0; //this is very different form 50% 50% 0!!!
+		transform-origin: 50vw 50vh 0; // this is very different form 50% 50% 0!!!
 
 		animation-iteration-count: 1;
 
@@ -187,7 +187,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			opacity: 1;
 			left: 0;
 			transform: rotateY(0deg) translateZ(0);
-			//toActive-Animations:
+			// toActive-Animations:
 			&.rightToCenter {
 				animation-duration: $animationDurationSection;
 				animation-name: section-rightToCenter--animation-height-opacity, section-rightToCenter--animation-left, section-rightToCenter--animation-transform;
@@ -266,7 +266,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				stroke-dashoffset: 1300;
 				transform: rotate(90deg);
 				transform-origin: center;
-				transition: transform 1s ease-in-out 0.5s, stroke-dashoffset 1.3s ease-in-out 0.2s;
+				transition: transform 1s ease-in-out .5s, stroke-dashoffset 1.3s ease-in-out .2s;
 			}
 
 			&.visible {
@@ -294,7 +294,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 
 
-	/* section specific animations */
+	// section specific animations
 
 	section.projects {
 		&.toHome .project {
@@ -313,7 +313,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 			}
 		}
 
-		/* translateZ is here to move the animation to the GPU and allow anti-aliasing! */
+		// translateZ is here to move the animation to the GPU and allow anti-aliasing!
 		@keyframes project-in--animation {
 			from {
 				transform: translateX(-100%) translateZ(0);
@@ -360,21 +360,21 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				}
 
 				&.active {
-					transition: transform 0.4s cubic-bezier(.4,0,.35,1.35);
+					transition: transform .4s cubic-bezier(.4,0,.35,1.35);
 				}
 
 				$arrow_indent: 18px;
 				--logo-width: 140px;
 				@include functions.mq(small) { --logo-width: 90px; }
 
-				/* Order is important here. First animation, then the basestyle, so the hover gets */
-				/* overwritten, if fromActive is applied. This is because of css-specifity:        */
-				/* ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0  */
+				// Order is important here. First animation, then the basestyle, so the hover gets
+				// overwritten, if fromActive is applied. This is because of css-specifity:       
+				// ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0 
 				
 				&:hover:before, &.active:before {
 					$width: 0%;
 					clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
-					transition: clip-path 0.6s cubic-bezier(.4,-0.1,.35,1.35), opacity 0.3s ease-in-out 0.2s;
+					transition: clip-path .6s cubic-bezier(.4,-0.1,.35,1.35), opacity .3s ease-in-out .2s;
 					opacity: 0;
 				}
 
@@ -388,7 +388,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 					$width: calc(100% - var(--logo-width) - 1px);
 					clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
-					transition: clip-path 0.6s cubic-bezier(.4,0,.60,1.25), opacity 0.3s ease-in-out 0.1s;
+					transition: clip-path .6s cubic-bezier(.4,0,.60,1.25), opacity .3s ease-in-out .1s;
 					opacity: 1;
 
 				}
@@ -399,11 +399,47 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 				will-change: max-height, padding;
 				max-height: 0;
 				overflow-y: hidden;
-				transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+				transition: max-height .4s ease-in-out, padding .4s ease-in-out;
+
+				.btn {
+					will-change: opacity;
+					opacity: 0;
+					transition: opacity .2s ease-in-out;
+				
+					&:before, &:after {
+						content:'';
+						position: absolute;
+						z-index: -1;
+						height: 50%;
+						width: 0%;
+						background: var(--accent-color);
+						right: 0;
+						transition-property: width;
+						transition-duration: .25s;
+						transition-timing-function: ease-in-out;
+					}
+					&:before {
+						top:0;
+						transition-delay: 0;
+					}
+					&:after {
+						bottom:0;
+						transition-delay: .08s;
+					}
+					&:hover:before, &:hover:after {
+						width: 100%;
+						left: 0;
+					}
+				}
 			}
 
 			.cover.active ~ .details {
-				transition: max-height 0.3s ease-in-out 0.15s, padding 0.3s ease-in-out 0.15s;
+				transition: max-height .3s ease-in-out .15s, padding .3s ease-in-out .15s;
+				
+				.btn {
+					transition: opacity .2s ease-in-out .4s;
+					opacity: 1;
+				}
 			}
 		}
 	}
@@ -414,37 +450,37 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	section.about {
 
 
-		/* contact_tiles animation */
+		// contact_tiles animation
 		.contact_tiles_grid {
 			a:nth-child(1) { animation-delay: 0s; }
-			a:nth-child(2) { animation-delay: 0.1s; }
-			a:nth-child(3) { animation-delay: 0.2s; }
-			a:nth-child(4) { animation-delay: 0.3s; }
+			a:nth-child(2) { animation-delay: .1s; }
+			a:nth-child(3) { animation-delay: .2s; }
+			a:nth-child(4) { animation-delay: .3s; }
 			
 			&.start_animation a {
 				animation-name: contact_tiles--animation;
-				animation-duration: 0.8s;
+				animation-duration: .8s;
 				animation-timing-function: ease-out;
 				animation-iteration-count: 1;
 			}
 
 			a {
 				will-change: background-color;
-				transition: background-color 0.2s ease-in-out;
+				transition: background-color .2s ease-in-out;
 				background-color: transparent;
-				/* mail */
+				// mail
 				&:nth-child(1) {
 					&:hover, &:active, &:focus { background-color: #dd4c3c; }
 				}
-				/* phone */
+				// phone
 				&:nth-child(2) {
 					&:hover, &:active, &:focus { background-color: #3d559e; }
 				}
-				/* skype */
+				// skype
 				&:nth-child(3) {
 					&:hover, &:active, &:focus { background-color: #1dabe5; }
 				}
-				/* whatsapp */
+				// whatsapp
 				&:nth-child(4) {
 					&:hover, &:active, &:focus { background-color: #20d442; }
 				}
@@ -462,7 +498,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 
 
 
-/* everything popup-related */
+// everything popup-related
 
 .popup_container {
 	will-change: opacity;
@@ -478,7 +514,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 	opacity: 0;
 	pointer-events: none;
 	background: variables.$color-page-main-opaque;
-	transition: opacity 0.2s;
+	transition: opacity .2s;
 	z-index: 1000;
 
 	&.active {
@@ -494,7 +530,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); //ease-in
 		max-height: 85%;
 		padding: 50px;
 		box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
-		transition: all 0.3s ease-in-out;
+		transition: all .3s ease-in-out;
 		overflow-y: auto;
 		
 		&.move {

@@ -1,10 +1,10 @@
-/* _functions.scss */
+// _functions.scss
 
 @function url-friendly-color($color) {
 	@return '%23' + str-slice('#{$color}', 2, -1)
 }
 
-/* responsive-design-mixin: */
+// responsive-design-mixin:
 $break-small: 900px;
 $break-large: 1200px;
 
