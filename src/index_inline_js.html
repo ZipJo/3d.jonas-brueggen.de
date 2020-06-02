@@ -28,8 +28,8 @@ function loader(cb) {
 	document.getElementById("tjs_bg").classList.remove("hide_container");
 	if (cb) cb();
 }
-
-window.onload = function() {
+// scripts are loaded async, so wait for them to be loaded, then execute the startup!
+window.addEventListener("load", function() {
 	startup();
-};
+});
 </script>

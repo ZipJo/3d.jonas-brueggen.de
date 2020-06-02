@@ -60,14 +60,13 @@ const jb_scripts = {
 				//section specific js
 				if (hashName == "projects") {
 					// rng for projects
-					let pElem = document.querySelectorAll(".wrapper section.projects .project .cover"),
-						bgs = ["bg1","bg2","bg3","bg4","bg5"];
+					let pElem = document.querySelectorAll(".wrapper section.projects .project .cover");
 
 					pElem.forEach(function(cElem){
 						cElem.style.setProperty("--rnd-1",Math.floor(Math.random()*1000) / 1000);
 						cElem.style.setProperty("--rnd-2",Math.floor(Math.random()*1000) / 1000);
-						cElem.classList.remove(...bgs);
 					});
+					jb_scripts.removeRandomBackgrounds();
 					jb_scripts.setRandomBackgrounds();
 				} 
 
@@ -182,6 +181,16 @@ const jb_scripts = {
 			prevNumber2 = prevNumber1;
 			prevNumber1 = rNumber;
 		}
+	},
+
+
+	removeRandomBackgrounds(){
+		let classesBg = ["bg1","bg2","bg3","bg4","bg5"],
+			elems = document.querySelectorAll(".wrapper section.projects .project");
+
+		elems.forEach(function(cElem){
+			cElem.classList.remove(...classesBg);
+		});
 	},
 
 	colorLogo(toColor = true) {

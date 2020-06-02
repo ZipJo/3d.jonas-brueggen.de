@@ -9,11 +9,11 @@
 	<meta name="viewport" content="width=device-width">
 	<link rel="icon" href="files/icon_colored.ico">
 	<link rel="stylesheet" href="css/jb_main.css" media="all" />
-	<script src="js/three.min.js"></script>
-	<script src="js/stats.min.js"></script>
-	<script src="js/canvasanimations-config.js"></script>
+	<script async src="js/three.min.js"></script>
+	<script async src="js/stats.min.js"></script>
+	<script async src="js/canvasanimations-config.js"></script>
 
-	<!-- build:js js/jb.min.js -->
+	<!-- build:js js/jb.min.js async -->
 		<script src="js/scripts.js"></script>
 		<script src="js/events.js"></script>
 		<script src="js/canvasanimations.js"></script>
@@ -34,8 +34,7 @@
 			<div class="header_logo" onclick="jb_scripts.contentChanger.toggleHash();">
 				<a>
 					<div class="logo_wrapper animate_in" id="id_logo_wrapper">
-						<img src="files/JB_Logo_black_alpha_square.svg" class="logo logo_black animation--logo"/>
-						<img src="files/JB_Logo_color_alpha_square.svg" class="logo logo_color animation--logo"/>
+						<img src="files/JB_Logo_color_alpha_square.svg" class="logo"/>
 					</div>
 				</a>
 			</div>
