@@ -139,7 +139,7 @@ const jb_scripts = {
 		}
 	},
 
-	customPopup(content, maxWidth, link = null) {
+	customPopup(content, maxWidth, link = null, classes = "") {
 		if (link == null){
 			//use "content"
 			popupContainer = document.querySelector(".popup_container");
@@ -150,6 +150,7 @@ const jb_scripts = {
 			let popupElem = document.createElement("div");
 			popupElem.innerHTML = content;
 			popupElem.style.maxWidth=maxWidth;
+			popupElem.className = classes;
 			popupContainer.appendChild(popupElem);
 			popupContainer.classList.add("active");
 			requestAnimationFrame(function(){
@@ -211,4 +212,66 @@ const jb_scripts = {
 		}
 		return destination;
 	},
+
+	addProject(shortName, link, longName, subtitle, paragraph1, paragraph2, placeAndDate){
+		let parent = document.querySelector("section.projects"),
+			pElem = document.createElement("div"),
+			innerHTML = `
+<div class="cover" onclick="jb_scripts.projectCoverAnimation(this);">
+	<div class="logo">
+		<picture>
+			<source srcset="files/projects/${shortName}/logo_${shortName}_small.png, files/projects/${shortName}/logo_${shortName}_medium.png 1.5x" media="(max-width: 900px)">
+			<source srcset="files/projects/${shortName}/logo_${shortName}_medium.png, files/projects/${shortName}/logo_${shortName}_large.png 1.5x" media="(min-width: 900px)">
+			<img src="files/projects/${shortName}/logo_${shortName}_medium.png" alt="logo project ${longName}" />
+		</picture>
+	</div>
+	<div class="title">
+		<h1>${longName}</h1>
+		<h2>${subtitle}</h2>
+	</div>
+</div>
+<div class="details">
+	<div class="description">
+		<p>${paragraph1}</p>
+		<p>${paragraph2}</p>
+		<h4>${placeAndDate}</h4>
+	</div>
+	<span class="btn" onclick="jb_scripts.customPopup(jb_scripts.projectPopupHtml('${shortName}','${longName}','${link}'), '1400px', null, this.parentElement.parentElement.className );">preview</span>
+</div>`;
+			pElem.classList.add("project");
+			pElem.innerHTML = innerHTML;
+
+			parent.appendChild(pElem);
+			return;
+	},
+
+	projectPopupHtml(shortName, longName, link){
+		let pcHtml = `
+<picture class="image_pc">
+	<source srcset="files/projects/${shortName}/pc_${shortName}_medium.png, files/projects/${shortName}/pc_${shortName}_large.png 1.5x">
+	<img src="files/projects/${shortName}/pc_${shortName}_medium.png" alt="Project ${longName}, PC view" />
+</picture>`;
+		let phoneHtml = `
+<picture class="image_phone">
+	<source srcset="files/projects/${shortName}/phone_${shortName}_small.png, files/projects/${shortName}/phone_${shortName}_medium.png 1.5x">
+	<img src="files/projects/${shortName}/phone_${shortName}_small.png" alt="Project ${longName}, smartphone view" />
+</picture>`;
+		let retHtml = "";
+		
+		if (window.innerWidth < 900){
+			retHtml = '<div class="pictures">' + phoneHtml + '</div>';
+		} else {
+			retHtml = '<div class="pictures">' + pcHtml + '</div>';
+		}
+
+		if (link == "") {
+			link = "No live version available";
+		} else {
+			link = '<a href="' + link + '" target="_blank">Visit the page</a>';
+		}
+
+		retHtml += '<p>' + link + ' - <a>close</a></p>';
+
+		return retHtml;
+	}
 }
