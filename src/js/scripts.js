@@ -202,6 +202,7 @@ const jb_scripts = {
 
 	triggerContactTileAnimation(){
 		let elem = document.getElementById("id_contact_tiles");
+		elem.scrollIntoView({behavior: "smooth"});
 		elem.classList.add("start_animation");
 		requestAnimationFrame(function(){
 			setTimeout(function(){
