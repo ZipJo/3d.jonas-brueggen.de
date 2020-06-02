@@ -102,6 +102,7 @@ const jb_scripts = {
 
 		if (elem.classList.contains("active")) {
 
+			elem.style.setProperty("--rnd-1","0");
 			elem.classList.remove("active");
 			elem.classList.add("fromActive");
 			elem.style.removeProperty("animation-name");
