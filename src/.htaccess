@@ -1,6 +1,6 @@
 ErrorDocument 404 /#/x404
 
-
+AddOutputFilterByType DEFLATE image/x-icon
 
 <IfModule mod_expires.c>
 ExpiresActive On
