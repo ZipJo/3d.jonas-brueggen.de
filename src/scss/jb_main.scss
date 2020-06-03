@@ -480,39 +480,62 @@ p {
 		> div.bg#{$i} { background-color: #{nth(variables.$accents, $i)}; }
 	}
 	.pictures {
-		.image_pc img {
+		position: relative;
+		min-height: 120px;
+		min-width: 40px;
+		max-width: 60vw;
+		margin: 0 auto;
+		width: 40px;
+		transition: width .3s ease-in-out .2s;
+
+		&.loaded.image_pc {
 			width: 1100px;
-			max-width: 60vw;
 		}
-		.image_phone img { 
+		&.loaded.image_phone {
 			width: 300px;
-			max-width: 60vw;
+		}
+		img {
+			width: 100%;
+			opacity: 0;
+			transition: opacity .3s ease-in-out .3s;
+		}
+		&.loaded img {
+			opacity: 1;
 		}
 
-		~ p {
-			text-align: center;
-			margin-top: 2em;
-			margin-bottom: 0;
-			
-			a {
-				position: relative;
+		span.loader {
+			opacity: 1;
+			transition: opacity .4s;
+		}
 
-				&:before {
-					content:"";
-					position: absolute;
-					bottom: 0;
-					right: 0;
-					height: 2px;
-					width: 0;
-					background: variables.$color-page-main;
-					transition: width 0.15s ease-in-out;
-				}
+		 &.loaded span.loader {
+			opacity: 0;	
+		}
+	}
 
-				&:hover:before{
-					left: 0;
-					width: 100%;
-					transition: width 0.15s ease-in-out;
-				}
+	.pictures + p {
+		text-align: center;
+		margin-top: 2em;
+		margin-bottom: 0;
+		
+		a {
+			position: relative;
+
+			&:before {
+				content:"";
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				height: 2px;
+				width: 0;
+				background: variables.$color-page-main;
+				transition: width 0.15s ease-in-out;
+			}
+
+			&:hover:before{
+				left: 0;
+				width: 100%;
+				transition: width 0.15s ease-in-out;
 			}
 		}
 	}

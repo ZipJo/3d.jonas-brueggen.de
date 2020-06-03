@@ -258,21 +258,28 @@ const jb_scripts = {
 
 	projectPopupHtml(shortName, longName, link){
 		let pcHtml = `
-<picture class="image_pc">
-	<source srcset="files/projects/${shortName}/pc_${shortName}_medium.png, files/projects/${shortName}/pc_${shortName}_large.png 1.5x">
-	<img src="files/projects/${shortName}/pc_${shortName}_medium.png" alt="Project ${longName}, PC view" />
-</picture>`;
+<div class="pictures image_pc">
+	<picture>
+		<source srcset="files/projects/${shortName}/pc_${shortName}_medium.png, files/projects/${shortName}/pc_${shortName}_large.png 1.5x">
+		<img onload="this.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/pc_${shortName}_medium.png" alt="Project ${longName}, PC view" />
+	</picture>
+	<span class="loader"></span>
+</div>`;
 		let phoneHtml = `
-<picture class="image_phone">
-	<source srcset="files/projects/${shortName}/phone_${shortName}_small.png, files/projects/${shortName}/phone_${shortName}_medium.png 1.5x">
-	<img src="files/projects/${shortName}/phone_${shortName}_small.png" alt="Project ${longName}, smartphone view" />
-</picture>`;
+<div class="pictures image_phone">
+	<picture>
+		<source srcset="files/projects/${shortName}/phone_${shortName}_small.png, files/projects/${shortName}/phone_${shortName}_medium.png 1.5x">
+		<img onload="this.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/phone_${shortName}_small.png" alt="Project ${longName}, smartphone view" />
+	</picture>
+	<span class="loader"></span>
+</div>`;
+		
 		let retHtml = "";
 		
 		if (window.innerWidth < 900){
-			retHtml = '<div class="pictures">' + phoneHtml + '</div>';
+			retHtml = phoneHtml;
 		} else {
-			retHtml = '<div class="pictures">' + pcHtml + '</div>';
+			retHtml = pcHtml;
 		}
 
 		if (link == "") {

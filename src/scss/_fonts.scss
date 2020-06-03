@@ -3,9 +3,10 @@
 @font-face {
 	font-family: "Montserrat";
 
-	src: url("/css/montserrat-regular.ttf") format("truetype"),
+	src: local('Montserrat'),
+		url("/css/montserrat-regular.woff2") format("woff2"),
 		url("/css/montserrat-regular.woff") format("woff"),
-		url("/css/montserrat-regular.woff2") format("woff2");
+		url("/css/montserrat-regular.ttf") format("truetype");
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap
@@ -13,9 +14,10 @@
 @font-face {
 	font-family: "Montserrat";
 
-	src: url("/css/montserrat-bold.ttf") format("truetype"),
+	src: local('Montserrat'),
+		url("/css/montserrat-bold.woff2") format("woff2"),
 		url("/css/montserrat-bold.woff") format("woff"),
-		url("/css/montserrat-bold.woff2") format("woff2");
+		url("/css/montserrat-bold.ttf") format("truetype");
 	font-weight: bold;
 	font-style: normal;
 	font-display: swap
