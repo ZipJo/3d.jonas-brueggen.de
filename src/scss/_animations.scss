@@ -39,7 +39,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 					max-height: 100vh;
 				}
 				to {
-					max-height: 500vh;
+					max-height: 700vh;
 					opacity: 1;
 				}
 			}
@@ -77,7 +77,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 			// from front to back
 			@keyframes #{$name}-height-opacity {
 				from {
-					max-height: 500vh;
+					max-height: 700vh;
 					opacity: 1;
 				}
 				40% {
@@ -183,7 +183,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 
 		&.active {
 			pointer-events: all;
-			max-height: 500vh;
+			max-height: 700vh;
 			opacity: 1;
 			left: 0;
 			transform: rotateY(0deg) translateZ(0);
