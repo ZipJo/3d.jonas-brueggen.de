@@ -473,120 +473,128 @@ p {
 // Other stuff
 // ###########
 
-// project/pictures-styling
+// popup-styling
+
 .popup_container {
 
+	--border-width: 3vmin;
+
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 1%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	pointer-events: none;
+	background: variables.$color-page-bg-25;
+
+	> div {
+		background: variables.$color-page-bg;
+		max-height: 95vh;
+		max-width: 95vh;
+		border: var(--border-width) solid variables.$color-page-bg;
+		box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
+		overflow-y: auto;
+	}
+
+	// special popups:
+
+	// project/pictures-styling
+
 	@for $i from 1 through 5 {
-		> div.bg#{$i} { background-color: #{nth(variables.$accents, $i)}; }
+		> div.bg#{$i} {
+			background-color: #{nth(variables.$accents, $i)};
+			border: var(--border-width) solid #{nth(variables.$accents, $i)};
+		}
 	}
 	.pictures {
 		position: relative;
 		min-height: 120px;
-		min-width: 40px;
+		min-width: 200px;
 		max-width: 60vw;
 		margin: 0 auto;
-		width: 40px;
-		transition: width .3s ease-in-out;
 
-		&.loaded.image_pc {
-			width: 1100px;
-		}
-		&.loaded.image_phone {
-			width: 300px;
-		}
-		img {
+		> a, img {
 			width: 100%;
-			opacity: 0;
-			transition: opacity .3s ease-in-out .1s;
+			margin-bottom: -4px; // to fix a weird issue with the "picture"-element haing a non-zero height
 		}
-		&.loaded img {
-			opacity: 1;
-		}
-
-		span.loader {
-			opacity: 1;
-			transition: opacity .2s;
-		}
-
-		 &.loaded span.loader {
-			opacity: 0;	
-		}
-	}
-
-	.pictures + p {
-		text-align: center;
-		margin-top: 2em;
-		margin-bottom: 0;
-		
-		a {
-			position: relative;
-
-			&:before {
-				content:"";
-				position: absolute;
-				bottom: 0;
-				right: 0;
-				height: 2px;
-				width: 0;
-				background: variables.$color-page-main;
-				transition: width 0.15s ease-in-out;
-			}
-
-			&:hover:before{
-				left: 0;
-				width: 100%;
-				transition: width 0.15s ease-in-out;
-			}
-		}
-	}
-}
-
-
-//  impressum-style
-
-.impressum_div {
-	line-height: 1.6em;
-
-	p { line-height: 1.6em; }
-
-	li {
-		list-style: unset;
-		margin-top: 8px;
-	}
-
-	.table-2-cols {
-		display: grid;
-		grid-template-columns: 1fr 6fr;
-		border-top: 1px solid variables.$color-page-main-25;
-		border-left: 1px solid variables.$color-page-main-25;
-		@include functions.mq(small) { grid-template-columns: 1fr; }
 		
 		p {
-			border-bottom: 1px solid variables.$color-page-main-25;
-			border-right: 1px solid variables.$color-page-main-25;
+			text-align: center;
 			margin: 0;
-			padding: 1em;
+			margin-top: var(--border-width);
 		}
 	}
 
-	.first_column {
-		width: 250px;
-	}
+	//  impressum-style
 
-	a {
-		display: inline-block;
-		text-decoration: underline;
-	}
-
-	h1 {
-		padding-top: 40px;
-
-		&:first-child {
-			padding-top: 0;
+	.impressum_div {
+		+ span.close_info {
+			position: sticky;
+			bottom: 5px;
+			left: 50%;
+			display: block;
+			transform: translateX(-50%);
+			background: variables.$color-accent-1;
+			width: 40%;
+			min-width: 300px;
+			text-align: center;
+			padding: 6px;
+			border-radius: 10px;
+			border: 1px solid variables.$color-page-main;
+			opacity: 0.95;
 		}
-	}
+		line-height: 1.6em;
 
-	h2 {
-		padding-top: 15px;
+		p { line-height: 1.6em; }
+
+		li {
+			list-style: unset;
+			margin-top: 8px;
+			margin-left: 6vmin;
+		}
+
+		.table-2-cols {
+			display: grid;
+			grid-template-columns: 1fr 6fr;
+			border-top: 1px solid variables.$color-page-main-25;
+			border-left: 1px solid variables.$color-page-main-25;
+			@include functions.mq(small) { grid-template-columns: 1fr; }
+			
+			p {
+				border-bottom: 1px solid variables.$color-page-main-25;
+				border-right: 1px solid variables.$color-page-main-25;
+				margin: 0;
+				padding: 1em;
+			}
+		}
+
+		.first_column {
+			width: 250px;
+		}
+
+		a {
+			display: inline-block;
+			text-decoration: underline;
+		}
+
+		h1 {
+			padding-top: 40px;
+
+			&:first-child {
+				padding-top: 0;
+			}
+		}
+
+		h2 {
+			padding-top: 15px;
+		}
 	}
 }
+
+
+

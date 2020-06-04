@@ -112,7 +112,7 @@
 		jb_scripts.addProject(
 			"gln",
 			"https://gemeinde-langenleuba-niederhain.de/",
-			"Gemeinde Langeleuba-Niederhain",
+			"Gemeinde Langenleuba-Niederhain",
 			"Small city in Germany",
 			"New Homepage for the city \"Gemeinde Langenleuba-Niederhain\".",
 			"Highly customized Worpress page based on Elementor, new mail-system with a roundcube installation.",
@@ -193,7 +193,7 @@
 			</div>
 		</div>
 		<div class="imprint">
-			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');">Imprint and privacy policy</a></p>
+			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');setTimeout(function(){ let cElem = document.querySelector('.popup_container.active span.close_info'); if (cElem) cElem.classList.add('fade')}, 3000)">Imprint and privacy policy</a></p>
 		</div>
 	</aside>
 </section>

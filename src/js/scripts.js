@@ -257,38 +257,38 @@ const jb_scripts = {
 	},
 
 	projectPopupHtml(shortName, longName, link){
-		let pcHtml = `
-<div class="pictures image_pc">
-	<picture>
-		<source srcset="files/projects/${shortName}/pc_${shortName}_medium.png, files/projects/${shortName}/pc_${shortName}_large.png 1.5x">
-		<img onload="this.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/pc_${shortName}_medium.png" alt="Project ${longName}, PC view" />
-	</picture>
-	<span class="loader"></span>
-</div>`;
-		let phoneHtml = `
-<div class="pictures image_phone">
-	<picture>
-		<source srcset="files/projects/${shortName}/phone_${shortName}_small.png, files/projects/${shortName}/phone_${shortName}_medium.png 1.5x">
-		<img onload="this.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/phone_${shortName}_small.png" alt="Project ${longName}, smartphone view" />
-	</picture>
-	<span class="loader"></span>
-</div>`;
-		
-		let retHtml = "";
-		
-		if (window.innerWidth < 900){
-			retHtml = phoneHtml;
-		} else {
-			retHtml = pcHtml;
-		}
 
+
+		let pcHtml = `
+<picture>
+	<source srcset="files/projects/${shortName}/pc_${shortName}_medium.png, files/projects/${shortName}/pc_${shortName}_large.png 1.5x">
+	<img onload="this.parentElement.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/pc_${shortName}_medium.png" alt="Project ${longName}, PC view" />
+</picture>`;
+		let phoneHtml = `
+<picture>
+	<source srcset="files/projects/${shortName}/phone_${shortName}_small.png, files/projects/${shortName}/phone_${shortName}_medium.png 1.5x">
+	<img onload="this.parentElement.parentElement.parentElement.classList.add('loaded');" src="files/projects/${shortName}/phone_${shortName}_small.png" alt="Project ${longName}, smartphone view" />
+</picture>`;
+		
 		if (link == "") {
 			link = "No live version available";
 		} else {
-			link = '<a href="' + link + '" target="_blank">Visit the page</a>';
+			pcHtml = '<a href="' + link + '" target="_blank">'+pcHtml+'</a>';
+			phoneHtml = '<a href="' + link + '" target="_blank">'+phoneHtml+'</a>';
+			
+			link = '<a class="pagelink" href="' + link + '" target="_blank">Visit the page</a>';
 		}
 
-		retHtml += '<p>' + link + ' - <a>close</a></p>';
+
+		let retHtml = "";
+		
+		if (window.innerWidth < 900){
+			retHtml = '<div class="pictures image_phone">' + phoneHtml;
+		} else {
+			retHtml = '<div class="pictures image_pc">' + pcHtml;
+		}
+
+		retHtml += '<span class="loader"></span><p>' + link + ' - <a>close</a></p></div>';
 
 		return retHtml;
 	}
