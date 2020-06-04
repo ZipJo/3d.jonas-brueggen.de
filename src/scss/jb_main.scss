@@ -424,15 +424,23 @@ p {
 						@include functions.mq(small) { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
 						> a {
+							position: relative;
+
+							&:before {
+								content: '';
+								display: block;
+								padding-top: 100%;
+							}
+
 							> span {
+								position: absolute;
+								top: 0;
 								height: 100%;
 								width: 100%;
 								display: block;
-								background-image: url('/files/logos.svg');
+								background:url('/files/logos.svg');
 								background-repeat: no-repeat;
 								background-size: 400%;
-								background-attachment: local;
-								background-position-y: 0%;
 							}
 
 							// mail
