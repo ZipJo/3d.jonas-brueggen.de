@@ -34,6 +34,7 @@ const jb_events = {
 					if (typeof(DeviceOrientationEvent.requestPermission) === 'function') {
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
+						if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) alert("ios1");
 						document.body.addEventListener('click', function(){
 							DeviceOrientationEvent.requestPermission()
 								.then(function(){
