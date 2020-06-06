@@ -513,6 +513,13 @@ p {
 
 	// special popups:
 
+
+	//ios-popup
+
+	.ios_popup {
+		padding: 5vmin;
+	}
+
 	// project/pictures-styling
 
 	@for $i from 1 through 5 {

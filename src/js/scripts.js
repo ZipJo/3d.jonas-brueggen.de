@@ -156,6 +156,7 @@ const jb_scripts = {
 			requestAnimationFrame(function(){
 				setTimeout(function(){popupElem.classList.add("move");},10);
 			});
+			return popupContainer;
 		} else {
 			//load and display link
 			let xhr = new XMLHttpRequest();

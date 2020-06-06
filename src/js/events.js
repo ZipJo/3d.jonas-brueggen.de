@@ -31,20 +31,31 @@ const jb_events = {
 
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
-					if (typeof(DeviceOrientationEvent.requestPermission) === 'function') {
-						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
-						window.addEventListener("devicemotion", this.deviceMotionEvent);
-						if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) alert("ios1");
-						document.body.addEventListener('click', function(){
-							DeviceOrientationEvent.requestPermission()
-								.then(function(){
-									window.addEventListener("deviceorientation", this.deviceOrientationEvent);
-									window.addEventListener("devicemotion", this.deviceMotionEvent);
-								})
-						}, {
-							once: true
-						});
+					if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+						//this shuold be true for all IOS-devices
+						let currentPermission = DeviceOrientationEvent.requestPermission();
+						if(currentPermission !== 'granted') {
+							//no permission given yet, or denied in the past.
+							//trigger a popup, to enforce a click
+							let content = "<p>You seem to be using an iOS device.<br>This page is more engaging, if you grant permissions for motion and orientation sensors!</p>";
+							let popupElem = jb_scripts.customPopup(content, '250px', null, 'ios_popup' );
+							popupElem.addEventListener('click', function(){
+								DeviceOrientationEvent.requestPermission()
+									.then(function(){
+										window.addEventListener("deviceorientation", this.deviceOrientationEvent);
+										window.addEventListener("devicemotion", this.deviceMotionEvent);
+									})
+							}, {
+								once: true
+							});
+
+						} else {
+							//permission already granted, register events
+							window.addEventListener("deviceorientation", this.deviceOrientationEvent);
+							window.addEventListener("devicemotion", this.deviceMotionEvent);
+						}
 					} else {
+						//no IOS-device, register event
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
 					}
