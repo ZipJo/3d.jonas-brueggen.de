@@ -209,6 +209,7 @@ p {
 				font-size: 0.9em;
 				text-transform: uppercase;
 				padding: 10px 15px;
+
 			}
 		}
 		// Enter - Button
@@ -482,6 +483,27 @@ p {
 // ###########
 // Other stuff
 // ###########
+
+// pc-info style
+body > span.pc_info_span {
+	position: fixed;
+	top: 0;
+	left: 0;
+	padding: 10px;
+	margin: 10px;
+	display: block;
+	background: #02324b;
+	text-align: center;
+	border-radius: 10px;
+	border: 1px solid #fbf9ef;
+	opacity: 0;
+	font-size: .9rem;
+	line-height: 1.3;
+	transition: opacity 2s;
+	&.visible {
+		opacity: .8;
+	}
+}
 
 // popup-styling
 

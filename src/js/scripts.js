@@ -28,6 +28,7 @@ const jb_scripts = {
 					} else {
 						// from section to section
 						document.querySelector("header").classList.add("top");
+						document.querySelector("header nav").classList.add(hashName);
 						if (this.allowedNames.indexOf(this.currentActive) < this.allowedNames.indexOf(hashName)){
 							document.querySelector("section."+hashName).classList.add("active", "rightToCenter");
 							document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
@@ -39,15 +40,17 @@ const jb_scripts = {
 				} else if (this.currentActive == "home" && hashName != "home"){
 					// from home to section
 					document.querySelector("header").classList.add("top");
+					document.querySelector("header nav").classList.add(hashName);
 					document.querySelector("section."+hashName).classList.add("active", "fromHome");
 				} else if (this.currentActive === null && hashName != "home"){
 					//first call (init) for not-home
 					setTimeout(function() {
+						document.querySelector("header nav").classList.add(hashName);
 						document.querySelector("header").classList.add("top");
 						document.querySelector("section."+hashName).classList.add("active", "fromHome");
-					}, 200)
+					}, 500)
 				} else if (this.currentActive === null && hashName == "home"){
-					//first call (init) forhome
+					//first call (init) for home
 					jb_events.addHomeScrollEvents();
 					jb_DOManimation.start();
 					setTimeout(function() {
@@ -82,10 +85,12 @@ const jb_scripts = {
 		clearClasses() {
 			let sections = document.querySelectorAll("section"),
 				header = document.querySelector("header"),
+				nav = document.querySelector("header nav"),
 				classes = ["active","rightToCenter","leftToCenter","centerToRight","centerToLeft","toHome","fromHome","top"];
 
 			document.querySelector("header > span.enter").classList.remove("visible");
 			header.classList.remove(...classes);
+			nav.classList.remove(...nav.classList);
 			sections.forEach(function(section) {
 				section.classList.remove(...classes);
 			});
@@ -151,7 +156,7 @@ const jb_scripts = {
 			popupElem.innerHTML = content;
 			popupElem.style.maxWidth=maxWidth;
 			popupElem.className = classes;
-			popupContainer.appendChild(popupElem);
+			popupContainer.append(popupElem);
 			popupContainer.classList.add("active");
 			requestAnimationFrame(function(){
 				setTimeout(function(){popupElem.classList.add("move");},10);
@@ -164,6 +169,26 @@ const jb_scripts = {
 			xhr.open('get', link);
 			xhr.onload = function() { jb_scripts.customPopup(xhr.response, maxWidth); };
 			xhr.send();
+		}
+	},
+
+	touchRemover: {
+		init() {
+
+		},
+		tester() {
+			let elem = document.createElement("div");
+			elem.classList.add("touchinfo");
+			document.body.append(elem);
+			console.log("aEL");
+			window.addEventListener("touch", this.touchHandler);
+
+		},
+		touchHandler(e){
+			console.log(e);
+		},
+		unsetTouch() {
+
 		}
 	},
 
@@ -253,7 +278,7 @@ const jb_scripts = {
 			pElem.classList.add("project");
 			pElem.innerHTML = innerHTML;
 
-			parent.appendChild(pElem);
+			parent.append(pElem);
 			return;
 	},
 

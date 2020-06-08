@@ -245,6 +245,36 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 			opacity: 0;
 			visibility: hidden;
 			transition: all $animationDurationHome*.7 ease-in-out 0s;
+
+			a {
+				position: relative;
+				
+				&:before {
+					content:"";
+					position: absolute;
+					bottom: 0;
+					right: 0;
+					height: 1px;
+					width: 0;
+					background: variables.$color-accent-6;
+					transition: width 0.15s ease-in-out;
+				}
+
+				&:hover:before{
+					background: variables.$color-page-main;
+					left: 0;
+					width: 100%;
+					transition: width 0.15s ease-in-out;
+				}
+			}
+
+			&.projects a:nth-child(1):before,
+			&.about a:nth-child(2):before {
+				left: 0;
+				width: 100%;
+				transition: width 0.15s ease-in-out;
+			}
+
 		}
 
 		@keyframes enter--animation {

@@ -65,6 +65,18 @@ const jb_events = {
 			} else {
 				//desktop!
 
+				//add a small notification on the home-screen
+				let infoSpan = document.createElement("span")
+				infoSpan.innerHTML = "This page is more fun<br>on a mobile device!";
+				infoSpan.classList.add("pc_info_span","visible");
+				document.body.prepend(infoSpan);
+				//...and remove it after five seconds
+				setTimeout(function(){
+					infoSpan.classList.remove("visible");
+					setTimeout(function(){
+						document.body.removeChild(infoSpan);
+					},2000);
+				},5000);
 				/* el on mousemove */
 				window.addEventListener('mousemove', this.mouseMoveAction);
 
