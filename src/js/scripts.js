@@ -158,8 +158,16 @@ const jb_scripts = {
 			popupElem.className = classes;
 			popupContainer.append(popupElem);
 			popupContainer.classList.add("active");
+
+			//add a history entry, in prep for adding "back"-support.
+			history.pushState(null,null);
+			window.addEventListener("popstate",jb_scripts.closePopup);
+
 			requestAnimationFrame(function(){
-				setTimeout(function(){popupElem.classList.add("move");},10);
+				setTimeout(function(){
+					popupElem.classList.add("move");
+
+				},10);
 			});
 			return popupContainer;
 		} else {
@@ -170,6 +178,11 @@ const jb_scripts = {
 			xhr.onload = function() { jb_scripts.customPopup(xhr.response, maxWidth); };
 			xhr.send();
 		}
+	},
+
+	closePopup() {
+		document.querySelector(".popup_container.active").classList.remove("active");
+		window.removeEventListener("popstate",jb_scripts.closePopup);
 	},
 
 	touchRemover: {

@@ -130,7 +130,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 		0% {
 			top: 60vh;
 			opacity: 0;
-			max-height: 39vh;
+			max-height: 25vh;
 		}
 		100% {
 			top: $homeHeight;
@@ -147,7 +147,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 		100% {
 			top: 60vh;
 			opacity: 0;
-			max-height: 39vh;
+			max-height: 25vh;
 		}
 	}
 
@@ -210,7 +210,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 			transform: rotateY(0deg) translateZ(0);
 			top: 70vh;
 			opacity: 0;
-			max-height: 29vh;
+			max-height: 25vh;
 
 			animation-duration: $animationDurationHome;
 			animation-name: section-toHome--animation;

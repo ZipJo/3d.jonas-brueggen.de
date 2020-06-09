@@ -35,17 +35,25 @@ body {
 
 // scrollbar-design hacking (amazing!)
 
+$track-color: rgba(255,255,255,0.25);
+$thumb-color: rgba(255,255,255,0.6);
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color $track-color;
+}
+
 *::-webkit-scrollbar {
 	width: 7px;
 	height: 6px;
 }
 
-*::-webkit-scrollbar-thumb {
-	background-color: rgba(0,0,0,0.45);
+*::-webkit-scrollbar-track {
+	background-color: $track-color;
 }
 
-*::-webkit-scrollbar-track {
-	background-color: rgba(0,0,0,0.05);
+*::-webkit-scrollbar-thumb {
+	background-color: $thumb-color;
 }
 
 // Link-styles

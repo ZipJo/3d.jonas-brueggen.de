@@ -185,6 +185,6 @@ const jb_events = {
 		jb_events.vars.deviceOrientation.rotation_alpha = Math.round(e.rotationRate.alpha * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //up & down
 		jb_events.vars.deviceOrientation.rotation_beta = Math.round(e.rotationRate.beta * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //left & right
 		jb_events.vars.deviceOrientation.rotation_gamma = Math.round(e.rotationRate.gamma * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //counter- & clockwise
-	},
+	}
 
 }
