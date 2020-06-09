@@ -16,7 +16,19 @@ const jb_events = {
 			homeTouchstart: null
 		},
 		status: "initial",
-		isResized: false,
+		isResized: false
+	},
+
+	iosPermission () {
+		// (optional) Do something before API request prompt.
+		DeviceMotionEvent.requestPermission()
+			.then( response => {
+			// (optional) Do something after API prompt dismissed.
+			if ( response == "granted" ) {
+				window.addEventListener("deviceorientation", jb_events.deviceOrientationEvent);
+				window.addEventListener("devicemotion", jb_events.deviceMotionEvent);
+			}
+		}).catch( console.error )
 	},
 
 
@@ -26,36 +38,35 @@ const jb_events = {
 		if (this.vars.onhover.enable) {
 
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
-			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			if ( true || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent) !== 'undefined')) {
 				//mobile!
-
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
-					if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-						//this shuold be true for all IOS-devices
-						let currentPermission = DeviceOrientationEvent.requestPermission();
-						if(currentPermission !== 'granted') {
-							//no permission given yet, or denied in the past.
-							//trigger a popup, to enforce a click
-							let content = "<p>You seem to be using an iOS device.<br>This page is more engaging, if you grant permissions for motion and orientation sensors!</p>";
-							let popupElem = jb_scripts.customPopup(content, '250px', null, 'ios_popup' );
-							popupElem.addEventListener('click', function(){
-								DeviceOrientationEvent.requestPermission()
-									.then(function(){
-										window.addEventListener("deviceorientation", this.deviceOrientationEvent);
-										window.addEventListener("devicemotion", this.deviceMotionEvent);
-									})
-							}, {
-								once: true
-							});
+						if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent)) {
+						//this shuold be true for all iOS-devices
 
-						} else {
-							//permission already granted, register events
-							window.addEventListener("deviceorientation", this.deviceOrientationEvent);
-							window.addEventListener("devicemotion", this.deviceMotionEvent);
-						}
+						//call requestPermission outside of a click-event, to get current response-state
+						//this only works on a https-connection, so testing is very annoying!
+
+						DeviceMotionEvent.requestPermission()
+						.then(response => {
+						    if (response) {
+						        //already responded, try to register events
+						        window.addEventListener("deviceorientation", this.deviceOrientationEvent);
+								window.addEventListener("devicemotion", this.deviceMotionEvent);
+						    }
+						})
+						.catch(function(error) {
+							//if there's no response, the 'if'-above fails. trigger popup and bind
+							//requestPermission to a click-event!
+							let content = "<p>You seem to be using an iOS device.<br>This page is better, if you grant permissions for motion and orientation sensors!</p>";
+							let popupElem = jb_scripts.customPopup(content, '250px', null, 'ios_popup' );
+							//trigger a popup, to enforce a click
+
+							popupElem.addEventListener('click', jb_events.iosPermission, {once: true});
+						});
 					} else {
-						//no IOS-device, register event
+						//no iOS-device, register event
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
 					}
