@@ -40,6 +40,15 @@ const jb_events = {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
 			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent) !== 'undefined')) {
 				//mobile!
+				let infodiv = document.createElement("div");
+				infodiv.classList.add("infobox");
+				infodiv.innerHTML = screen.orientation;
+				document.body.prepend(infodiv)
+
+				window.addEventListener("orientationchange", function() {
+					infodiv.innerHTML = screen.orientation;
+				});
+
 				console.log("mobile");
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
