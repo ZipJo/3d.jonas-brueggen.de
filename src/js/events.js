@@ -38,8 +38,9 @@ const jb_events = {
 		if (this.vars.onhover.enable) {
 
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
-			if ( true || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent) !== 'undefined')) {
+			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent) !== 'undefined')) {
 				//mobile!
+				console.log("mobile");
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
 						if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent)) {
@@ -75,8 +76,9 @@ const jb_events = {
 
 			} else {
 				//desktop!
+				console.log("desktop");
 
-				//add a small notification on the home-screen
+				//add a small notification on the home-screen, if there's no support.
 				let infoSpan = document.createElement("span")
 				infoSpan.innerHTML = "This page is more fun<br>on a mobile device!";
 				infoSpan.classList.add("pc_info_span","visible");
@@ -88,10 +90,10 @@ const jb_events = {
 						document.body.removeChild(infoSpan);
 					},2000);
 				},5000);
-				/* el on mousemove */
-				window.addEventListener('mousemove', this.mouseMoveAction);
 
-				/* el on onmouseleave */
+				/* event on mousemove */
+				window.addEventListener('mousemove', this.mouseMoveAction);
+				/* event on onmouseleave */
 				window.addEventListener('mouseleave', this.mouseLeaveAction);
 			
 			}
