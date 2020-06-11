@@ -8,8 +8,6 @@ const jb_main = {
 		//init contentChanger (watches the hash)
 		jb_scripts.contentChanger.init();
 
-		jb_scripts.touchRemover.tester();
-
 		//start main animation
 		jb_anim.start('canvas#bg_canvas', {}, callback);
 	}

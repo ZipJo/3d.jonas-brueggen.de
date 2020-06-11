@@ -42,16 +42,9 @@ const jb_events = {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
 			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent.requestPermission) === 'function')) {
 				//mobile!
-				let infodiv = document.createElement("div");
-				infodiv.classList.add("infobox");
-				document.body.prepend(infodiv)
-
-				console.log("mobile");
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
-					console.log("has deviceOrientation");
 						if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent)) {
-						console.log("is iOS device, requestPermission");
 						//this shuold be true for all iOS-devices
 
 						//call requestPermission outside of a click-event, to get current response-state
@@ -69,7 +62,6 @@ const jb_events = {
 						.catch(function(error) {
 							//if there's no response, the 'if'-above fails. trigger popup and bind
 							//requestPermission to a click-event!
-							console.log("requestPermission failed, add popup and click-listener");
 							let content = "<p>You seem to be using an iOS device.<br>This page is better, if you grant permissions for motion and orientation sensors!</p><a href='' class='fancy_link' style='pointer-events:none;'>okay</a>";
 							let popupElem = jb_scripts.customPopup(content, '250px', null, 'ios_popup' );
 							//trigger a popup, to enforce a click
@@ -81,23 +73,19 @@ const jb_events = {
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
 					}
-					console.log("add ScreenOrientation events");
 
 					// check if screen.orientation is supported
 					if ('screen' in window && 'orientation' in window.screen) {
-						console.log("window.screen.orientation supported.");
 						window.screen.orientation.addEventListener("change",jb_events.screenOrientationAction);
 						//also add event on resize, because android is sometimes weird and won't fire the event.
 						window.addEventListener("resize",jb_events.screenOrientationAction);
 
 					} else {
 						//fallback on deprecated window.orientation (iOS)
-						console.log("window.screen.orientation not supported. fallback on window.orientation");
 						window.addEventListener("orientationchange",jb_events.screenOrientationAction);
 					}
 					//call the event once, to set the initial values
 					jb_events.screenOrientationAction();
-					console.log("add ScreenOrientation events - done!");
 
 				}
 
@@ -200,7 +188,6 @@ const jb_events = {
 			//window.orientation has different values. fix them here
 			jb_events.vars.screenOrientationAngle = window.orientation == -90 ? 270 : window.orientation;
 		}
-		document.querySelector("div.infobox").innerHTML = "screenOrientation<br>" + jb_events.vars.screenOrientationAngle;
 	},
 
 	deviceOrientationEvent(e) {

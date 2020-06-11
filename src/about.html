@@ -9,7 +9,7 @@
 
 		<p>I have a professional certification as a systems-integrator (network-design) and a degree in computer sciences, with IT consulting and project management as a main focus.</p>
 
-		<p>If you're interested in working with me, feel free to <a class="fancy_link" onclick="jb_scripts.triggerContactTileAnimation();">contact me</a>.</p>
+		<p>If you're interested in working with me, feel free to <a class="fancy_link" onclick="jb_scripts.triggerContactTileAnimation();" ontouchend="jb_scripts.touchRemover(this);">contact me</a>.</p>
 	</article>
 	<aside>
 		<div class="contact_address">
@@ -17,14 +17,14 @@
 		</div>
 		<div class="grid_wrap">
 			<div class="contact_tiles_grid" id="id_contact_tiles">
-				<a href="mailto:info@jonas-brueggen.de"><span></span></a>
-				<a href="tel:+4915759073485"><span></span></a>
-				<a href="skype:jonas.brueggen@gmail.com?chat"><span></span></a>
-				<a href="https://wa.me/4915759073485" target="_blank"><span></span></a>
+				<a href="mailto:info@jonas-brueggen.de" target="_blank" ontouchend="jb_scripts.touchRemover(this);"><span></span></a>
+				<a href="tel:+4915759073485" ontouchend="jb_scripts.touchRemover(this);"><span></span></a>
+				<a href="skype:jonas.brueggen@gmail.com?chat" ontouchend="jb_scripts.touchRemover(this);"><span></span></a>
+				<a href="https://wa.me/4915759073485" target="_blank" ontouchend="jb_scripts.touchRemover(this);"><span></span></a>
 			</div>
 		</div>
 		<div class="imprint">
-			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');setTimeout(function(){ let cElem = document.querySelector('.popup_container.active span.close_info'); if (cElem) cElem.classList.add('fade')}, 3000)">Imprint and privacy policy</a></p>
+			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');setTimeout(function(){ let cElem = document.querySelector('.popup_container.active span.close_info'); if (cElem) cElem.classList.add('fade')}, 3000)" ontouchend="jb_scripts.touchRemover(this);">Imprint and privacy policy</a></p>
 		</div>
 	</aside>
 </section>

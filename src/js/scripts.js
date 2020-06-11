@@ -185,24 +185,15 @@ const jb_scripts = {
 		window.removeEventListener("popstate",jb_scripts.closePopup);
 	},
 
-	touchRemover: {
-		init() {
-
-		},
-		tester() {
-			let elem = document.createElement("div");
-			elem.classList.add("touchinfo");
-			document.body.append(elem);
-			console.log("add touchremove-tester");
-			window.addEventListener("touchend", this.touchHandler);
-
-		},
-		touchHandler(e){
-			console.log(e);
-		},
-		unsetTouch() {
-
-		}
+	touchRemover(el) {
+		//removes an element and immideately adds it back to remove the sticky-hover on mobile devices
+		//should be called ontouchend on all links
+		let par = el.parentNode;
+		let next = el.nextSibling;
+		setTimeout(function(){
+			par.removeChild(el);
+			par.insertBefore(el, next);
+		},500);
 	},
 
 	setRandomBackgrounds(){
@@ -311,11 +302,13 @@ const jb_scripts = {
 		
 		if (link == "") {
 			link = "No live version available";
+			pcHtml = '<span>'+pcHtml+'</span>';
+			phoneHtml = '<span>'+phoneHtml+'</span>';
 		} else {
 			pcHtml = '<a href="' + link + '" target="_blank">'+pcHtml+'</a>';
 			phoneHtml = '<a href="' + link + '" target="_blank">'+phoneHtml+'</a>';
 			
-			link = '<a class="pagelink" href="' + link + '" target="_blank">Visit the page</a>';
+			link = '<a class="pagelink" href="' + link + '" target="_blank" ontouchend="jb_scripts.touchRemover(this);">Visit the page</a>';
 		}
 
 
