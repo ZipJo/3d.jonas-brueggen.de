@@ -12,10 +12,10 @@
 	}
 
 function startup() {
-	let dev = false;
+	let dev = true;
 	if (dev) {
 		loader();
-		init_eruda(jb_main.init()); //mobile console - for dev purposes
+		init_eruda(jb_main.init); //mobile console - for dev purposes
 	} else {
 		jb_main.init(loader);
 	}

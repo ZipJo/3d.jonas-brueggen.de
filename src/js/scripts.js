@@ -193,7 +193,7 @@ const jb_scripts = {
 			let elem = document.createElement("div");
 			elem.classList.add("touchinfo");
 			document.body.append(elem);
-			console.log("aEL");
+			console.log("add touchremove-tester");
 			window.addEventListener("touch", this.touchHandler);
 
 		},

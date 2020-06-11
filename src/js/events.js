@@ -20,11 +20,13 @@ const jb_events = {
 	},
 
 	iosPermission () {
+		console.log("requestPermission after user-interaction");
 		// (optional) Do something before API request prompt.
 		DeviceMotionEvent.requestPermission()
 			.then( response => {
 			// (optional) Do something after API prompt dismissed.
 			if ( response == "granted" ) {
+				console.log("requestPermission after user-interaction - success!");
 				window.addEventListener("deviceorientation", jb_events.deviceOrientationEvent);
 				window.addEventListener("devicemotion", jb_events.deviceMotionEvent);
 			}
@@ -42,17 +44,14 @@ const jb_events = {
 				//mobile!
 				let infodiv = document.createElement("div");
 				infodiv.classList.add("infobox");
-				infodiv.innerHTML = screen.orientation;
 				document.body.prepend(infodiv)
-
-				window.addEventListener("orientationchange", function() {
-					infodiv.innerHTML = screen.orientation;
-				});
 
 				console.log("mobile");
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
+					console.log("has deviceOrientation");
 						if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent)) {
+						console.log("is iOS device, requestPermission");
 						//this shuold be true for all iOS-devices
 
 						//call requestPermission outside of a click-event, to get current response-state
@@ -62,6 +61,7 @@ const jb_events = {
 						.then(response => {
 						    if (response) {
 						        //already responded, try to register events
+								console.log("requestPermission is cached, register events");
 						        window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 								window.addEventListener("devicemotion", this.deviceMotionEvent);
 						    }
@@ -69,7 +69,8 @@ const jb_events = {
 						.catch(function(error) {
 							//if there's no response, the 'if'-above fails. trigger popup and bind
 							//requestPermission to a click-event!
-							let content = "<p>You seem to be using an iOS device.<br>This page is better, if you grant permissions for motion and orientation sensors!</p>";
+							console.log("requestPermission failed, add popup and click-listener");
+							let content = "<p>You seem to be using an iOS device.<br>This page is better, if you grant permissions for motion and orientation sensors!</p><a href='' class='fancy_link' style='pointer-events:none;'>okay</a>";
 							let popupElem = jb_scripts.customPopup(content, '250px', null, 'ios_popup' );
 							//trigger a popup, to enforce a click
 
@@ -80,6 +81,23 @@ const jb_events = {
 						window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 						window.addEventListener("devicemotion", this.deviceMotionEvent);
 					}
+					console.log("add ScreenOrientation events");
+
+					// check if screen.orientation is supported
+					if ('screen' in window && 'orientation' in window.screen) {
+						console.log("window.screen.orientation supported.");
+						window.screen.orientation.addEventListener("change",jb_events.screenOrientationAction);
+						//also add event on resize, because android is sometimes weird and won't fire the event.
+						window.addEventListener("resize",jb_events.screenOrientationAction);
+
+					} else {
+						//fallback on deprecated window.orientation (iOS)
+						console.log("window.screen.orientation not supported. fallback on window.orientation");
+						window.addEventListener("orientationchange",jb_events.screenOrientationAction);
+					}
+					//call the event once, to set the initial values
+					jb_events.screenOrientationAction();
+					console.log("add ScreenOrientation events - done!");
 
 				}
 
@@ -173,7 +191,17 @@ const jb_events = {
 		jb_events.vars.onclick.click_pos_y = e.clientY;
 	},
 
-	
+	screenOrientationAction() {
+		// check if screen.orientation is supported
+		if ('screen' in window && 'orientation' in window.screen) {
+			jb_events.vars.screenOrientationAngle = screen.orientation.angle;
+		} else {
+			//fallback on deprecated window.orientation (iOS)
+			//window.orientation has different values. fix them here
+			jb_events.vars.screenOrientationAngle = window.orientation == -90 ? 270 : window.orientation;
+		}
+		document.querySelector("div.infobox").innerHTML = "screenOrientation<br>" + jb_events.vars.screenOrientationAngle;
+	},
 
 	deviceOrientationEvent(e) {
 		jb_events.vars.deviceOrientation.sensorStatus = true;
@@ -182,6 +210,15 @@ const jb_events = {
 		let alpha = e.alpha, //counter- & clockwise (0 to 360)
 			beta = e.beta, //up & down (-180 to 180)
 			gamma = e.gamma; //left & right (-90 to 90)
+
+		//handle screenOrientation:
+		if (jb_events.vars.screenOrientationAngle == 90 ) {
+			beta = -e.gamma;
+			gamma = e.beta;
+		} else if (jb_events.vars.screenOrientationAngle == 270 ) {
+			beta = e.gamma;
+			gamma = -e.beta;
+		} 
 
 		//normalize alpha (game-based calibration):
 		if (jb_events.vars.deviceOrientation.initialOffset == undefined) {
@@ -202,11 +239,26 @@ const jb_events = {
 	deviceMotionEvent(e) {
 		jb_events.vars.deviceOrientation.sensorStatus = true;
 		jb_events.vars.status = 'tilt';
+
+		let alpha = e.rotationRate.alpha,  //up & down
+			beta = e.rotationRate.beta,  //left & right
+			gamma = e.rotationRate.gamma;  //counter- & clockwise
+
+		//handle screenOrientation:
+		if (jb_events.vars.screenOrientationAngle == 90 ) {
+			alpha = -e.rotationRate.beta;
+			beta = e.rotationRate.alpha;
+		} else if (jb_events.vars.screenOrientationAngle == 270 ) {
+			alpha = e.rotationRate.beta;
+			beta = -e.rotationRate.alpha;
+		} 
 		
 		//round values to only capture significant motion
-		jb_events.vars.deviceOrientation.rotation_alpha = Math.round(e.rotationRate.alpha * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //up & down
-		jb_events.vars.deviceOrientation.rotation_beta = Math.round(e.rotationRate.beta * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //left & right
-		jb_events.vars.deviceOrientation.rotation_gamma = Math.round(e.rotationRate.gamma * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //counter- & clockwise
+		jb_events.vars.deviceOrientation.rotation_alpha = Math.round(alpha * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //up & down
+		jb_events.vars.deviceOrientation.rotation_beta = Math.round(beta * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //left & right
+		jb_events.vars.deviceOrientation.rotation_gamma = Math.round(gamma * jb_events.vars.deviceOrientation.motionAccuracy)/jb_events.vars.deviceOrientation.motionAccuracy; //counter- & clockwise
+		
+
 	}
 
 }
