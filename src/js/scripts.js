@@ -194,7 +194,7 @@ const jb_scripts = {
 			elem.classList.add("touchinfo");
 			document.body.append(elem);
 			console.log("add touchremove-tester");
-			window.addEventListener("touch", this.touchHandler);
+			window.addEventListener("touchend", this.touchHandler);
 
 		},
 		touchHandler(e){
