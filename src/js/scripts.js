@@ -139,6 +139,8 @@ const jb_scripts = {
 				let details = elem.parentElement.querySelector(".details");
 				details.style.setProperty("max-height", 10+details.scrollHeight+"px");
 				details.style.setProperty("padding", "var(--padding)");
+				let scrollAnim = setInterval(function(){details.scrollIntoView({behavior: "smooth",block:"nearest"});},1000/60); //60fps
+				setTimeout(function(){clearInterval(scrollAnim);},500); //duration of the "open"-animation
 			});
 
 		}
@@ -232,7 +234,7 @@ const jb_scripts = {
 
 	triggerContactTileAnimation(){
 		let elem = document.getElementById("id_contact_tiles");
-		elem.scrollIntoView({behavior: "smooth"});
+		elem.scrollIntoView({behavior: "smooth",block:"nearest"});
 		elem.classList.add("start_animation");
 		requestAnimationFrame(function(){
 			setTimeout(function(){
