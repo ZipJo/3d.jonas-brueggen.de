@@ -10,5 +10,7 @@ const jb_main = {
 
 		//start main animation
 		jb_anim.start('canvas#bg_canvas', {}, callback);
+
+		//if (callback) callback();
 	}
 }
