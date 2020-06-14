@@ -2,3 +2,6 @@ files/
 node_modules/
 *.psd
 .ftppass
+package.json
+package-lock.json
+.gitignore
