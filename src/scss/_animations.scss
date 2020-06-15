@@ -4,230 +4,17 @@
 @use 'variables';
 @use 'functions';
 
-
-$cb_quarter-sin: cubic-bezier(.4,.63,.67,1); // ease-out
-$cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
-
-
 // main perspective animations
 .wrapper {
 	$homeHeight: 170px; // logo-height+nav-height
 
 	$animationDurationHome: .8s;
-	$animationDurationSection: .5s;
-	$perspective: 10vw; // defines the z=0 plane with width and height at 100% as the frustum near plane
-
-	$maxRotation: 35deg; // max Object rotation
-	$rotationRatio: 4; // to fix perspective-skew. this is an estimate, css-perspective is weird!
-	$maxRotationCss: $maxRotation / $rotationRatio;
-
-	$pushback: -5vw; // depth for the initial "pushback"-effect on section-inactivity. roughly 1/8th of maxDistanceZ
-
-	$maxDistanceX: 255vw; // distance from left at 90°
-	$maxDistanceZ: -40vw; // depth at 90° excluding pushback!
-
-	// mixin for the keyframe-animation:
-	@mixin section-animation( $name, $dir, $maxRot, $maxRotCss ) {
-		@if $dir == in {
-			// from back to front
-			@keyframes #{$name}-height-opacity {
-				from {
-					max-height: 50vh;
-					opacity: 0;
-				}
-				60% {
-					max-height: 100vh;
-				}
-				to {
-					max-height: 700vh;
-					opacity: 1;
-				}
-			}
-			@keyframes #{$name}-left {
-				from {
-					$left: math.sin($maxRot) * $maxDistanceX;
-					left: $left;
-					animation-timing-function: $cb_quarter-cos;
-				}
-				60% {
-					$left: math.sin($maxRot * .4) * $maxDistanceX;
-					left: $left;
-					animation-timing-function: $cb_quarter-sin;
-				}
-				to {
-					left: 0;
-				}
-			}
-			@keyframes #{$name}-transform {
-				from {
-					$translateZ: $pushback + (1 - math.cos($maxRot)) * $maxDistanceZ;
-					transform: rotateY($maxRotCss) translateZ($translateZ);
-					animation-timing-function: $cb_quarter-sin;
-				}
-				60% {
-					transform: rotateY(0deg) translateZ($pushback);
-					animation-timing-function: $cb_quarter-cos;
-				}
-				to {
-					transform: rotateY(0deg) translateZ(0);
-				}
-			}
-
-		} @else {
-			// from front to back
-			@keyframes #{$name}-height-opacity {
-				from {
-					max-height: 700vh;
-					opacity: 1;
-				}
-				40% {
-					max-height: 100vh;
-				}
-				to {
-					max-height: 50vh;
-					opacity: 0;
-				}
-			}
-			@keyframes #{$name}-left {
-				from {
-					left: 0;
-					animation-timing-function: $cb_quarter-cos;
-				}
-				40% {
-					$left: math.sin($maxRot * .4) * $maxDistanceX;
-					left: $left;
-					animation-timing-function: $cb_quarter-sin;
-				}
-				to {
-					$left: math.sin($maxRot) * $maxDistanceX;
-					left: $left;
-				}
-			}
-			@keyframes #{$name}-transform {
-				from {
-					transform: rotateY(0deg) translateZ(0);
-					animation-timing-function: $cb_quarter-sin;
-				}
-				40% {
-					transform: rotateY(0deg) translateZ($pushback);
-					animation-timing-function: $cb_quarter-cos;
-				}
-				to {
-					$translateZ: $pushback + (1 - math.cos($maxRot)) * $maxDistanceZ;
-					transform: rotateY($maxRotCss) translateZ($translateZ);
-				}
-			}
-
-		}
-	}
-	// actual animations:
-	@include section-animation(section-rightToCenter--animation, in, $maxRotation, $maxRotationCss);
-	@include section-animation(section-leftToCenter--animation, in, -$maxRotation, -$maxRotationCss);
-	@include section-animation(section-centerToRight--animation, out, $maxRotation, $maxRotationCss);
-	@include section-animation(section-centerToLeft--animation, out, -$maxRotation, -$maxRotationCss);
-
-	@keyframes section-fromHome--animation {
-		0% {
-			top: 60vh;
-			opacity: 0;
-			max-height: 25vh;
-		}
-		100% {
-			top: $homeHeight;
-			opacity: 1;
-			max-height: 100vh;
-		}
-	}
-	@keyframes section-toHome--animation {
-		0% {
-			top: $homeHeight;
-			opacity: 1;
-			max-height: 100vh;
-		}
-		100% {
-			top: 60vh;
-			opacity: 0;
-			max-height: 25vh;
-		}
-	}
-
-
-	perspective: $perspective;
-	transform-style: preserve-3d;
-	height: 100vh;
-	width: 100vw;
-
-	section {
-		will-change: top, left, transform, opacity, max-height;
-
-		top: $homeHeight;
-
-		pointer-events:none;
-
-		// animation-stuff - default states (inactive):
-		$translateZ: $pushback + (1 - math.cos($maxRotation)) * $maxDistanceZ;
-		$left: math.sin($maxRotation) * $maxDistanceX;
-
-		max-height: 50vh;
-		overflow-y: hidden;
-		opacity: 0;
-
-		left: $left;
-		transform: rotateY($maxRotationCss) translateZ($translateZ);
-
-		transform-origin: 50vw 50vh 0; // this is very different form 50% 50% 0!!!
-
-		animation-iteration-count: 1;
-
-		transition: max-height $animationDurationSection ease-in-out;
-
-		&.active {
-			pointer-events: all;
-			max-height: 700vh;
-			opacity: 1;
-			left: 0;
-			transform: rotateY(0deg) translateZ(0);
-			// toActive-Animations:
-			&.rightToCenter {
-				animation-duration: $animationDurationSection;
-				animation-name: section-rightToCenter--animation-height-opacity, section-rightToCenter--animation-left, section-rightToCenter--animation-transform;
-			}
-			&.leftToCenter {
-				animation-duration: $animationDurationSection;
-				animation-name: section-leftToCenter--animation-height-opacity, section-leftToCenter--animation-left, section-leftToCenter--animation-transform;
-			}
-		}
-		&.centerToRight {
-			animation-duration: $animationDurationSection;
-			animation-name: section-centerToRight--animation-height-opacity, section-centerToRight--animation-left, section-centerToRight--animation-transform;
-		}
-		&.centerToLeft {
-			animation-duration: $animationDurationSection;
-			animation-name: section-centerToLeft--animation-height-opacity, section-centerToLeft--animation-left, section-centerToLeft--animation-transform;
-		}
-		&.toHome {
-			left: 0;
-			transform: rotateY(0deg) translateZ(0);
-			top: 70vh;
-			opacity: 0;
-			max-height: 25vh;
-
-			animation-duration: $animationDurationHome;
-			animation-name: section-toHome--animation;
-			animation-timing-function: ease-in-out;
-		}
-		&.fromHome {
-			animation-duration: $animationDurationHome;
-			animation-name: section-fromHome--animation;
-			animation-timing-function: ease-in-out;
-		}
-	}
 
 	header {
-		will-change: transform, top;
-		top: 50vh;
+		will-change: transform, margin-top;
+		margin-top: 50vh;
 		transform: translateY(-50%);
-		transition: top $animationDurationHome ease-in-out, transform $animationDurationHome ease-in-out;
+		transition: margin-top $animationDurationHome ease-in-out, transform $animationDurationHome ease-in-out;
 
 		.header_logo {
 			will-change: transform;
@@ -313,7 +100,7 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 
 
 		&.top {
-			top: 0;
+			margin-top: 0;
 			transform: translateY(0);
 
 			.header_logo { transform: rotateY(0); }
@@ -322,48 +109,81 @@ $cb_quarter-cos: cubic-bezier(.33,0,.6,.37); // ease-in
 		}
 	}
 
+	@keyframes section-fromHome--animation {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes section-toHome--animation {
+		0% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+
+	section {
+		pointer-events: none;
+		opacity: 0;
+
+		transition: opacity .5s ease-in-out;
+
+		&.active {
+			pointer-events: all;
+			opacity: 1;
+		}
+
+		&.toHome {
+			opacity: 0;
+		}
+	}
+
+	section.projects {
+		&.projectsToAbout {
+			opacity: 1;
+		}
+		&.aboutToProjects {
+			opacity: 1;
+		}
+	}
+	section.about {
+		&.projectsToAbout {
+			opacity: 1;
+		}
+		&.aboutToProjects {
+			opacity: 1;
+		}		
+	}
 
 
 	// section specific animations
 
 	section.projects {
-		&.toHome .project {
-			animation-name: project-out--animation;
-			animation-duration: 1s;
-			animation-fill-mode: both;
-			animation-delay: 0s;
-		}
-
-		&.fromHome.active .project {
-			animation-name: project-in--animation;
-			animation-duration: 1s;
-			animation-fill-mode: both;
+		&.active .project {
+			transform: translateX(0) translateZ(0);
+			transition-property: transform;
+			transition-duration: .9s;
+			transition-timing-function: ease-in-out;
 			@for $i from 1 through 10 {
-				&:nth-child(#{$i}) { animation-delay: calc(.3s + (.1s * #{$i})); }
+				&:nth-child(#{$i}) { transition-delay: calc(0s + (.1s * #{$i})); }
 			}
-		}
-
-		// translateZ is here to move the animation to the GPU and allow anti-aliasing!
-		@keyframes project-in--animation {
-			from {
-				transform: translateX(-100%) translateZ(0);
-			}
-			to {
-				transform: translateX(0) translateZ(0);
-			  }
-		}
-		@keyframes project-out--animation {
-			from {
-				transform: translateX(0) translateZ(0);
-			}
-			to {
-				transform: translateX(-100%) translateZ(0);
-			  }
 		}
 
 		.project {
-			transform-style: preserve-3d;
-			will-change: transform;
+			transform: translateX(-100%) translateZ(0);
+			transition-property: transform;
+			transition-duration: 1s;
+			transition-timing-function: ease-in-out;
+			@for $i from 1 through 10 {
+				&:nth-child(#{$i}) { transition-delay: calc(0s + (.03s * #{$i})); }
+			}
+		}
+
+		.project {
 
 			$move_dur: 60s;
 			$move_dur_mod: 5s;

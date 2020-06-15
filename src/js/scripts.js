@@ -29,12 +29,16 @@ const jb_scripts = {
 						// from section to section
 						document.querySelector("header").classList.add("top");
 						document.querySelector("header nav").classList.add(hashName);
-						if (this.allowedNames.indexOf(this.currentActive) < this.allowedNames.indexOf(hashName)){
-							document.querySelector("section."+hashName).classList.add("active", "rightToCenter");
-							document.querySelector("section."+this.currentActive).classList.add("centerToLeft");
-						} else {
-							document.querySelector("section."+hashName).classList.add("active", "leftToCenter");
-							document.querySelector("section."+this.currentActive).classList.add("centerToRight");						
+						document.querySelector("section."+hashName).classList.add("active");
+
+						//add special rules between about and projects
+						if (this.currentActive == "projects" && hashName == "about") {
+							document.querySelector("section.about").classList.add("projectsToAbout");
+							document.querySelector("section.projects").classList.add("projectsToAbout");
+						} else if (this.currentActive == "about" && hashName == "projects") {
+							document.querySelector("section.about").classList.add("aboutToProjects");
+							document.querySelector("section.projects").classList.add("aboutToProjects");
+
 						}
 					}
 				} else if (this.currentActive == "home" && hashName != "home"){
@@ -86,7 +90,7 @@ const jb_scripts = {
 			let sections = document.querySelectorAll("section"),
 				header = document.querySelector("header"),
 				nav = document.querySelector("header nav"),
-				classes = ["active","rightToCenter","leftToCenter","centerToRight","centerToLeft","toHome","fromHome","top"];
+				classes = ["active","projectsToAbout","aboutToProjects","toHome","fromHome","top"];
 
 			document.querySelector("header > span.enter").classList.remove("visible");
 			header.classList.remove(...classes);
