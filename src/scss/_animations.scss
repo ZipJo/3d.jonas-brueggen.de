@@ -121,12 +121,13 @@
 			pointer-events: none;
 			max-height: 0vh;
 			overflow: hidden;
-			transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+			transition: opacity .5s ease-in-out, max-height .3s ease-in-out .2s;
 
 			&.active {
 				opacity: 1;
 				pointer-events: all;
 				max-height: 1000vh;
+				transition: opacity .5s ease-in-out, max-height .3s ease-in-out;
 			}
 		}
 
@@ -134,9 +135,6 @@
 		section.projects {
 
 			@keyframes projects-toHome--animation {
-				from {
-					transform: translateX(0) translateZ(0);
-				}
 				to {
 					transform: translateX(-100%) translateZ(0);
 				}
@@ -147,9 +145,6 @@
 				}
 			}
 			@keyframes projects-toAbout--animation {
-				from {
-					transform: translateX(0) translateZ(0);
-				}
 				to {
 					transform: translateX(120vw) translateZ(0);
 				}
@@ -158,17 +153,13 @@
 				from {
 					transform: translateX(120vw) translateZ(0);
 				}
-				to {
-					transform: translateX(0) translateZ(0);
-				}
 			}
 
 			z-index: 3;
 
 			&.toHome .project {
-				
 				animation-name: projects-toHome--animation;
-				animation-fill-mode: both;
+				animation-fill-mode: backwards;
 				animation-duration: .8s;
 				animation-timing-function: ease-in-out;
 				@for $i from 1 through 10 {
@@ -186,9 +177,7 @@
 			}
 
 			&.projectsToAbout {
-				opacity: 1;
-				max-height: 1000vh;
-				transition: none;
+				transition: opacity .2s ease-in-out .8s, max-height 2s ease-in-out .4s;
 				.project {
 					animation-name: projects-toAbout--animation;
 					animation-fill-mode: both;
@@ -203,7 +192,7 @@
 				transition: none;
 				.project {
 					animation-name: projects-fromAbout--animation;
-					animation-fill-mode: both;
+					animation-fill-mode: backwards;
 					animation-duration: .9s;
 					animation-timing-function: cubic-bezier(.4,0,.4,1.2);
 					@for $i from 1 through 10 {
@@ -213,19 +202,45 @@
 			}
 		}
 		section.about {
-			z-index: 2;
-			clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
-			&.active {
-				clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+			
+			@keyframes about-toProjects--animation {
+				from {
+					clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+				}
+				90% {
+					opacity: 1;
+					max-height: 1000vh;
+				}
+				to {
+					clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+				}
 			}
+			@keyframes about-fromProjects--animation {
+				from {
+					clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+				}
+				10% {
+					opacity: 1;
+					max-height: 1000vh;
+				}
+				to {
+					clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+				}
+			}
+
+			z-index: 2;
+
 			&.projectsToAbout.active {
-				transition: clip-path .5s linear .1s;
+				animation-name: about-fromProjects--animation;
+				animation-duration: .5s;
+				animation-delay: .1s;
+				animation-timing-function: linear;
 			}
 			&.aboutToProjects {
-				opacity: 1;
-				max-height: 1000vh;
-				clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
-				transition: clip-path .4s linear .3s;
+				animation-name: about-toProjects--animation;
+				animation-duration: .4s;
+				animation-delay: .3s;
+				animation-timing-function: linear;
 			}		
 		}
 
