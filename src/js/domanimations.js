@@ -18,8 +18,8 @@ const jb_DOManimation = {
 				let percentage_y_mouse = -0.5 + Math.round(jb_events.vars.onhover.pos_y / window.innerHeight * this.vars.mouseAccuracy) / this.vars.mouseAccuracy;
 				this.vars.c_x = this.ease(this.vars.c_x, percentage_x_mouse, 0.055);
 				this.vars.c_y = this.ease(this.vars.c_y, percentage_y_mouse, 0.055);
-				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin)");
-				this.vars.text_elem.style.setProperty("transform","translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin)");
+				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin) translateZ(1px)");
+				this.vars.text_elem.style.setProperty("transform","translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin) translateZ(0)");
 			}
 
 			if (jb_events.vars.onhover.enable && jb_events.vars.status == 'tilt') {
@@ -27,8 +27,8 @@ const jb_DOManimation = {
 					rot_beta = jb_events.vars.deviceOrientation.rotation_beta / this.vars.rotation_accuracy;
 				this.vars.c_x = this.ease(this.vars.c_x, rot_beta, 0.035);
 				this.vars.c_y = this.ease(this.vars.c_y, rot_alpha, 0.035);
-				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin)");
-				this.vars.text_elem.style.setProperty("transform","translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin)");
+				this.vars.logo_elem.style.setProperty("transform","rotateY(360deg) translateX("+this.vars.c_x*this.vars.mod_logo+"vmin) translateY("+this.vars.c_y*this.vars.mod_logo+"vmin) translateZ(1px)");
+				this.vars.text_elem.style.setProperty("transform","translateX("+this.vars.c_x*this.vars.mod_text+"vmin) translateY("+this.vars.c_y*this.vars.mod_text+"vmin) translateZ(0)");
 			}
 		}
 	},

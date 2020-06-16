@@ -29,15 +29,28 @@ const jb_scripts = {
 						// from section to section
 						document.querySelector("header").classList.add("top");
 						document.querySelector("header nav").classList.add(hashName);
-						document.querySelector("section."+hashName).classList.add("active");
 
 						//add special rules between about and projects
 						if (this.currentActive == "projects" && hashName == "about") {
-							document.querySelector("section.about").classList.add("projectsToAbout");
-							document.querySelector("section.projects").classList.add("projectsToAbout");
+							document.querySelector("section.projects").classList.add("active");
+							setTimeout(function(){
+								document.querySelector("section.projects").classList.remove("active");
+								document.querySelector("section.about").classList.add("active");
+
+								document.querySelector("section.about").classList.add("projectsToAbout");
+								document.querySelector("section.projects").classList.add("projectsToAbout");
+							},250); //start the css-animation _after_ projectCoverAnimation is done
+
 						} else if (this.currentActive == "about" && hashName == "projects") {
+							document.querySelector("section.projects").classList.add("active");
+
 							document.querySelector("section.about").classList.add("aboutToProjects");
 							document.querySelector("section.projects").classList.add("aboutToProjects");
+
+
+						} else {
+							//fallback for the default:
+							document.querySelector("section."+hashName).classList.add("active");
 
 						}
 					}
@@ -59,7 +72,7 @@ const jb_scripts = {
 					jb_DOManimation.start();
 					setTimeout(function() {
 						if (jb_scripts.contentChanger.currentActive == "home"){
-							document.querySelector("header > span.enter").classList.add("visible")
+							document.querySelector("header > span.enter").classList.add("visible");
 						}
 					}, 5000);
 				}
@@ -90,13 +103,17 @@ const jb_scripts = {
 			let sections = document.querySelectorAll("section"),
 				header = document.querySelector("header"),
 				nav = document.querySelector("header nav"),
-				classes = ["active","projectsToAbout","aboutToProjects","toHome","fromHome","top"];
+				classes = ["active","projectsToAbout","aboutToProjects","toHome","fromHome","top"],
+				projects = document.querySelectorAll("section.projects .project .cover.active");
 
 			document.querySelector("header > span.enter").classList.remove("visible");
 			header.classList.remove(...classes);
 			nav.classList.remove(...nav.classList);
 			sections.forEach(function(section) {
 				section.classList.remove(...classes);
+			});
+			projects.forEach(function(proj) {
+				jb_scripts.projectCoverAnimation(proj);
 			});
 		},
 
@@ -143,8 +160,12 @@ const jb_scripts = {
 				let details = elem.parentElement.querySelector(".details");
 				details.style.setProperty("max-height", 10+details.scrollHeight+"px");
 				details.style.setProperty("padding", "var(--padding)");
-				let scrollAnim = setInterval(function(){details.scrollIntoView({behavior: "smooth",block:"nearest"});},1000/60); //60fps
-				setTimeout(function(){clearInterval(scrollAnim);},500); //duration of the "open"-animation
+				let scrollOffset = 2 * parseInt(getComputedStyle(details).getPropertyValue('--padding'),10) + jb_scripts.fullOffsetTop(details) + details.scrollHeight - window.innerHeight;
+				if ( window.pageYOffset < scrollOffset ){
+					setTimeout(function(){
+						window.scrollTo({behavior: 'smooth', top: scrollOffset});
+					},200); //because the css-animation start 150ms delayed
+				}
 			});
 
 		}
@@ -245,6 +266,15 @@ const jb_scripts = {
 				elem.classList.remove("start_animation");
 			},1100);
 		});
+	},
+
+	fullOffsetTop(elem) {
+		let total = 0;
+		if (elem.offsetParent) {
+			total += this.fullOffsetTop(elem.offsetParent);
+		}
+		total += elem.offsetTop;
+		return total;
 	},
 
 	objDeepExtend(destination, source) {

@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="css/jb_main.css" media="all" />
 	<script async src="js/three.min.js"></script>
 	<script async src="js/stats.min.js"></script>
+	<script async src="js/smoothscroll.min.js"></script>
 	<script async src="js/canvasanimations-config.js"></script>
 
 	<!-- build:js js/jb.min.js async -->
@@ -71,6 +72,7 @@
 </style>
 </head>
 <body>
+	<!-- <div class="testcube_cb"></div> -->
 	<div class="page_loader">
 		<div class="loader"></div>
 	</div>
@@ -103,7 +105,8 @@
 				</svg>
 			</span>
 		</header>
-		<section class="projects"></section>
+		<div class="section_container">
+			<section class="projects"></section>
 <script>
 	//has to be onload, because the scripts are loaded async
 	window.addEventListener("load", function() {
@@ -167,7 +170,7 @@
 			"Germany, 2016");
 	});
 </script>
-		<section class="about">
+			<section class="about">
 	<article>
 		<p>I've been working for roughly six years as a middleware developer in Germany. For the past two years I've been travelling and doing occasional volunteer work, but web design has always been my main professional interest so I also started freelancing in this area.</p>
 
@@ -197,9 +200,10 @@
 		</div>
 	</aside>
 </section>
-		<section class="x404">
+			<section class="x404">
 	<h1>This page doesn't exist, sorry <code>¯\_(ツ)_/¯</code><br>Try clicking on the links above.</h1>
 </section>
+		</div>
 		<!-- end of page wrapper -->
 	</div>
 	<div id="tjs_bg" class="tjs_bg hide_container">

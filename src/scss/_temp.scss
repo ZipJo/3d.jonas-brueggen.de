@@ -1,62 +1,15 @@
-$left: 50vw;
-$testRad: 10vw;
-$cb_quarter-sine: cubic-bezier(.4,.63,.67,1);
-$cb_quarter-cos: cubic-bezier(.33,0,.6,.37);
-
 div.testcube_cb {
+	z-index: 1000;
 	position: fixed;
-	top:50vh;
-	left: $left;
-	transform: translateY($testRad);
-	height:20px;
+	top:0;
+	height:90vh;
 	width: 20px;
-	animation-name: testanimY_cb, testanimX_cb;
-	animation-duration: 20s;
-	animation-iteration-count: infinite;
+	border:5vh solid blue;
 	background: red;
-}
-
-
-@keyframes testanimY_cb {
-	from {
-		transform: translateY($testRad);
-		animation-timing-function: $cb_quarter-cos;
-	}
-	25% {
-		transform: translateY(0);
-		animation-timing-function: $cb_quarter-sine;
-	}
-	50% {
-		transform: translateY(- $testRad);
-		animation-timing-function: $cb_quarter-cos;
-	}
-	75% {
-		transform: translateY(0);
-		animation-timing-function: $cb_quarter-sine;
-	}
-	to {
-		transform: translateY($testRad);
-	}
-}
-@keyframes testanimX_cb {
-	from {
-		left: $left;
-		animation-timing-function: $cb_quarter-sine;
-	}
-	25% {
-		left: $left + $testRad;	
-		animation-timing-function: $cb_quarter-cos;
-	}
-	50% {
-		left: $left;	
-		animation-timing-function: $cb_quarter-sine;
-	}
-	75% {
-		left: $left - $testRad;	
-		animation-timing-function: $cb_quarter-cos;
-	}
-	to {
-		left: $left;
+	transform: rotateY(360deg);
+	transition: transform 1s;
+	&:hover {
+		transform: rotateY(0);
 	}
 }
 

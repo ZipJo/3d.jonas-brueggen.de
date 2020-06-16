@@ -6,25 +6,24 @@
 
 // main perspective animations
 .wrapper {
-	$homeHeight: 170px; // logo-height+nav-height
-
+	$homeHeight: 175px; // logo-height+nav-height (roughly)
 	$animationDurationHome: .8s;
 
 	header {
 		will-change: transform, margin-top;
-		margin-top: 50vh;
-		transform: translateY(-50%);
+		margin-top: calc(50vh - #{$homeHeight}/2);
 		transition: margin-top $animationDurationHome ease-in-out, transform $animationDurationHome ease-in-out;
 
 		.header_logo {
 			will-change: transform;
-			transform: rotateY(360deg);
+			transform: rotateY(360deg) translateZ(1px);
 			transition: transform $animationDurationHome ease-in-out;
 		}
 		.logo_subtext {
 			will-change: opacity, visibility, transform;
 			opacity: 1;
 			visibility: visible;
+			transform: translateZ(0);
 			transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3;
 		}
 		nav {
@@ -65,7 +64,7 @@
 		}
 
 		@keyframes enter--animation {
-			50% { transform: translateX(-50%) scale(1.05); }
+			50% { transform: translateX(-50%) scale(1.02); }
 		}
 
 		.enter {
@@ -103,244 +102,296 @@
 			margin-top: 0;
 			transform: translateY(0);
 
-			.header_logo { transform: rotateY(0); }
+			.header_logo { transform: rotateY(0deg) translateZ(1px); }
 			.logo_subtext { opacity: 0;	visibility: hidden; transition: all $animationDurationHome*.7 ease-in-out 0s; }
 			nav { opacity: 1; visibility: visible; transition: all $animationDurationHome*.7 ease-in-out $animationDurationHome*.3; }
 		}
 	}
 
-	@keyframes section-fromHome--animation {
-		0% {
+	// between section animations
+
+	// default animation: simple opacity change;
+	.section_container {
+		position: relative;
+
+		section {
+			top:0;
 			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-	@keyframes section-toHome--animation {
-		0% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
-		}
-	}
+			position: absolute;
+			pointer-events: none;
+			max-height: 0vh;
+			overflow: hidden;
+			transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
 
-	section {
-		pointer-events: none;
-		opacity: 0;
-
-		transition: opacity .5s ease-in-out;
-
-		&.active {
-			pointer-events: all;
-			opacity: 1;
-		}
-
-		&.toHome {
-			opacity: 0;
-		}
-	}
-
-	section.projects {
-		&.projectsToAbout {
-			opacity: 1;
-		}
-		&.aboutToProjects {
-			opacity: 1;
-		}
-	}
-	section.about {
-		&.projectsToAbout {
-			opacity: 1;
-		}
-		&.aboutToProjects {
-			opacity: 1;
-		}		
-	}
-
-
-	// section specific animations
-
-	section.projects {
-		&.active .project {
-			transform: translateX(0) translateZ(0);
-			transition-property: transform;
-			transition-duration: .9s;
-			transition-timing-function: ease-in-out;
-			@for $i from 1 through 10 {
-				&:nth-child(#{$i}) { transition-delay: calc(0s + (.1s * #{$i})); }
+			&.active {
+				opacity: 1;
+				pointer-events: all;
+				max-height: 1000vh;
 			}
 		}
 
-		.project {
-			transform: translateX(-100%) translateZ(0);
-			transition-property: transform;
-			transition-duration: 1s;
-			transition-timing-function: ease-in-out;
-			@for $i from 1 through 10 {
-				&:nth-child(#{$i}) { transition-delay: calc(0s + (.03s * #{$i})); }
+
+		section.projects {
+
+			@keyframes projects-toHome--animation {
+				from {
+					transform: translateX(0) translateZ(0);
+				}
+				to {
+					transform: translateX(-100%) translateZ(0);
+				}
 			}
-		}
-
-		.project {
-
-			$move_dur: 60s;
-			$move_dur_mod: 5s;
-
-			@for $i from 1 through 10 {
-				&:nth-child(#{$i}) .cover {
-					animation-delay: calc( -#{($move_dur + $move_dur_mod) * 2} * var(--rnd-1) );
-					animation-duration: calc( #{$move_dur} + ( #{$move_dur_mod} * var(--rnd-2) ) );
+			@keyframes projects-fromHome--animation {
+				from {
+					transform: translateX(-100%) translateZ(0);
+				}
+			}
+			@keyframes projects-toAbout--animation {
+				from {
+					transform: translateX(0) translateZ(0);
+				}
+				to {
+					transform: translateX(120vw) translateZ(0);
+				}
+			}
+			@keyframes projects-fromAbout--animation {
+				from {
+					transform: translateX(120vw) translateZ(0);
+				}
+				to {
+					transform: translateX(0) translateZ(0);
 				}
 			}
 
-			.cover {
-				transform-style: preserve-3d;
-				will-change: transform;
+			z-index: 3;
+
+			&.toHome .project {
 				
-				animation-name: cover-move--animation;
-				animation-iteration-count: infinite;
-				animation-direction: alternate;
-				animation-timing-function: cubic-bezier(.25,0,.75,1);
-				
-				@keyframes cover-move--animation {
-					from { transform: translateX(0) translateZ(0) rotate(0.01deg); }
-					to   { transform: translateX(-30%) translateZ(0) rotate(0.01deg); }
-				}
-
-				&.active {
-					transition: transform .4s cubic-bezier(.4,0,.35,1.35);
-				}
-
-				$arrow_indent: 18px;
-				--logo-width: 145px;
-				@include functions.mq(small) { --logo-width: 93px; }
-
-				// Order is important here. First animation, then the basestyle, so the hover gets
-				// overwritten, if fromActive is applied. This is because of css-specifity:       
-				// ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0 
-				
-				&:hover:before, &.active:before {
-					$width: 0%;
-					clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
-					transition: clip-path .6s cubic-bezier(.4,-0.1,.35,1.35), opacity .3s ease-in-out .2s;
-					opacity: 0;
-				}
-
-				&:before, &.fromActive:before {
-					will-change: clip-path, opacity;
-					content:'';
-					height: 100%;
-					width: 100%;
-					position: absolute;
-					left: 0;
-
-					$width: calc(100% - var(--logo-width) - 1px);
-					clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
-					transition: clip-path .6s cubic-bezier(.4,0,.60,1.25), opacity .3s ease-in-out .1s;
-					opacity: 1;
-
-				}
-
-			}
-
-			.details {
-				will-change: max-height, padding;
-				max-height: 0;
-				overflow-y: hidden;
-				transition: max-height .4s ease-in-out, padding .4s ease-in-out;
-
-				.btn {
-					will-change: opacity;
-					opacity: 0;
-					transition: opacity .2s ease-in-out;
-				
-					&:before, &:after {
-						content:'';
-						position: absolute;
-						z-index: -1;
-						height: 50%;
-						width: 0%;
-						background: var(--accent-color);
-						right: 0;
-						transition-property: width;
-						transition-duration: .25s;
-						transition-timing-function: ease-in-out;
-					}
-					&:before {
-						top:0;
-						transition-delay: 0;
-					}
-					&:after {
-						bottom:0;
-						transition-delay: .08s;
-					}
-					&:hover:before, &:hover:after {
-						width: 100%;
-						left: 0;
-					}
-				}
-			}
-
-			.cover.active ~ .details {
-				transition: max-height .3s ease-in-out .15s, padding .3s ease-in-out .15s;
-				
-				.btn {
-					transition: opacity .2s ease-in-out .4s;
-					opacity: 1;
-				}
-			}
-		}
-	}
-
-
-
-
-	section.about {
-
-
-		// contact_tiles animation
-		.contact_tiles_grid {
-			a:nth-child(1) { animation-delay: 0s; }
-			a:nth-child(2) { animation-delay: .1s; }
-			a:nth-child(3) { animation-delay: .2s; }
-			a:nth-child(4) { animation-delay: .3s; }
-			
-			&.start_animation a {
-				animation-name: contact_tiles--animation;
+				animation-name: projects-toHome--animation;
+				animation-fill-mode: both;
 				animation-duration: .8s;
-				animation-timing-function: ease-out;
-				animation-iteration-count: 1;
+				animation-timing-function: ease-in-out;
+				@for $i from 1 through 10 {
+					&:nth-child(#{$i}) { animation-delay: calc(0s + (.05s * #{$i - 1})); }
+				}
+			}
+			&.fromHome.active .project {
+				animation-name: projects-fromHome--animation;
+				animation-fill-mode: backwards;
+				animation-duration: 1s;
+				animation-timing-function: cubic-bezier(.4,0,.4,1.2);
+				@for $i from 1 through 10 {
+					&:nth-child(#{$i}) { animation-delay: calc(0s + (.1s * #{$i - 1})); }
+				}
 			}
 
-			a {
-				will-change: background-color;
-				transition: background-color .2s ease-in-out;
-				background-color: transparent;
-				// mail
-				&:nth-child(1) {
-					&:hover, &:active, &:focus { background-color: #dd4c3c; }
+			&.projectsToAbout {
+				opacity: 1;
+				max-height: 1000vh;
+				transition: none;
+				.project {
+					animation-name: projects-toAbout--animation;
+					animation-fill-mode: both;
+					animation-duration: .9s;
+					animation-timing-function: ease-in-out;
+					@for $i from 1 through 10 {
+						&:nth-child(#{$i}) { animation-delay: calc(0s + (.05s * #{$i - 1})); }
+					}	
 				}
-				// phone
-				&:nth-child(2) {
-					&:hover, &:active, &:focus { background-color: #3d559e; }
+			}
+			&.aboutToProjects.active {
+				transition: none;
+				.project {
+					animation-name: projects-fromAbout--animation;
+					animation-fill-mode: both;
+					animation-duration: .9s;
+					animation-timing-function: cubic-bezier(.4,0,.4,1.2);
+					@for $i from 1 through 10 {
+						&:nth-child(#{$i}) { animation-delay: calc(0s + (.05s * #{$i - 1})); }
+					}
 				}
-				// skype
-				&:nth-child(3) {
-					&:hover, &:active, &:focus { background-color: #1dabe5; }
+			}
+		}
+		section.about {
+			z-index: 2;
+			clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+			&.active {
+				clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+			}
+			&.projectsToAbout.active {
+				transition: clip-path .5s linear .1s;
+			}
+			&.aboutToProjects {
+				opacity: 1;
+				max-height: 1000vh;
+				clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+				transition: clip-path .4s linear .3s;
+			}		
+		}
+
+
+		// section specific animations inside sections
+
+		section.projects {
+
+			.project {
+				$move_dur: 60s;
+				$move_dur_mod: 5s;
+
+				@for $i from 1 through 10 {
+					&:nth-child(#{$i}) .cover {
+						animation-delay: calc( -#{($move_dur + $move_dur_mod) * 2} * var(--rnd-1) );
+						animation-duration: calc( #{$move_dur} + ( #{$move_dur_mod} * var(--rnd-2) ) );
+					}
 				}
-				// whatsapp
-				&:nth-child(4) {
-					&:hover, &:active, &:focus { background-color: #20d442; }
+
+				.cover {
+					transform-style: preserve-3d;
+					will-change: transform;
+					
+					animation-name: cover-move--animation;
+					animation-iteration-count: infinite;
+					animation-direction: alternate;
+					animation-timing-function: cubic-bezier(.25,0,.75,1);
+					
+					@keyframes cover-move--animation {
+						from { transform: translateX(0) translateZ(0) rotate(0.01deg); }
+						to   { transform: translateX(-20vw) translateZ(0) rotate(0.01deg); }
+					}
+
+					&.active {
+						transition: transform .4s cubic-bezier(.4,0,.35,1.35);
+					}
+
+					$arrow_indent: 18px;
+					--logo-width: 145px;
+					@include functions.mq(small) { --logo-width: 93px; }
+
+					// Order is important here. First animation, then the basestyle, so the hover gets
+					// overwritten, if fromActive is applied. This is because of css-specifity:       
+					// ".fromActive:before" and ":hover:before" both have a (base)-specifity of 0/2/0 
+					
+					&:hover:before, &.active:before {
+						$width: 0%;
+						clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
+						transition: clip-path .6s cubic-bezier(.4,-0.1,.35,1.35), opacity .3s ease-in-out .2s;
+						opacity: 0;
+					}
+
+					&:before, &.fromActive:before {
+						will-change: clip-path, opacity;
+						content:'';
+						height: 100%;
+						width: 100%;
+						position: absolute;
+						left: 0;
+
+						$width: calc(100% - var(--logo-width) - 1px);
+						clip-path: polygon(0% 0%, $width 0%, $width calc(50% - #{$arrow_indent}), calc(#{$width} - #{$arrow_indent})  50%, $width calc(50% + #{$arrow_indent}), $width 100%, 0% 100%);
+						transition: clip-path .6s cubic-bezier(.4,0,.60,1.25), opacity .3s ease-in-out .1s;
+						opacity: 1;
+
+					}
+
+				}
+
+				.details {
+					will-change: max-height, padding;
+					max-height: 0;
+					overflow-y: hidden;
+					transition: max-height .25s ease-in-out, padding .25s ease-in-out;
+
+					.btn {
+						will-change: opacity;
+						opacity: 0;
+						transition: opacity .15s ease-in-out;
+					
+						&:before, &:after {
+							content:'';
+							position: absolute;
+							z-index: -1;
+							height: 50%;
+							width: 0%;
+							background: var(--accent-color);
+							right: 0;
+							transition-property: width;
+							transition-duration: .25s;
+							transition-timing-function: ease-in-out;
+						}
+						&:before {
+							top:0;
+							transition-delay: 0;
+						}
+						&:after {
+							bottom:0;
+							transition-delay: .08s;
+						}
+						&:hover:before, &:hover:after {
+							width: 100%;
+							left: 0;
+						}
+					}
+				}
+
+				.cover.active ~ .details {
+					transition: max-height .3s ease-in-out .15s, padding .3s ease-in-out .15s;
+					
+					.btn {
+						transition: opacity .15s ease-in-out .4s;
+						opacity: 1;
+					}
 				}
 			}
 		}
 
-		@keyframes contact_tiles--animation {
-			from { transform: translateX(0%) translateZ(0); }
-			30% { transform: translateX(-20%) translateZ(0); }
-			to { transform: translateX(0%) translateZ(0); }
+
+
+
+		section.about {
+
+
+			// contact_tiles animation
+			.contact_tiles_grid {
+				a:nth-child(1) { animation-delay: 0s; }
+				a:nth-child(2) { animation-delay: .1s; }
+				a:nth-child(3) { animation-delay: .2s; }
+				a:nth-child(4) { animation-delay: .3s; }
+				
+				&.start_animation a {
+					animation-name: contact_tiles--animation;
+					animation-duration: .8s;
+					animation-timing-function: ease-out;
+					animation-iteration-count: 1;
+				}
+
+				a {
+					will-change: background-color;
+					transition: background-color .2s ease-in-out;
+					background-color: transparent;
+					// mail
+					&:nth-child(1) {
+						&:hover, &:active, &:focus { background-color: #dd4c3c; }
+					}
+					// phone
+					&:nth-child(2) {
+						&:hover, &:active, &:focus { background-color: #3d559e; }
+					}
+					// skype
+					&:nth-child(3) {
+						&:hover, &:active, &:focus { background-color: #1dabe5; }
+					}
+					// whatsapp
+					&:nth-child(4) {
+						&:hover, &:active, &:focus { background-color: #20d442; }
+					}
+				}
+			}
+
+			@keyframes contact_tiles--animation {
+				from { transform: translateX(0%) translateZ(0); }
+				30% { transform: translateX(-20%) translateZ(0); }
+				to { transform: translateX(0%) translateZ(0); }
+			}
 		}
 	}
 }

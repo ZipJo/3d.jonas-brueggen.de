@@ -146,7 +146,7 @@ p {
 	header {
 		opacity: 1;
 		width: 100vw;
-
+		position: relative;
 		.header_logo {
 			cursor: pointer;
 			margin: 0 auto;
@@ -154,7 +154,6 @@ p {
 			width: 100px;
 			height: 100px;
 			position: relative;
-			z-index: 10;
 			.logo_wrapper {
 				overflow: hidden;
 				width: 100%;
@@ -199,8 +198,7 @@ p {
 			cursor: pointer;
 			position: absolute;
 			width: 100%;
-			z-index: 5;
-			bottom: -5px;
+			bottom: -6px;
 			h3, h4 {
 				font-family: monospace;
 				text-align: center;
@@ -219,8 +217,8 @@ p {
 			width: 50px;
 			height: 50px;
 			display: block;
-			position: fixed;
-			top: 50vh;
+			position: absolute;
+			top: calc(50vh - 50px);
 			left: 50vw;
 			transform-origin: 0;
 			transform: translateX(-50%);
@@ -245,11 +243,8 @@ p {
 	section {
 		/*box-shadow:inset 0 0 0 1px darkred; */
 
-		width: 100vw;
 		padding: 20px 0 0;
-
-		position: absolute;
-		
+		width: 100vw;
 
 		// ####################
 		// Page-specific rules:
@@ -362,7 +357,6 @@ p {
 
 			display: flex;
 			flex-direction: row;
-			min-height: 60vh;
 			align-items: center;
 			justify-content: space-around;
 			@include functions.mq(small) {
@@ -469,8 +463,6 @@ p {
 
 		&.x404 {
 			display: flex;
-			width: 100vw;
-			min-height: 20vh;
 			justify-content: center;
 			align-items: center;
 			text-align: center;

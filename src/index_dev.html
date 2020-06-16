@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="css/jb_main.css" media="all" />
 	<script async src="js/three.min.js"></script>
 	<script async src="js/stats.min.js"></script>
+	<script async src="js/smoothscroll.min.js"></script>
 	<script async src="js/canvasanimations-config.js"></script>
 
 	<!-- build:js js/jb.min.js async -->
@@ -23,6 +24,7 @@
 	@@include('index_inline_css.html')
 </head>
 <body>
+	<!-- <div class="testcube_cb"></div> -->
 	<div class="page_loader">
 		<div class="loader"></div>
 	</div>
@@ -55,9 +57,11 @@
 				</svg>
 			</span>
 		</header>
-		@@include('projects.html')
-		@@include('about.html')
-		@@include('x404.html')
+		<div class="section_container">
+			@@include('projects.html')
+			@@include('about.html')
+			@@include('x404.html')
+		</div>
 		<!-- end of page wrapper -->
 	</div>
 	<div id="tjs_bg" class="tjs_bg hide_container">
