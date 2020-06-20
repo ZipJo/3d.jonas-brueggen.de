@@ -9,8 +9,8 @@ const jb_main = {
 		jb_scripts.contentChanger.init();
 
 		//start main animation
-		//jb_anim.start('canvas#bg_canvas', {}, callback);
-
+		jb_anim.start('canvas#bg_canvas', {}, callback);
+		callback = null;
 		if (callback) callback();
 	}
 }
