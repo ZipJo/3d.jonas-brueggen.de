@@ -16,17 +16,16 @@ const jb_events = {
 			homeTouchstart: null
 		},
 		status: "initial",
-		isResized: false
+		isResized: false,
+		isMobile: false
 	},
 
 	iosPermission () {
-		console.log("requestPermission after user-interaction");
 		// (optional) Do something before API request prompt.
 		DeviceMotionEvent.requestPermission()
 			.then( response => {
 			// (optional) Do something after API prompt dismissed.
 			if ( response == "granted" ) {
-				console.log("requestPermission after user-interaction - success!");
 				window.addEventListener("deviceorientation", jb_events.deviceOrientationEvent);
 				window.addEventListener("devicemotion", jb_events.deviceMotionEvent);
 			}
@@ -42,6 +41,7 @@ const jb_events = {
 			// Add tilt-events, instead of hover for mobile and mouseevent for desktops:
 			if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (/Mac/i.test(navigator.userAgent) && typeof(DeviceOrientationEvent.requestPermission) === 'function')) {
 				//mobile!
+				this.vars.isMobile = true;
 				//only, if DeviceOrientationEvent is supported.
 				if (typeof(DeviceOrientationEvent) !== 'undefined') {
 						if (typeof(DeviceOrientationEvent.requestPermission) === 'function' && /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent)) {
@@ -54,7 +54,6 @@ const jb_events = {
 						.then(response => {
 						    if (response) {
 						        //already responded, try to register events
-								console.log("requestPermission is cached, register events");
 						        window.addEventListener("deviceorientation", this.deviceOrientationEvent);
 								window.addEventListener("devicemotion", this.deviceMotionEvent);
 						    }
@@ -91,8 +90,6 @@ const jb_events = {
 
 			} else {
 				//desktop!
-				console.log("desktop");
-
 				//add a small notification on the home-screen, if there's no support.
 				let infoSpan = document.createElement("span")
 				infoSpan.innerHTML = "This page is more fun<br>on a mobile device!";

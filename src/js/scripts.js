@@ -124,51 +124,72 @@ const jb_scripts = {
 
 	},
 
+	coverMouseLeaveFromActive(){
+		this.classList.remove("fromActive");
+		this.removeEventListener("mouseleave", jb_scripts.coverMouseLeaveFromActive);
+	},
+
 	projectCoverAnimation(elem){
-
 		if (elem.classList.contains("active")) {
-
 			elem.style.setProperty("--rnd-1","0");
 			elem.classList.remove("active");
 			elem.classList.add("fromActive");
-			elem.style.removeProperty("animation-name");
-			setTimeout(function () {
-				elem.addEventListener("mouseleave", function oml() {
-					elem.classList.remove("fromActive");
-					elem.removeEventListener("mouseleave", oml);
-				});
-			}, 800);
 
+			elem.style.animation = "";
+			elem.style.webkitAnimation = "";
+			elem.style.transform = "";
+			//add mouseLeave event on desktop
+			if (!jb_events.vars.isMobile) {
+				setTimeout(function () { elem.addEventListener("mouseleave", jb_scripts.coverMouseLeaveFromActive); }, 600);
+			}
 			let details = elem.parentElement.querySelector(".details");
-			details.style.removeProperty("max-height");
-			details.style.removeProperty("padding");
-
-
+			details.style.maxHeight = "";
+			details.style.padding = "";
 		} else {
-
-			let cTransform = window.getComputedStyle(elem).transform;
-			elem.style.setProperty("transform",cTransform);
-			elem.style.setProperty("animation-name","none");
 			elem.classList.remove("fromActive");
+
+			let cMatrix = new WebKitCSSMatrix(window.getComputedStyle(elem).transform);
+			let cTranslateX = Math.round(cMatrix.m41 * 10000) / 10000;
+
+			//create a custom animation that transitions from the current state to "0"
+			let customCoverAnimation = [
+				{ transform: "translateX("+cTranslateX+"px)" },
+				{ transform: "translateX(0px)" }
+			];
+
+			let customTiming = {
+			duration: 400,
+			easing: "cubic-bezier(.4,0,.35,1.35)"
+			}
+
+			elem.animate(customCoverAnimation, customTiming);
 			
-			window.requestAnimationFrame(function(){
+			requestAnimationFrame( function(){
+				elem.style.animation = "none";
+				elem.style.webkitAnimation = "none";
 				elem.style.setProperty("--rnd-1","0");
-				
+				elem.style.transform = "translateX("+cTranslateX+"px)";				
 				elem.classList.add("active");
-				window.requestAnimationFrame(function(){ elem.style.removeProperty("transform"); });
+				
+				requestAnimationFrame( function(){
+					elem.style.transform = "translateX(0px)";
+					setTimeout( function(){elem.style.animation = "none";},200);
+
+				});
 
 				let details = elem.parentElement.querySelector(".details");
-				details.style.setProperty("max-height", 10+details.scrollHeight+"px");
-				details.style.setProperty("padding", "var(--padding)");
+				details.style.maxHeight = 10+details.scrollHeight+"px";
+				details.style.padding = "var(--padding)";
 				let scrollOffset = 2 * parseInt(getComputedStyle(details).getPropertyValue('--padding'),10) + jb_scripts.fullOffsetTop(details) + details.scrollHeight - window.innerHeight;
 				if ( window.pageYOffset < scrollOffset ){
 					setTimeout(function(){
 						window.scrollTo({behavior: 'smooth', top: scrollOffset});
-					},200); //because the css-animation start 150ms delayed
+					},200); //because the css-animation starts 150ms delayed
 				}
-			});
 
+			});
 		}
+
 	},
 
 	customPopup(content, maxWidth, link = null, classes = "") {

@@ -516,15 +516,19 @@ body > span.pc_info_span {
 	bottom: 0;
 	opacity: 0;
 	pointer-events: none;
-	background: variables.$color-page-bg-25;
+	background: variables.$color-page-bg-75;
+	
 
 	> div {
 		background: variables.$color-page-bg;
-		max-height: 95vh;
-		max-width: 95vh;
+		max-height: 90vh;
+		max-width: 85vw;
 		border: var(--border-width) solid variables.$color-page-bg;
 		box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
 		overflow-y: auto;
+		@include functions.mq(small) {
+			max-height: 80vh;
+		}
 	}
 
 	// special popups:
@@ -569,9 +573,8 @@ body > span.pc_info_span {
 		+ span.close_info {
 			position: sticky;
 			bottom: 5px;
-			left: 50%;
+			left: 0;
 			display: block;
-			transform: translateX(-50%);
 			background: variables.$color-accent-1;
 			width: 40%;
 			min-width: 300px;
@@ -580,6 +583,7 @@ body > span.pc_info_span {
 			border-radius: 10px;
 			border: 1px solid variables.$color-page-main;
 			opacity: 0.95;
+			margin: 0 auto;
 		}
 		line-height: 1.6em;
 

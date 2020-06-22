@@ -1,21 +1,22 @@
-<!-- spinner javascript -->
+<!-- startup and loader javascript -->
 <script>
 
-	function init_eruda(cb) {
-		var script = document.createElement('script');
-		script.src = "//cdn.jsdelivr.net/npm/eruda";
-		document.body.appendChild(script);
-		script.onload = function() {
-			eruda.init();
-			if (cb) cb();
-		}
+function init_eruda(){
+
+	var script = document.createElement('script');
+	script.src="//cdn.jsdelivr.net/npm/eruda";
+	document.body.appendChild(script);
+	script.onload = function () {
+		eruda.init();
 	}
+}
 
 function startup() {
 	let dev = false;
 	if (dev) {
+		init_eruda();
 		loader();
-		init_eruda(jb_main.init); //mobile console - for dev purposes
+		jb_main.init();
 	} else {
 		jb_main.init(loader);
 	}

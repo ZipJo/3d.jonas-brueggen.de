@@ -12,6 +12,7 @@
 	<script async src="js/three.min.js"></script>
 	<script async src="js/stats.min.js"></script>
 	<script async src="js/smoothscroll.min.js"></script>
+	<script async src="js/web-animations.min.js"></script>
 	<script async src="js/canvasanimations-config.js"></script>
 
 	<!-- build:js js/jb.min.js async -->
@@ -196,7 +197,7 @@
 			</div>
 		</div>
 		<div class="imprint">
-			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '1400px', 'impressum.htm');setTimeout(function(){ let cElem = document.querySelector('.popup_container.active span.close_info'); if (cElem) cElem.classList.add('fade')}, 3000)" ontouchend="jb_scripts.touchRemover(this);">Imprint and privacy policy</a></p>
+			<p><a class="fancy_link" onclick="jb_scripts.customPopup('nocontent', '90vw', 'impressum.htm');setTimeout(function(){ let cElem = document.querySelector('.popup_container.active span.close_info'); if (cElem) cElem.classList.add('fade')}, 3000)" ontouchend="jb_scripts.touchRemover(this);">Imprint and privacy policy</a></p>
 		</div>
 	</aside>
 </section>
@@ -210,24 +211,25 @@
 		<!-- <span id="motion_dot"></span> -->
 		<canvas id="bg_canvas"></canvas>
 	</div>
-	<!-- spinner javascript -->
+	<!-- startup and loader javascript -->
 <script>
 
-	function init_eruda(cb) {
-		var script = document.createElement('script');
-		script.src = "//cdn.jsdelivr.net/npm/eruda";
-		document.body.appendChild(script);
-		script.onload = function() {
-			eruda.init();
-			if (cb) cb();
-		}
+function init_eruda(){
+
+	var script = document.createElement('script');
+	script.src="//cdn.jsdelivr.net/npm/eruda";
+	document.body.appendChild(script);
+	script.onload = function () {
+		eruda.init();
 	}
+}
 
 function startup() {
 	let dev = false;
 	if (dev) {
+		init_eruda();
 		loader();
-		init_eruda(jb_main.init); //mobile console - for dev purposes
+		jb_main.init();
 	} else {
 		jb_main.init(loader);
 	}

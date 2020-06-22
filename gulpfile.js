@@ -37,6 +37,7 @@ let moveFiles = [
 			'js/stats.min.js',
 			'js/three.min.js',
 			'js/smoothscroll.min.js',
+			'js/web-animations.min.js',
 			'js/canvasworker.js',
 			'js/canvasanimations-config.js',
 			'js/*.gif',
