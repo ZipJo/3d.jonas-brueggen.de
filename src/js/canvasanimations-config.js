@@ -8,4 +8,5 @@ const jb_anim_options = {
 	helpers3D: false,
 	hoverPerspectiveContainment: 10, //100% = 90° (π/2)
 	fps: 60,
+	bgColor: 0x011b28,
 };

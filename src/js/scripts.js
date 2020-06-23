@@ -334,7 +334,7 @@ const jb_scripts = {
 		<p>${paragraph2}</p>
 		<h4>${placeAndDate}</h4>
 	</div>
-	<span class="btn" onclick="jb_scripts.customPopup(jb_scripts.projectPopupHtml('${shortName}','${longName}','${link}'), '1400px', null, this.parentElement.parentElement.className );">preview</span>
+	<span class="btn" onclick="jb_scripts.customPopup(jb_scripts.projectPopupHtml('${shortName}','${longName}','${link}'), '85vw', null, this.parentElement.parentElement.className );">preview</span>
 </div>`;
 			pElem.classList.add("project");
 			pElem.innerHTML = innerHTML;
@@ -377,7 +377,7 @@ const jb_scripts = {
 			retHtml = '<div class="pictures image_pc">' + pcHtml;
 		}
 
-		retHtml += '<span class="loader"></span><p>' + link + ' - <a>close</a></p></div>';
+		retHtml += '<span class="loader"></span><p>' + link + '<a>close</a></p></div>';
 
 		return retHtml;
 	}

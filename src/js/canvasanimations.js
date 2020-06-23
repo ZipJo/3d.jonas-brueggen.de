@@ -186,9 +186,9 @@ const jb_anim = {
 	initThreeJs(){
 		//setup scene
 		this.data.threejs.scene = new THREE.Scene();
-		this.data.threejs.scene.background = new THREE.Color(0x011823);
+		this.data.threejs.scene.background = new THREE.Color(this.data.options.bgColor);
 		this.data.threejs.scene.fog = new THREE.Fog({
-			color: 0x011823,
+			color: this.data.options.bgColor,
 			near: this.data.options.camFrustumNearField,
 			far: this.data.options.camRotationRadius+750
 		});

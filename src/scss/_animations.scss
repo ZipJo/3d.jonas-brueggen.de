@@ -487,48 +487,58 @@
 		&.loaded.image_phone {
 			width: 300px;
 		}
-		img {
+		> a {
 			opacity: 0;
 			transition: opacity .3s ease-in-out .1s;
 		}
-		&.loaded img {
+		&.loaded > a {
 			opacity: 1;
 		}
 
 		span.loader {
 			opacity: 1;
 			transition: opacity .2s;
+			filter: invert(1);
+    		bottom: 55%;
 		}
 
 		 &.loaded span.loader {
 			opacity: 0;	
 		}
 
-		&.loaded > a:hover ~ p a.pagelink:before {
+		&.loaded > a:hover ~ p a.pagelink:before, &.loaded > a:hover ~ p a.pagelink:after {
 			left: 0;
 			width: 100%;
-			transition: width 0.15s ease-in-out;
 		}
 		
 		p {
 			a {
-				position: relative;
-				
-				&:before {
-					content:"";
-					position: absolute;
-					bottom: 0;
-					right: 0;
-					height: 2px;
-					width: 0;
-					background: variables.$color-page-main;
-					transition: width 0.15s ease-in-out;
-				}
 
-				&:hover:before{
-					left: 0;
+				position: relative;
+
+				&:before, &:after {
+					content:'';
+					position: absolute;
+					z-index: -1;
+					height: 50%;
+					width: 0%;
+					background: var(--accent-color);
+					right: 0;
+					transition-property: width;
+					transition-duration: .25s;
+					transition-timing-function: ease-in-out;
+				}
+				&:before {
+					top:0;
+					transition-delay: 0;
+				}
+				&:after {
+					bottom:0;
+					transition-delay: .08s;
+				}
+				&:hover:before, &:hover:after {
 					width: 100%;
-					transition: width 0.15s ease-in-out;
+					left: 0;
 				}
 			}
 		}

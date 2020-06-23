@@ -313,8 +313,11 @@ p {
 
 				.details {
 					--padding: 50px;
-					@include functions.mq(small) { --padding: 30px; }
+					@include functions.mq(small) {
+						--padding: 30px;
+					}
 					padding: 0 var(--padding);
+
 
 					position: relative;
 
@@ -337,7 +340,7 @@ p {
 						text-transform: uppercase;
 						font-size: .9em;
 
-						margin: calc(var(--padding) * .8);
+						margin: calc(var(--padding) * .15) calc(var(--padding) * .6);
 						position: absolute;
 						bottom: 0;
 						right: 0;
@@ -516,14 +519,16 @@ body > span.pc_info_span {
 	bottom: 0;
 	opacity: 0;
 	pointer-events: none;
-	background: variables.$color-page-bg-75;
+	background: variables.$color-page-main-25;
+	backdrop-filter: blur(1.5px);
 	
 
 	> div {
 		background: variables.$color-page-bg;
 		max-height: 90vh;
 		max-width: 85vw;
-		border: var(--border-width) solid variables.$color-page-bg;
+		padding: var(--border-width);
+		border-radius: 2vmin;
 		box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.3);
 		overflow-y: auto;
 		@include functions.mq(small) {
@@ -541,29 +546,62 @@ body > span.pc_info_span {
 	}
 
 	// project/pictures-styling
-
-	@for $i from 1 through 5 {
-		> div.bg#{$i} {
-			background-color: #{nth(variables.$accents, $i)};
-			border: var(--border-width) solid #{nth(variables.$accents, $i)};
+	.project {
+		--padding: 50px;
+		@include functions.mq(small) { --padding: 30px; }
+		@for $i from 1 through 5 {
+			&.bg#{$i} p a {
+				--accent-color: #{nth(variables.$accents, $i)};
+			}
 		}
-	}
-	.pictures {
-		position: relative;
-		min-height: 120px;
-		min-width: 200px;
-		max-width: 60vw;
-		margin: 0 auto;
 
-		> a, img {
-			width: 100%;
-			margin-bottom: -4px; // to fix a weird issue with the "picture"-element haing a non-zero height
-		}
-		
-		p {
-			text-align: center;
-			margin: 0;
-			margin-top: var(--border-width);
+		.pictures {
+			position: relative;
+			min-height: 270px;
+			min-width: 300px;
+			max-width: 60vw;
+			@include functions.mq(small) {
+				min-height: 465px;
+				min-width: 240px;
+				max-width: 100%;
+			}
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+
+			> a, > span:not(.loader) {
+				width: 95%;
+				margin: 2.5%;
+				box-shadow: 0px 0 5px 0px black;
+				border: 5px solid variables.$color-page-main;
+			}
+
+			img {
+				width: 100%;
+				margin-bottom: -3px; // to fix a weird issue with the "picture"-element haing a non-zero height
+				box-shadow: 0 0 5px -2px black;
+			}
+			
+			p {
+				text-align: center;
+				margin: 0;
+				margin-top: calc(var(--border-width) - 2.5%);
+				a {
+					display: inline-block;
+					padding: calc(var(--padding) * .25);
+					border: 1px solid var(--accent-color);
+					border-radius: 3px;
+					color: variables.$color-page-main;
+
+					cursor: pointer;
+
+					text-transform: uppercase;
+					font-size: .9em;
+
+					margin: 0 calc(var(--padding) * .3);
+				}			
+			}
 		}
 	}
 
