@@ -43,6 +43,7 @@ let moveFiles = [
 			'js/*.gif',
 			'js/*.bmp',
 			'js/*.png',
+			'js/*.map',
 ];
 
 
