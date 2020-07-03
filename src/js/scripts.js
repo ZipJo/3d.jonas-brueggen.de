@@ -179,12 +179,12 @@ const jb_scripts = {
 
 				let details = elem.parentElement.querySelector(".details");
 				details.style.maxHeight = 10+details.scrollHeight+"px";
-				details.style.padding = "var(--padding)";
-				let scrollOffset = 2 * parseInt(getComputedStyle(details).getPropertyValue('--padding'),10) + jb_scripts.fullOffsetTop(details) + details.scrollHeight - window.innerHeight;
+				details.style.padding = "var(--padding) var(--padding) calc(var(--padding) + 25px)";
+				let scrollOffset = 2 * parseInt(getComputedStyle(details).getPropertyValue('--padding'),10) + jb_scripts.fullOffsetTop(details) + details.scrollHeight - window.innerHeight + 100;
 				if ( window.pageYOffset < scrollOffset ){
 					setTimeout(function(){
 						window.scrollTo({behavior: 'smooth', top: scrollOffset});
-					},200); //because the css-animation starts 150ms delayed
+					},550); //because the css-animation starts 150ms delayed
 				}
 
 			});
